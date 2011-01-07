@@ -1,0 +1,18 @@
+	mov [0], #0
+	mov [1], #0
+loop:	mov [2], [1]
+	div [2], #3
+	rem [2]
+	cmp [2], #0
+	jne #8
+	add [0], [1]
+	je #15
+	mov [2], [1]
+	div [2], #5
+	rem [2]
+	cmp [2], #0
+	jne #15
+	add [0], [1]
+	inc [1]
+	cmp [1], #1000
+	jl loop
