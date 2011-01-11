@@ -6,24 +6,23 @@
 #include <string.h>
 
 #include "hash_table.h"
-#include "argument.h"
-#include "label.h"
+#include "memory.h"
 
 typedef struct
 {
         unsigned int num_instructions;
         unsigned int* instr;
 
-	unsigned int num_labels;
-	label** pLabels;
-
-        argument** args;
-
 	hash_table* label_htab;
+
+	int** values;
+	int num_values;
+
+        int*** args;
 
 } program;
 
-program* create_program(char* filename);
+program* create_program(char* filename, memory* pMemory);
 void destroy_program(program* p);
 
 void print_warning(char* str, int line_number);

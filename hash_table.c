@@ -16,9 +16,14 @@ hash_table* create_htab()
 void destroy_htab(hash_table* htab)
 {
 	int i; for(i = 0; i < HTAB_SIZE; i++)
-		if(htab->nodes[i]) free(htab->nodes[i]);
+	{
+		if(htab->nodes[i])
+		{
+			free(htab->nodes[i]->key);
+			free(htab->nodes[i]);
+		}
+	}
 
-	free(htab->nodes);
 	free(htab);
 
 	htab = NULL;
@@ -29,10 +34,10 @@ int htab_add(hash_table* htab, char* k, int v)
 	int hash = htab_hash(k);
 
 	// If the node is not already occupied, allocate space, and copy the key/value pair.
-	if(htab->nodes[hash] == NULL) htab->nodes[hash] = (htable_node*)malloc(sizeof(htable_node));
+	if(htab->nodes[hash] == NULL) htab->nodes[hash] = malloc(sizeof(htable_node));
 	else return 1;
 
-	htab->nodes[hash]->key = (char*)malloc(sizeof(char) * strlen(k));
+	htab->nodes[hash]->key = (char*)malloc(sizeof(char) * (strlen(k) + 1));
 
 	strcpy(htab->nodes[hash]->key, k);
 	htab->nodes[hash]->value = v;

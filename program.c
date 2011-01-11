@@ -1,7 +1,9 @@
 #include "program.h"
 #include "instruction_index.h"
 
-program* create_program(char* filename)
+#define MAX_ARGS 2
+
+program* create_program(char* filename, memory* pMemory)
 {
 	// Open our file in read-only mode
 	FILE* pFile = fopen(filename, "r");
@@ -15,36 +17,42 @@ program* create_program(char* filename)
 	// Allocate space for our program
 	program* p = (program*)malloc(sizeof(program));
 
-	p->num_labels = 0;
+	// Initialize the members of program
 	p->num_instructions = 0;
-
-	char line[128];
-	memset(line, 0, 128);
+	p->instr = 0;
+	p->label_htab = 0;
+	p->values = 0;
+	p->num_values = 0;
+	p->args = 0;
 
 	// Create our label hash table
 	p->label_htab = create_htab();
 
-	p->instr = (unsigned*)malloc(sizeof(unsigned int) * 1);
-	p->args = (argument**)malloc(sizeof(argument*) * 1);
-	p->args[p->num_instructions] = (argument*)malloc(sizeof(argument) * MAX_ARGS);
+	char line[128];
+	memset(line, 0, 128);
 
 	// Get one line from the source file
 	while(fgets(line, 128, pFile))
 	{
-		line[strlen(line)] = '\0';
+		p->instr = realloc(p->instr, sizeof(unsigned) * (p->num_instructions + 1));
+		p->args = realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
+		p->args[p->num_instructions] = malloc(sizeof(int*) * MAX_ARGS);
+
+		line[strlen(line) - 1] = '\0';
 
 		char tokens[4][32];
-		char* token = 0;
+		memset(tokens, 0, 4 * 32);
 
+		char* pToken = 0;
 		int token_idx = 0;
 
 		// Tokenize our source line
-		token = strtok(line, "	 ,");
+		pToken = strtok(line, "	 ,");
 
-		while(token)
+		while(pToken)
 		{
-			if(token) strcpy(tokens[token_idx++], token);
-			token = strtok(NULL, "	 ,");
+			if(pToken) strcpy(tokens[token_idx++], pToken);
+			pToken = strtok(NULL, "	 ,");
 		}
 
 		int valid_opcode = 1;
@@ -120,17 +128,22 @@ program* create_program(char* filename)
 
 				for(i = ++token_idx; i < (token_idx + 2); i++)
 				{
-					argument* pArg = &p->args[p->num_instructions][i - token_idx];
-
 					if(tokens[i][0] == '#')
 					{
-						pArg->type = ARG_TYPE_VALUE;
-						pArg->value = atoi(tokens[i] + 1);
+						p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
+						p->values[p->num_values] = malloc(sizeof(int));
+
+						*p->values[p->num_values] = atoi(tokens[i] + 1);
+
+						p->args[p->num_instructions][i - token_idx] = p->values[p->num_values];
+						++p->num_values;
 					}
-					else if(tokens[i][0] == '[' && tokens[i][2] == ']')
+					else if(tokens[i][0] == '[')
 					{
-						pArg->type = ARG_TYPE_ADDRESS;
-						pArg->value = atoi(tokens[i] + 1);
+						char* end_symbol = strchr(tokens[i], ']');
+						*end_symbol = 0;
+
+						p->args[p->num_instructions][i - token_idx] = &pMemory->int32[atoi(tokens[i] + 1)];
 					}
 					// If it's not a value, and it's not an address, it must be a label!
 					// (NOTE: This is a *very* bad assumption, and must be fixed later.)
@@ -146,8 +159,13 @@ program* create_program(char* filename)
 						// If the label was found, create the argument
 						if(instr_idx >= 0)
 						{
-							pArg->value = instr_idx;
-							pArg->type = ARG_TYPE_LABEL;
+							p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
+							p->values[p->num_values] = malloc(sizeof(int));
+
+							*p->values[p->num_values] = instr_idx;
+
+							p->args[p->num_instructions][i - token_idx] = p->values[p->num_values];
+							++p->num_values;
 						}
 					}
 				}
@@ -155,11 +173,6 @@ program* create_program(char* filename)
 		}
 
 		++p->num_instructions;
-
-		p->instr = (unsigned*)realloc(p->instr, sizeof(unsigned int) * p->num_instructions + 1);
-		p->args = (argument**)realloc(p->args, sizeof(argument*) * p->num_instructions + 1);
-		p->args[p->num_instructions] = (argument*)realloc(p->args[p->num_instructions], sizeof(argument) * MAX_ARGS);
-
 	}
 
 	/* DEBUG */ printf("%i instructions\n", p->num_instructions); /* DEBUG */
@@ -170,15 +183,17 @@ program* create_program(char* filename)
 
 void destroy_program(program* p)
 {
-	if(p->label_htab) destroy_htab(p->label_htab);
+	destroy_htab(p->label_htab);
 
 	int i;
-	if(p->args[0])
-		for(i = 0; i < p->num_instructions; i++) free(p->args[i]);
 
+	for(i = 0; i < p->num_values; i++) free(p->values[i]);
+	if(p->values) free(p->values);
+
+	for(i = 0; i < p->num_instructions; i++) free(p->args[i]);
 	if(p->args) free(p->args);
-	if(p->instr) free(p->instr);
 
+	if(p->instr) free(p->instr);
 	if(p) free(p);
 }
 

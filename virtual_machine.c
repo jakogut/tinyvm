@@ -6,13 +6,12 @@ virtual_machine* create_vm(char* filename)
 
 	vm = (virtual_machine*)malloc(sizeof(virtual_machine));
 
-	vm->pProgram = create_program(filename);
+	vm->pStack = create_stack();
+	vm->pMemory = create_memory(512000);
+	vm->pProgram = create_program(filename, vm->pMemory);
 
 	// Make sure the program was interpreted properly
 	if(!vm->pProgram) return NULL;
-
-	vm->pStack = create_stack();
-	vm->pMemory = create_memory(512000);
 
 	populate_instruction_table(vm->instr_table);
 

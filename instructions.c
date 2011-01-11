@@ -38,48 +38,48 @@ void populate_instruction_table(instruction_table t)
 
 void instr_mov(program* p, memory* m, stack* s, int* instr_idx)
 {
-	*arg_to_addr(m, &p->args[*instr_idx][0]) = *arg_to_addr(m, &p->args[*instr_idx][1]);
+	*p->args[*instr_idx][0] = *p->args[*instr_idx][1];
 }
 
 void instr_push(program* p, memory* m, stack* s, int* instr_idx)
 {
-	stack_push(s, arg_to_addr(m, &p->args[*instr_idx][0]));
+	stack_push(s, p->args[*instr_idx][0]);
 }
 
 void instr_pop(program* p, memory* m, stack* s, int* instr_idx)
 {
-	stack_pop(s, arg_to_addr(m, &p->args[*instr_idx][0]));
+	stack_pop(s, p->args[*instr_idx][0]);
 }
 
 void instr_inc(program* p, memory* m, stack* s, int* instr_idx)
 {
-	++(*arg_to_addr(m, &p->args[*instr_idx][0]));
+	++(*p->args[*instr_idx][0]);
 }
 
 void instr_dec(program* p, memory* m, stack* s, int* instr_idx)
 {
-	--(*arg_to_addr(m, &p->args[*instr_idx][0]));
+	--(*p->args[*instr_idx][0]);
 }
 
 void instr_add(program* p, memory* m, stack* s, int* instr_idx)
 {
-	*arg_to_addr(m, &p->args[*instr_idx][0]) += *arg_to_addr(m, &p->args[*instr_idx][1]);
+	*p->args[*instr_idx][0] += *p->args[*instr_idx][1];
 }
 
 void instr_sub(program* p, memory* m, stack* s, int* instr_idx)
 {
-	*arg_to_addr(m, &p->args[*instr_idx][0]) -= *arg_to_addr(m, &p->args[*instr_idx][1]);
+	*p->args[*instr_idx][0] -= *p->args[*instr_idx][1];
 }
 
 void instr_mul(program* p, memory* m, stack* s, int* instr_idx)
 {
-	*arg_to_addr(m, &p->args[*instr_idx][0]) *= *arg_to_addr(m, &p->args[*instr_idx][1]);
+	*p->args[*instr_idx][0] *= *p->args[*instr_idx][1];
 }
 
 void instr_div(program* p, memory* m, stack* s, int* instr_idx)
 {
-	int* arg0 = arg_to_addr(m, &p->args[*instr_idx][0]);
-	int* arg1 = arg_to_addr(m, &p->args[*instr_idx][1]);
+	int* arg0 = p->args[*instr_idx][0];
+	int* arg1 = p->args[*instr_idx][1];
 
 	m->remainder = *arg0 % *arg1;
 	*arg0 /= *arg1;
@@ -87,34 +87,34 @@ void instr_div(program* p, memory* m, stack* s, int* instr_idx)
 
 void instr_rem(program* p, memory* m, stack* s, int* instr_idx)
 {
-        *arg_to_addr(m, &p->args[*instr_idx][0]) = m->remainder;
+        *p->args[*instr_idx][0] = m->remainder;
 }
 
 void instr_not(program* p, memory* m, stack* s, int* instr_idx)
 {
-	int* arg = arg_to_addr(m, &p->args[*instr_idx][0]);
+	int* arg = p->args[*instr_idx][0];
 	*arg = ~(*arg);
 }
 
 void instr_xor(program* p, memory* m, stack* s, int* instr_idx)
 {
-	*arg_to_addr(m, &p->args[*instr_idx][0]) ^= *arg_to_addr(m, &p->args[*instr_idx][1]);
+	*p->args[*instr_idx][0] ^= *p->args[*instr_idx][1];
 }
 
 void instr_or(program* p, memory* m, stack* s, int* instr_idx)
 {
-	*arg_to_addr(m, &p->args[*instr_idx][0]) |= *arg_to_addr(m, &p->args[*instr_idx][1]);
+	*p->args[*instr_idx][0] |= *p->args[*instr_idx][1];
 }
 
 void instr_and(program* p, memory* m, stack* s, int* instr_idx)
 {
-	*arg_to_addr(m, &p->args[*instr_idx][0]) &= *arg_to_addr(m, &p->args[*instr_idx][1]);
+	*p->args[*instr_idx][0] &= *p->args[*instr_idx][1];
 }
 
 void instr_cmp(program* p, memory* m, stack* s, int* instr_idx)
 {
-        int* arg0 = arg_to_addr(m, &p->args[*instr_idx][0]);
-        int* arg1 = arg_to_addr(m, &p->args[*instr_idx][1]);
+        int* arg0 = p->args[*instr_idx][0];
+        int* arg1 = p->args[*instr_idx][1];
 
         m->equal = (*arg0 == *arg1);
         m->greater = (*arg0 > *arg1);
@@ -123,7 +123,7 @@ void instr_cmp(program* p, memory* m, stack* s, int* instr_idx)
 void instr_jmp(program* p, memory* m, stack* s, int* instr_idx)
 {
 	// We have to jump to the address prior to the instruction we *want* to execute
-	*instr_idx = *arg_to_addr(m, &p->args[*instr_idx][0]) - 1;
+	*instr_idx = *p->args[*instr_idx][0] - 1;
 }
 
 void instr_je(program* p, memory* m, stack* s, int* instr_idx)

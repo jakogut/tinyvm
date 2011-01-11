@@ -4,7 +4,6 @@
 #include "memory.h"
 #include "program.h"
 #include "stack.h"
-#include "label.h"
 #include "instructions.h"
 #include "instruction_table.h"
 
