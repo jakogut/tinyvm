@@ -15,5 +15,7 @@ tinyvm: $(OBJECTS)
 clean:
 	rm -f tinyvm *.o 
 
+rebuild: clean tinyvm
+
 .PHONY : clean
 .SILENT : clean
