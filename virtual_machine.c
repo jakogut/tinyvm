@@ -34,9 +34,6 @@ void run_vm(virtual_machine* vm)
 {
 	int instr_idx = 0;
 
-	while(instr_idx < vm->pProgram->num_instructions)
-	{
+	for(;vm->pProgram->instr[instr_idx] != END; ++instr_idx)
                	vm->instr_table[vm->pProgram->instr[instr_idx]](vm->pProgram, vm->pMemory, vm->pStack, &instr_idx);
-		++instr_idx;
-	}
 }

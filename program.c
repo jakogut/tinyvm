@@ -34,7 +34,7 @@ program* create_program(char* filename, memory* pMemory)
 	// Get one line from the source file
 	while(fgets(line, 128, pFile))
 	{
-		p->instr = realloc(p->instr, sizeof(unsigned) * (p->num_instructions + 1));
+		p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
 		p->args = realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
 		p->args[p->num_instructions] = malloc(sizeof(int*) * MAX_ARGS);
 
@@ -92,6 +92,8 @@ program* create_program(char* filename, memory* pMemory)
 				p->instr[p->num_instructions] = MUL;
 			else if(strcmp(tokens[token_idx], "div") == 0)
 				p->instr[p->num_instructions] = DIV;
+			else if(strcmp(tokens[token_idx], "mod") == 0)
+				p->instr[p->num_instructions] = MOD;
 			else if(strcmp(tokens[token_idx], "rem") == 0)
 				p->instr[p->num_instructions] = REM;
 			else if(strcmp(tokens[token_idx], "not") == 0)
@@ -176,6 +178,9 @@ program* create_program(char* filename, memory* pMemory)
 	}
 
 	/* DEBUG */ printf("%i instructions\n", p->num_instructions); /* DEBUG */
+
+	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
+	p->instr[p->num_instructions] = -1;
 
 	fclose(pFile);
 	return p;

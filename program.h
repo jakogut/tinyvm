@@ -11,7 +11,7 @@
 typedef struct
 {
         unsigned int num_instructions;
-        unsigned int* instr;
+        int* instr;
 
 	hash_table* label_htab;
 

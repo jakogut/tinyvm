@@ -15,6 +15,7 @@ void populate_instruction_table(instruction_table t)
 	t[SUB] = instr_sub;
 	t[MUL] = instr_mul;
 	t[DIV] = instr_div;
+	t[MOD] = instr_mod;
 	t[REM] = instr_rem;
 
 	t[NOT] = instr_not;
@@ -78,11 +79,12 @@ void instr_mul(program* p, memory* m, stack* s, int* instr_idx)
 
 void instr_div(program* p, memory* m, stack* s, int* instr_idx)
 {
-	int* arg0 = p->args[*instr_idx][0];
-	int* arg1 = p->args[*instr_idx][1];
+	*p->args[*instr_idx][0] /= *p->args[*instr_idx][1];
+}
 
-	m->remainder = *arg0 % *arg1;
-	*arg0 /= *arg1;
+void instr_mod(program* p, memory* m, stack* s, int* instr_idx)
+{
+	m->remainder = *p->args[*instr_idx][0] % *p->args[*instr_idx][1];
 }
 
 void instr_rem(program* p, memory* m, stack* s, int* instr_idx)

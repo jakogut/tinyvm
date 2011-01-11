@@ -18,6 +18,7 @@ inline void instr_add(program* p, memory* m, stack* s, int* instr_idx);
 inline void instr_sub(program* p, memory* m, stack* s, int* instr_idx);
 inline void instr_mul(program* p, memory* m, stack* s, int* instr_idx);
 inline void instr_div(program* p, memory* m, stack* s, int* instr_idx);
+inline void instr_mod(program* p, memory* m, stack* s, int* instr_idx);
 inline void instr_rem(program* p, memory* m, stack* s, int* instr_idx);
 
 inline void instr_not(program* p, memory* m, stack* s, int* instr_idx);

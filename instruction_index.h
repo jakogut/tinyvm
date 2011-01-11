@@ -1,7 +1,10 @@
 #ifndef INSTRUCTION_INDEX_H_
 #define INSTRUCTION_INDEX_H_
 
-#define NUM_INSTRUCTIONS 22
+#define NUM_INSTRUCTIONS 23
+
+// End of the program
+#define END -1
 
 // Move a value to an address
 #define MOV 0
@@ -18,25 +21,29 @@
 #define ADD 5
 #define SUB 6
 #define MUL 7
-#define DIV 8
-#define REM 9
+#define DIV 8	// Divide, storing the quotient in the first argument
+#define MOD 9	// Divide, storing the remainder in the remainder register
+#define REM 10	// Copy the remainder register to the address specified by the first argument
 
 // Bitwise instructions
-#define NOT 10
-#define XOR 11
-#define OR  12
-#define AND 13
+#define NOT 11
+#define XOR 12
+#define OR  13
+#define AND 14
 
-#define CMP 14
-#define JMP 15
+// Compare
+#define CMP 15
 
-#define JE  16
-#define JNE 17
+// Conditionals
+#define JMP 16
 
-#define JG 18
-#define JGE 19
+#define JE  17
+#define JNE 18
 
-#define JL 20
-#define JLE 21
+#define JG 19
+#define JGE 20
+
+#define JL 21
+#define JLE 22
 
 #endif
