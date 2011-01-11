@@ -1,0 +1,18 @@
+	mov [1], #1000000
+	xor [10], [10]
+	mov [0], #3
+loop0:	add [10], [0]
+	add [0], #3
+	cmp [0], [1]
+	jl loop0
+	mov [0], #5
+loop1:	add [10], [0]
+	add [0], #15
+	cmp [0], [1]
+	jl loop1
+	mov [0], #10
+loop2:	add [10], [0]
+	add [0], #15
+	cmp [0], [1]
+	jl loop2
+	mov [0], [10]
