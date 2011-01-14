@@ -32,7 +32,7 @@ void destroy_vm(virtual_machine* vm)
 
 void run_vm(virtual_machine* vm)
 {
-	int instr_idx = 0;
+	int instr_idx = vm->pProgram->start;
 
 	for(;vm->pProgram->instr[instr_idx] != END; ++instr_idx)
                	vm->instr_table[vm->pProgram->instr[instr_idx]](vm->pProgram, vm->pMemory, vm->pStack, &instr_idx);

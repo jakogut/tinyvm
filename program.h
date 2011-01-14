@@ -10,6 +10,9 @@
 
 typedef struct
 {
+	// Where to begin executing the program
+	int start;
+
         unsigned int num_instructions;
         int* instr;
 

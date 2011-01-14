@@ -19,6 +19,7 @@ program* create_program(char* filename, memory* pMemory)
 	program* p = (program*)malloc(sizeof(program));
 
 	// Initialize the members of program
+	p->start = 0;
 	p->num_instructions = 0;
 	p->num_values = 0;
 
@@ -66,6 +67,9 @@ program* create_program(char* filename, memory* pMemory)
 			{
 				// Get rid of the label delimiter
 				*label_delimiter = 0;
+
+				// If the label is "start," set the program to begin there.
+				if(strcmp(tokens[token_idx], "start") == 0) p->start = p->num_instructions;
 
 				// Add that fucker to the hash table with the corresponding instruction index
 				htab_add(p->label_htab, tokens[token_idx], p->num_instructions);
