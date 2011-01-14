@@ -23,6 +23,9 @@ void populate_instruction_table(instruction_table t)
 	t[OR] = instr_or;
 	t[AND] = instr_and;
 
+	t[SHL] = instr_shl;
+	t[SHR] = instr_shr;
+
 	t[CMP] = instr_cmp;
 
 	t[JMP] = instr_jmp;
@@ -111,6 +114,16 @@ void instr_or(program* p, memory* m, stack* s, int* instr_idx)
 void instr_and(program* p, memory* m, stack* s, int* instr_idx)
 {
 	*p->args[*instr_idx][0] &= *p->args[*instr_idx][1];
+}
+
+void instr_shl(program* p, memory* m, stack* s, int* instr_idx)
+{
+	*p->args[*instr_idx][0] <<= *p->args[*instr_idx][1];
+}
+
+void instr_shr(program* p, memory* m, stack* s, int* instr_idx)
+{
+	*p->args[*instr_idx][0] >>= *p->args[*instr_idx][1];
 }
 
 void instr_cmp(program* p, memory* m, stack* s, int* instr_idx)

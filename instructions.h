@@ -26,6 +26,9 @@ inline void instr_xor(program* p, memory* m, stack* s, int* instr_idx);
 inline void instr_or(program* p, memory* m, stack* s, int* instr_idx);
 inline void instr_and(program* p, memory* m, stack* s, int* instr_idx);
 
+inline void instr_shl(program* p, memory* m, stack* s, int* instr_idx);
+inline void instr_shr(program* p, memory* m, stack* s, int* instr_idx);
+
 inline void instr_cmp(program* p, memory* m, stack* s, int* instr_idx);
 
 inline void instr_jmp(program* p, memory* m, stack* s, int* instr_idx);

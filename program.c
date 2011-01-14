@@ -105,6 +105,10 @@ program* create_program(char* filename, memory* pMemory)
 				p->instr[p->num_instructions] = OR;
 			else if(strcmp(tokens[token_idx], "and") == 0)
 				p->instr[p->num_instructions] = AND;
+			else if(strcmp(tokens[token_idx], "shl") == 0)
+				p->instr[p->num_instructions] = SHL;
+			else if(strcmp(tokens[token_idx], "shr") == 0)
+				p->instr[p->num_instructions] = SHR;
 			else if(strcmp(tokens[token_idx], "cmp") == 0)
 				p->instr[p->num_instructions] = CMP;
 			else if(strcmp(tokens[token_idx], "jmp") == 0)

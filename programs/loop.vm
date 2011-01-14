@@ -1,4 +1,4 @@
 	xor [0], [0]
 loop:	inc [0]
-	cmp [0], #256
+	cmp [0], 100:h
 	jl loop

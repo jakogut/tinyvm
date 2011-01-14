@@ -1,7 +1,7 @@
 #ifndef INSTRUCTION_INDEX_H_
 #define INSTRUCTION_INDEX_H_
 
-#define NUM_INSTRUCTIONS 23
+#define NUM_INSTRUCTIONS 25
 
 // End of the program
 #define END -1
@@ -31,19 +31,23 @@
 #define OR  13
 #define AND 14
 
+// Shifts
+#define SHL 15
+#define SHR 16
+
 // Compare
-#define CMP 15
+#define CMP 17
 
 // Conditionals
-#define JMP 16
+#define JMP 18
 
-#define JE  17
-#define JNE 18
+#define JE  19
+#define JNE 20
 
-#define JG 19
-#define JGE 20
+#define JG 21
+#define JGE 22
 
-#define JL 21
-#define JLE 22
+#define JL 23
+#define JLE 24
 
 #endif
