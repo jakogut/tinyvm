@@ -1,0 +1,117 @@
+This virtual machine loosely follows traditional Intel x86 assembly syntax.
+
+
+//////////////////////////////////////////////////
+// VALUES ////////////////////////////////////////
+//////////////////////////////////////////////////
+
+Values can be specified in decimal, hexadecimal, or binary. The only difference between Intel syntax assembly, and TVM
+syntax is the delimiter between the value, and the base specifier. By default, values without a base specifier are assumed
+to be in decimal. Any value prepended with "0x" is assumed to be in hexadecimal. 
+
+Values can also be specified using base identifiers. To specify the value "32," I can use 0x20 for hexadecimal, 20:h for hexadecimal
+using a base identifier, or 100000:b for binary using a base identifer.
+
+//////////////////////////////////////////////////
+// REGISTERS /////////////////////////////////////
+//////////////////////////////////////////////////
+
+Registers have not yet been implemented. Addressing memory directly, though not as efficient, works just as well.
+
+//////////////////////////////////////////////////
+// MEMORY ////////////////////////////////////////
+//////////////////////////////////////////////////
+
+Memory addresses are specified using brackets. Programs running within the virtual machine have their own address space, 
+so no positive address within the address space is off limits.
+
+To specify the 256th word in the address space, you can use [256], [100:h], [0x100], or [100000000:b]. Any syntax that's
+valid when specifying a value is valid when specifying an address. 
+
+//////////////////////////////////////////////////
+// LABELS ////////////////////////////////////////
+//////////////////////////////////////////////////
+
+Labels are specified by appending a colon to an identifier. Local labels are not yet supported.
+
+//////////////////////////////////////////////////
+// INSTRUCTIONS //////////////////////////////////
+//////////////////////////////////////////////////
+
+Instructions available right now are:
+
+[mov arg0, arg1]
+Moves value specified from arg1 to arg0
+
+[push arg]
+Pushes arg onto the stack
+
+[pop arg]
+Pops a value from the stack, storing it in arg
+
+[inc arg]
+Increments arg
+
+[dec arg]
+Decrements arg
+
+[add arg0, arg1]
+Adds arg1 to arg0, storing the result in arg0
+
+[sub arg0, arg1]
+Subtracts arg1 from arg0, storing the result in arg0
+
+[mul arg0, arg1]
+multiplies arg1 and arg0, storing the result in arg0
+
+[div arg0, arg1]
+Divides arg0 by arg1, storing the quotient in arg0
+
+[mod arg0, arg1]
+Same as the '%' (modulous) operator in C. Calculates arg0 mod arg1, and stores the result in the remainder register.
+
+[rem arg]
+Retrieves the value stored in the remainder register, storing it in arg
+
+[not arg]
+Calculates the binary NOT of arg, storing it in arg
+
+[xor arg0, arg1]
+Calculates the binary XOR of arg0 and arg1, storing the result in arg0
+
+[or arg0, arg1]
+Calculates the binary OR of arg0, and arg1, storing the result in arg0
+
+[and arg0, arg1]
+Calculates the binary AND of arg0, and arg1, storing the result in arg0
+
+[shl arg0, arg1]
+Shift arg0 left by arg1 places
+
+[shr arg0, arg1]
+Shifts arg0 right by arg1 places
+
+[cmp arg0, arg1]
+Compares arg0 and arg1, storing the result in the FLAGS register
+
+[jmp address]
+Jumps to an address, or label
+
+[je address]
+Jump if equal
+
+[jne address]
+Jump if not equal
+
+[jg address]
+Jump if greater
+
+[jge address]
+Jump if equal or greater
+
+[jl address]
+Jump if lesser
+
+[jle address]
+Jump if lesser or equal
+
