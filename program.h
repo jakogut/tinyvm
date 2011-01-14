@@ -25,6 +25,9 @@ typedef struct
 program* create_program(char* filename, memory* pMemory);
 void destroy_program(program* p);
 
+int* add_value(program* p, const int val);
+int parse_value(char* str);
+
 void print_warning(char* str, int line_number);
 void print_error(char* str, int line_number);
 

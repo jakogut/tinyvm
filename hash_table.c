@@ -49,7 +49,7 @@ int htab_find(hash_table* htab, char* key)
 {
 	int hash = htab_hash(key);
 
-	if(htab->nodes[hash]) return htab->nodes[hash]->value;
+	if(htab->nodes[hash] != NULL) return htab->nodes[hash]->value;
 	else return -1;
 }
 

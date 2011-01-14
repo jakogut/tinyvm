@@ -1,5 +1,6 @@
 #include "program.h"
-#include "instruction_index.h"
+#include "instructions.h"
+#include "instruction_table.h"
 
 #define MAX_ARGS 2
 
@@ -19,11 +20,7 @@ program* create_program(char* filename, memory* pMemory)
 
 	// Initialize the members of program
 	p->num_instructions = 0;
-	p->instr = 0;
-	p->label_htab = 0;
-	p->values = 0;
 	p->num_values = 0;
-	p->args = 0;
 
 	// Create our label hash table
 	p->label_htab = create_htab();
@@ -51,8 +48,12 @@ program* create_program(char* filename, memory* pMemory)
 
 		while(pToken)
 		{
-			if(pToken) strcpy(tokens[token_idx++], pToken);
+			if(pToken) strcpy(tokens[token_idx], pToken);
+			else strcpy(tokens[token_idx], "");
+
 			pToken = strtok(NULL, "	 ,");
+
+			++token_idx;
 		}
 
 		int valid_opcode = 1;
@@ -130,46 +131,39 @@ program* create_program(char* filename, memory* pMemory)
 
 				for(i = ++token_idx; i < (token_idx + 2); i++)
 				{
-					if(tokens[i][0] == '#')
-					{
-						p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
-						p->values[p->num_values] = malloc(sizeof(int));
+					// If the token is empty, do not attempt to parse it
+					if(strlen(tokens[i]) <= 0) continue;
 
-						*p->values[p->num_values] = atoi(tokens[i] + 1);
+					// Remove any trailing newline from the token
+					char* newline = strchr(tokens[i], '\n');
+					if(newline) *newline = 0;
 
-						p->args[p->num_instructions][i - token_idx] = p->values[p->num_values];
-						++p->num_values;
-					}
-					else if(tokens[i][0] == '[')
+					// Check to see whether the token specifies an address
+					if(tokens[i][0] == '[')
 					{
 						char* end_symbol = strchr(tokens[i], ']');
-						*end_symbol = 0;
+						if(end_symbol) *end_symbol = 0;
 
-						p->args[p->num_instructions][i - token_idx] = &pMemory->int32[atoi(tokens[i] + 1)];
+						p->args[p->num_instructions][i - token_idx] = &pMemory->int32[parse_value(tokens[i] + 1)];
+						continue;
 					}
-					// If it's not a value, and it's not an address, it must be a label!
-					// (NOTE: This is a *very* bad assumption, and must be fixed later.)
+					// If it's not an address, check if the argument is a label
 					else
 					{
-						// Remove any troublesome trailing newline character
-						char* newline = strchr(tokens[i], '\n');
-						if(newline) *newline = 0;
-
 						// Search the hash map for the label
-						int instr_idx =  htab_find(p->label_htab, tokens[i]);
+						int instr_idx = htab_find(p->label_htab, tokens[i]);
 
 						// If the label was found, create the argument
 						if(instr_idx >= 0)
 						{
-							p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
-							p->values[p->num_values] = malloc(sizeof(int));
-
-							*p->values[p->num_values] = instr_idx;
-
-							p->args[p->num_instructions][i - token_idx] = p->values[p->num_values];
-							++p->num_values;
+							p->args[p->num_instructions][i - token_idx] = add_value(p, instr_idx);
+							continue;
 						}
 					}
+
+					// If it's not an address, and it's not a label, parse it as a value
+					int value = parse_value(tokens[i]);
+					p->args[p->num_instructions][i - token_idx] = add_value(p, value);
 				}
 			}
 		}
@@ -177,10 +171,9 @@ program* create_program(char* filename, memory* pMemory)
 		++p->num_instructions;
 	}
 
-	/* DEBUG */ printf("%i instructions\n", p->num_instructions); /* DEBUG */
-
+	// Specify the end of the program
 	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
-	p->instr[p->num_instructions] = -1;
+	p->instr[p->num_instructions] = END;
 
 	fclose(pFile);
 	return p;
@@ -200,6 +193,43 @@ void destroy_program(program* p)
 
 	if(p->instr) free(p->instr);
 	if(p) free(p);
+}
+
+int* add_value(program* p, const int val)
+{
+	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
+	p->values[p->num_values] = malloc(sizeof(int));
+
+	*p->values[p->num_values] = val;
+
+	return p->values[p->num_values++];
+}
+
+int parse_value(char* str)
+{
+	char* delimiter = strchr(str, ':');
+	int base = 0;
+
+	if(delimiter)
+	{
+		char* identifier = delimiter + 1;
+
+		switch(*identifier)
+		{
+			case 'h':
+				base = 16;
+				break;
+			case 'b':
+				base = 2;
+				break;
+			default:
+				base = 0;
+				break;
+		}
+	}
+
+	return strtoul(str, NULL, base);
+
 }
 
 void print_warning(char* str, int line_number)
