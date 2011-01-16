@@ -1,0 +1,5 @@
+Building can be accomplished on UNIX-like systems with make and GCC.
+
+There are no external dependencies, save the C standard library.
+
+Building can be accomplished using "make," or "make rebuild".
