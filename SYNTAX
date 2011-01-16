@@ -1,8 +1,22 @@
 This virtual machine loosely follows traditional Intel x86 assembly syntax.
 
+//////////////////////////////////////////////////
+// Table of Contents /////////////////////////////
+//////////////////////////////////////////////////
+0. VALUES
+1. REGISTERS
+2. MEMORY
+3. LABELS
+4. INSTRUCTION LISTING
+	I.   Memory
+	II.  Stack
+	III. Arithmetic Operators
+	IV.  Binary Operators
+	V.   Comparison
+	VI.  Control Flow Manipulation
 
 //////////////////////////////////////////////////
-// VALUES ////////////////////////////////////////
+// 0. VALUES /////////////////////////////////////
 //////////////////////////////////////////////////
 
 Values can be specified in decimal, hexadecimal, or binary. The only difference between Intel syntax assembly, and TVM
@@ -13,13 +27,13 @@ Values can also be specified using base identifiers. To specify the value "32," 
 using a base identifier, or 100000:b for binary using a base identifer.
 
 //////////////////////////////////////////////////
-// REGISTERS /////////////////////////////////////
+// 1. REGISTERS //////////////////////////////////
 //////////////////////////////////////////////////
 
 Registers have not yet been implemented. Addressing memory directly, though not as efficient, works just as well.
 
 //////////////////////////////////////////////////
-// MEMORY ////////////////////////////////////////
+// 2. MEMORY /////////////////////////////////////
 //////////////////////////////////////////////////
 
 Memory addresses are specified using brackets. Programs running within the virtual machine have their own address space, 
@@ -29,89 +43,104 @@ To specify the 256th word in the address space, you can use [256], [100:h], [0x1
 valid when specifying a value is valid when specifying an address. 
 
 //////////////////////////////////////////////////
-// LABELS ////////////////////////////////////////
+// 3. LABELS /////////////////////////////////////
 //////////////////////////////////////////////////
 
 Labels are specified by appending a colon to an identifier. Local labels are not yet supported.
 
+Labels must be specified at the beginning of a line, or on their own line.
+
 //////////////////////////////////////////////////
-// INSTRUCTIONS //////////////////////////////////
+// 4. INSTRUCTION LISTING ////////////////////////
 //////////////////////////////////////////////////
 
-Instructions available right now are:
+Instructions listed are displayed in complete usage form, with example arguments, enclosed in square brackets.
+The square brackets are not to be used in actual TVM programs.
 
-[mov arg0, arg1]
-Moves value specified from arg1 to arg0
+	// I. Memory //
 
-[push arg]
-Pushes arg onto the stack
+		[mov arg0, arg1]
+		Moves value specified from arg1 to arg0
 
-[pop arg]
-Pops a value from the stack, storing it in arg
+	// II. Stack //
 
-[inc arg]
-Increments arg
+		[push arg]
+		Pushes arg onto the stack
 
-[dec arg]
-Decrements arg
+		[pop arg]
+		Pops a value from the stack, storing it in arg
 
-[add arg0, arg1]
-Adds arg1 to arg0, storing the result in arg0
+	// III. Arithmetic Operators //
 
-[sub arg0, arg1]
-Subtracts arg1 from arg0, storing the result in arg0
+		[inc arg]
+		Increments arg
 
-[mul arg0, arg1]
-multiplies arg1 and arg0, storing the result in arg0
+		[dec arg]
+		Decrements arg
 
-[div arg0, arg1]
-Divides arg0 by arg1, storing the quotient in arg0
+		[add arg0, arg1]
+		Adds arg1 to arg0, storing the result in arg0
 
-[mod arg0, arg1]
-Same as the '%' (modulous) operator in C. Calculates arg0 mod arg1, and stores the result in the remainder register.
+		[sub arg0, arg1]
+		Subtracts arg1 from arg0, storing the result in arg0
 
-[rem arg]
-Retrieves the value stored in the remainder register, storing it in arg
+		[mul arg0, arg1]
+		multiplies arg1 and arg0, storing the result in arg0
 
-[not arg]
-Calculates the binary NOT of arg, storing it in arg
+		[div arg0, arg1]
+		Divides arg0 by arg1, storing the quotient in arg0
 
-[xor arg0, arg1]
-Calculates the binary XOR of arg0 and arg1, storing the result in arg0
+		[mod arg0, arg1]
+		Same as the '%' (modulous) operator in C. Calculates arg0 mod arg1, and stores the result in the remainder register.
 
-[or arg0, arg1]
-Calculates the binary OR of arg0, and arg1, storing the result in arg0
+		[rem arg]
+		Retrieves the value stored in the remainder register, storing it in arg
 
-[and arg0, arg1]
-Calculates the binary AND of arg0, and arg1, storing the result in arg0
+	// IV. Binary Operators //
 
-[shl arg0, arg1]
-Shift arg0 left by arg1 places
+		[not arg]
+		Calculates the binary NOT of arg, storing it in arg
 
-[shr arg0, arg1]
-Shifts arg0 right by arg1 places
+		[xor arg0, arg1]
+		Calculates the binary XOR of arg0 and arg1, storing the result in arg0
 
-[cmp arg0, arg1]
-Compares arg0 and arg1, storing the result in the FLAGS register
+		[or arg0, arg1]
+		Calculates the binary OR of arg0, and arg1, storing the result in arg0
 
-[jmp address]
-Jumps to an address, or label
+		[and arg0, arg1]
+		Calculates the binary AND of arg0, and arg1, storing the result in arg0
 
-[je address]
-Jump if equal
+		[shl arg0, arg1]
+		Shift arg0 left by arg1 places
 
-[jne address]
-Jump if not equal
+		[shr arg0, arg1]
+		Shifts arg0 right by arg1 places
 
-[jg address]
-Jump if greater
+	// V. Comparison //
 
-[jge address]
-Jump if equal or greater
+		[cmp arg0, arg1]
+		Compares arg0 and arg1, storing the result in the FLAGS register
 
-[jl address]
-Jump if lesser
+	// VI. Control Flow Manipulation //
 
-[jle address]
-Jump if lesser or equal
+		[jmp address]
+		Jumps to an address, or label
+
+		[je address]
+		Jump if equal
+
+		[jne address]
+		Jump if not equal
+
+		[jg address]
+		Jump if greater
+
+		[jge address]
+		Jump if equal or greater
+
+		[jl address]
+		Jump if lesser
+
+		[jle address]
+		Jump if lesser or equal
 
