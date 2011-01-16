@@ -5,7 +5,7 @@
 void stack_push(stack* s, int* item)
 {
 	s->num_items++;
-	s->items = (int*)realloc(s->items, s->num_items);
+	s->items = (int*)realloc(s->items, s->num_items * sizeof(int));
 
 	s->items[s->num_items - 1] = *item;
 }
