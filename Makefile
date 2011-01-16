@@ -25,7 +25,7 @@ tinyvm: $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f tinyvm tinyvm-debug *.o 
+	rm -f tinyvm tinyvm-debug gmon.out *.save *.o
 
 rebuild: clean tinyvm
 
