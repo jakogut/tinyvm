@@ -4,13 +4,10 @@
 #include "memory.h"
 #include "program.h"
 #include "stack.h"
-#include "instructions.h"
-#include "instruction_table.h"
 
 typedef struct
 {
 	program* pProgram;
-	instruction_table instr_table;
 
 	stack* pStack;
 

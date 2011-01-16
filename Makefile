@@ -3,7 +3,7 @@ CXXFLAGS = -Wall -O3
 CFLAGS = $(CXXFLAGS) -c
 LFLAGS = $(CXXFLAGS)
 
-OBJECTS = hash_table.o instructions.o tinyvm.o memory.o program.o stack.o virtual_machine.o
+OBJECTS = hash_table.o tinyvm.o memory.o program.o stack.o virtual_machine.o
 
 DEBUG = no
 PROFILE = no

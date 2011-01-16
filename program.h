@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "instruction_index.h"
 #include "hash_table.h"
 #include "memory.h"
 

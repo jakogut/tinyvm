@@ -1,6 +1,4 @@
 #include "program.h"
-#include "instructions.h"
-#include "instruction_table.h"
 
 #define MAX_ARGS 2
 
