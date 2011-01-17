@@ -55,7 +55,6 @@ program* create_program(char* filename, memory* pMemory)
 			++token_idx;
 		}
 
-		int valid_opcode = 1;
 		for(token_idx = 0; token_idx < 4; token_idx++)
 		{
 			// Figure out if the token we're dealing with is a label
@@ -77,6 +76,8 @@ program* create_program(char* filename, memory* pMemory)
 			}
 
 			// Figure out if the token we're dealing with is an opcode
+			int valid_opcode = 1;
+
 			if(strcmp(tokens[token_idx], "mov") == 0)
 				p->instr[p->num_instructions] = MOV;
 			else if(strcmp(tokens[token_idx], "push") == 0)
@@ -133,8 +134,10 @@ program* create_program(char* filename, memory* pMemory)
 			// If it *is* an opcode, parse the arguments
 			if(valid_opcode)
 			{
-				int i;
+				int num_instr = p->num_instructions;
+				++p->num_instructions;
 
+				int i;
 				for(i = ++token_idx; i < (token_idx + 2); i++)
 				{
 					// If the token is empty, do not attempt to parse it
@@ -150,7 +153,7 @@ program* create_program(char* filename, memory* pMemory)
 						char* end_symbol = strchr(tokens[i], ']');
 						if(end_symbol) *end_symbol = 0;
 
-						p->args[p->num_instructions][i - token_idx] = &pMemory->int32[parse_value(tokens[i] + 1)];
+						p->args[num_instr][i - token_idx] = &pMemory->int32[parse_value(tokens[i] + 1)];
 						continue;
 					}
 					// If it's not an address, check if the argument is a label
@@ -162,19 +165,17 @@ program* create_program(char* filename, memory* pMemory)
 						// If the label was found, create the argument
 						if(instr_idx >= 0)
 						{
-							p->args[p->num_instructions][i - token_idx] = add_value(p, instr_idx);
+							p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
 							continue;
 						}
 					}
 
 					// If it's not an address, and it's not a label, parse it as a value
 					int value = parse_value(tokens[i]);
-					p->args[p->num_instructions][i - token_idx] = add_value(p, value);
+					p->args[num_instr][i - token_idx] = add_value(p, value);
 				}
 			}
 		}
-
-		++p->num_instructions;
 	}
 
 	// Specify the end of the program
