@@ -1,5 +1,9 @@
-	mov [0], 0
+This is a really inefficient solution to the first Project Euler problem.
+See euler1_nodiv.vm for a much better solution.
+
+start:	mov [0], 0
 	mov [1], 0
+
 loop:	mov [2], [1]
 	mod [2], 3
 	rem [2]
@@ -7,6 +11,13 @@ loop:	mov [2], [1]
 	jne 8
 	add [0], [1]
 	je 15
+
+	When jumping, you can specify a label, which is tied to an address, 
+	which points to a certain instruction, or you can just specify an address.
+	Both forms are used in this program. (Straight addresses are used because
+	jumping to labels below the current source line doesn't quite work properly.
+	This will be fixed soon.)
+
 	mov [2], [1]
 	mod [2], 5
 	rem [2]
