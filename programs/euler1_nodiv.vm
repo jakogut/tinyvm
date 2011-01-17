@@ -1,32 +1,34 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 //  This algorithm was copied from an x86 solution to the first Project Euler problem. //
 //  It was authored by bitRAKE.							       //
+//										       //
+//  http://projecteuler.net/index.php?section=forum&id=14			       //
 /////////////////////////////////////////////////////////////////////////////////////////
 
 Specify a label named "start," and it will become the entrypoint for the program.
 
 start:	mov [1], 1000000
 	xor [10], [10]
+	
 	mov [0], 3
-
 loop0:	add [10], [0]
 	add [0], 3
 	cmp [0], [1]
 	jl loop0
-	mov [0], 5
 
 Unrecognized shit isn't parsed, as long as it's not 
 on the same line as a valid instruction.
 
+	mov [0], 5
 loop1:	add [10], [0]
 	add [0], 15
 	cmp [0], [1]
 	jl loop1
-	mov [0], 10
 
 Comments can be entered on _any_ line that doesn't contain
 a valid opcode. TVM does not give a fuck.
 
+	mov [0], 10
 loop2:	add [10], [0]
 	add [0], 15
 	cmp [0], [1]
