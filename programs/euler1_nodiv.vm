@@ -1,9 +1,9 @@
-/////////////////////////////////////////////////////////////////////////////////////////
-//  This algorithm was copied from an x86 solution to the first Project Euler problem. //
-//  It was authored by bitRAKE.							       //
-//										       //
-//  http://projecteuler.net/index.php?section=forum&id=14			       //
-/////////////////////////////////////////////////////////////////////////////////////////
+
+This algorithm was copied from an x86 solution to the first Project Euler problem.
+It was authored by bitRAKE.
+
+http://projecteuler.net/index.php?section=forum&id=14
+
 
 Specify a label named "start," and it will become the entrypoint for the program.
 
