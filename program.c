@@ -238,13 +238,3 @@ int parse_value(char* str)
 	return strtoul(str, NULL, base);
 
 }
-
-void print_warning(char* str, int line_number)
-{
-	printf("WARNING: %i: %s\n\n", line_number, str);
-}
-
-void print_error(char* str, int line_number)
-{
-	printf("ERROR: %i: %s\n\n", line_number, str);
-}

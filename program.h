@@ -11,10 +11,8 @@
 
 typedef struct
 {
-	// Where to begin executing the program
 	int start;
 
-        unsigned int num_instructions;
         int* instr;
 
 	hash_table* label_htab;
@@ -31,8 +29,5 @@ void destroy_program(program* p);
 
 int* add_value(program* p, const int val);
 int parse_value(char* str);
-
-void print_warning(char* str, int line_number);
-void print_error(char* str, int line_number);
 
 #endif

@@ -1,5 +1,20 @@
+TinyVM is a virtual machine where the goal is having a small footprint.
+Low memory usage, a small amount of code, and a small binary. This
+virtual machine has been branches into two other projects, FastVM and SimpleVM,
+where performance and simplicity are the main goals respectively.
+
+TinyVM, and all of its branches, have differing goals, but they're each designed
+to execute the same code. FastVM may have better performance than TinyVM and SimpleVM,
+but it may also use more memory, more complex code, and take longer to compile. TinyVM
+may be smaller, and have a lighter footprint than the other branches, but it doesn't have
+the speed or simplicity of the other two. TVM code is made to be portable across these 
+virtual machines, but there are tradeoffs to the VM you use to execute your code.
+
 Building can be accomplished on UNIX-like systems with make and GCC.
 
 There are no external dependencies, save the C standard library.
 
 Building can be accomplished using "make," or "make rebuild".
+
+To build a debug version, add "DEBUG=yes" after "make". To build a binary with
+profiling enabled, add "PROFILE=yes" after "make".
