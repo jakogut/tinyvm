@@ -14,13 +14,14 @@ typedef struct
 	int start;
 
         int* instr;
+	int num_instructions;
 
-	hash_table* label_htab;
+        int*** args;
 
 	int** values;
 	int num_values;
 
-        int*** args;
+	hash_table* label_htab;
 
 } program;
 
