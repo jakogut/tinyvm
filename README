@@ -1,7 +1,8 @@
 TinyVM is a virtual machine where the goal is having a small footprint.
 Low memory usage, a small amount of code, and a small binary. This
-virtual machine has been branches into two other projects, FastVM and SimpleVM,
-where performance and simplicity are the main goals respectively.
+virtual machine has been branched into several other projects, including
+FastVM and SimpleVM, where performance and simplicity are the main goals 
+respectively.
 
 TinyVM, and all of its branches, have differing goals, but they're each designed
 to execute the same code. FastVM may have better performance than TinyVM and SimpleVM,
