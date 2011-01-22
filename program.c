@@ -48,9 +48,11 @@ program* create_program(char* filename, memory* pMemory)
 		while(pToken)
 		{
 			if(pToken) strcpy(tokens[token_idx], pToken);
-			else strcpy(tokens[token_idx++], "");
+			else strcpy(tokens[token_idx], "");
 
 			pToken = strtok(NULL, "	 ,");
+
+			++token_idx;
 		}
 
 		for(token_idx = 0; token_idx < 4; token_idx++)
