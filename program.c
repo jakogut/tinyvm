@@ -48,11 +48,9 @@ program* create_program(char* filename, memory* pMemory)
 		while(pToken)
 		{
 			if(pToken) strcpy(tokens[token_idx], pToken);
-			else strcpy(tokens[token_idx], "");
+			else strcpy(tokens[token_idx++], "");
 
 			pToken = strtok(NULL, "	 ,");
-
-			++token_idx;
 		}
 
 		for(token_idx = 0; token_idx < 4; token_idx++)
@@ -78,67 +76,41 @@ program* create_program(char* filename, memory* pMemory)
 			// Figure out if the token we're dealing with is an opcode
 			int valid_opcode = 1;
 
-			if(strcmp(tokens[token_idx], "mov") == 0)
-				p->instr[p->num_instructions] = MOV;
-			else if(strcmp(tokens[token_idx], "push") == 0)
-				p->instr[p->num_instructions] = PUSH;
-			else if(strcmp(tokens[token_idx], "pop") == 0)
-				p->instr[p->num_instructions] = POP;
-			else if(strcmp(tokens[token_idx], "inc") == 0)
-				p->instr[p->num_instructions] = INC;
-			else if(strcmp(tokens[token_idx], "dec") == 0)
-				p->instr[p->num_instructions] = DEC;
-			else if(strcmp(tokens[token_idx], "add") == 0)
-				p->instr[p->num_instructions] = ADD;
-			else if(strcmp(tokens[token_idx], "sub") == 0)
-				p->instr[p->num_instructions] = SUB;
-			else if(strcmp(tokens[token_idx], "mul") == 0)
-				p->instr[p->num_instructions] = MUL;
-			else if(strcmp(tokens[token_idx], "div") == 0)
-				p->instr[p->num_instructions] = DIV;
-			else if(strcmp(tokens[token_idx], "mod") == 0)
-				p->instr[p->num_instructions] = MOD;
-			else if(strcmp(tokens[token_idx], "rem") == 0)
-				p->instr[p->num_instructions] = REM;
-			else if(strcmp(tokens[token_idx], "not") == 0)
-				p->instr[p->num_instructions] = NOT;
-			else if(strcmp(tokens[token_idx], "xor") == 0)
-				p->instr[p->num_instructions] = XOR;
-			else if(strcmp(tokens[token_idx], "or") == 0)
-				p->instr[p->num_instructions] = OR;
-			else if(strcmp(tokens[token_idx], "and") == 0)
-				p->instr[p->num_instructions] = AND;
-			else if(strcmp(tokens[token_idx], "shl") == 0)
-				p->instr[p->num_instructions] = SHL;
-			else if(strcmp(tokens[token_idx], "shr") == 0)
-				p->instr[p->num_instructions] = SHR;
-			else if(strcmp(tokens[token_idx], "cmp") == 0)
-				p->instr[p->num_instructions] = CMP;
-			else if(strcmp(tokens[token_idx], "jmp") == 0)
-				p->instr[p->num_instructions] = JMP;
-			else if(strcmp(tokens[token_idx], "je") == 0)
-				p->instr[p->num_instructions] = JE;
-			else if(strcmp(tokens[token_idx], "jne") == 0)
-				p->instr[p->num_instructions] = JNE;
-			else if(strcmp(tokens[token_idx], "jg") == 0)
-				p->instr[p->num_instructions] = JG;
-			else if(strcmp(tokens[token_idx], "jge") == 0)
-				p->instr[p->num_instructions] = JGE;
-			else if(strcmp(tokens[token_idx], "jl") == 0)
-				p->instr[p->num_instructions] = JL;
-			else if(strcmp(tokens[token_idx], "jle") == 0)
-				p->instr[p->num_instructions] = JLE;
+			if(strcmp(tokens[token_idx], "mov") == 0)	p->instr[p->num_instructions] = MOV;
+			else if(strcmp(tokens[token_idx], "push") == 0)	p->instr[p->num_instructions] = PUSH;
+			else if(strcmp(tokens[token_idx], "pop") == 0)	p->instr[p->num_instructions] = POP;
+			else if(strcmp(tokens[token_idx], "inc") == 0)	p->instr[p->num_instructions] = INC;
+			else if(strcmp(tokens[token_idx], "dec") == 0)	p->instr[p->num_instructions] = DEC;
+			else if(strcmp(tokens[token_idx], "add") == 0)	p->instr[p->num_instructions] = ADD;
+			else if(strcmp(tokens[token_idx], "sub") == 0)	p->instr[p->num_instructions] = SUB;
+			else if(strcmp(tokens[token_idx], "mul") == 0)	p->instr[p->num_instructions] = MUL;
+			else if(strcmp(tokens[token_idx], "div") == 0)	p->instr[p->num_instructions] = DIV;
+			else if(strcmp(tokens[token_idx], "mod") == 0)	p->instr[p->num_instructions] = MOD;
+			else if(strcmp(tokens[token_idx], "rem") == 0)	p->instr[p->num_instructions] = REM;
+			else if(strcmp(tokens[token_idx], "not") == 0)	p->instr[p->num_instructions] = NOT;
+			else if(strcmp(tokens[token_idx], "xor") == 0)	p->instr[p->num_instructions] = XOR;
+			else if(strcmp(tokens[token_idx], "or") == 0)	p->instr[p->num_instructions] = OR;
+			else if(strcmp(tokens[token_idx], "and") == 0)	p->instr[p->num_instructions] = AND;
+			else if(strcmp(tokens[token_idx], "shl") == 0)	p->instr[p->num_instructions] = SHL;
+			else if(strcmp(tokens[token_idx], "shr") == 0)	p->instr[p->num_instructions] = SHR;
+			else if(strcmp(tokens[token_idx], "cmp") == 0)	p->instr[p->num_instructions] = CMP;
+			else if(strcmp(tokens[token_idx], "jmp") == 0)	p->instr[p->num_instructions] = JMP;
+			else if(strcmp(tokens[token_idx], "je") == 0)	p->instr[p->num_instructions] = JE;
+			else if(strcmp(tokens[token_idx], "jne") == 0)	p->instr[p->num_instructions] = JNE;
+			else if(strcmp(tokens[token_idx], "jg") == 0)	p->instr[p->num_instructions] = JG;
+			else if(strcmp(tokens[token_idx], "jge") == 0)	p->instr[p->num_instructions] = JGE;
+			else if(strcmp(tokens[token_idx], "jl") == 0)	p->instr[p->num_instructions] = JL;
+			else if(strcmp(tokens[token_idx], "jle") == 0)	p->instr[p->num_instructions] = JLE;
 			else
 				valid_opcode = 0;
 
 			// If it *is* an opcode, parse the arguments
 			if(valid_opcode)
 			{
-				int num_instr = p->num_instructions;
+				int i, num_instr = p->num_instructions;
 				++p->num_instructions;
 
-				int i;
-				for(i = ++token_idx; i < (token_idx + 2); i++)
+				for(i = ++token_idx; i < (token_idx + 2); ++i)
 				{
 					// If the token is empty, do not attempt to parse it
 					if(strlen(tokens[i]) <= 0) continue;
