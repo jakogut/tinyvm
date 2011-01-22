@@ -11,9 +11,7 @@ memory* create_memory(size_t size)
 	mem = (memory*)malloc(sizeof(memory));
 	mem->int32 = (int*)malloc(num_words * sizeof(int));
 
-	mem->equal = 0;
-	mem->greater = 0;
-
+	mem->FLAGS = 0;
 	mem->remainder = 0;
 
 	return mem;
