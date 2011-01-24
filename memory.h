@@ -7,7 +7,6 @@ typedef struct
 {
 	/*
 	Similar to x86 FLAGS register
-	This stores certain flags used by operations in big endian format. (Bit 0x5 would be (1 << 27))
 
 	0x1	EQUAL
 	0x2	GREATER

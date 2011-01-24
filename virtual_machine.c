@@ -53,19 +53,19 @@ void run_vm(virtual_machine* vm)
 		else if(vm->pProgram->instr[instr_idx] == AND)	*arg0 &= *arg1;
 		else if(vm->pProgram->instr[instr_idx] == SHL)	*arg0 <<= *arg1;
 		else if(vm->pProgram->instr[instr_idx] == SHR)	*arg0 >>= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == CMP)	vm->pMemory->FLAGS = ((*arg0 == *arg1) << 32 | (*arg0 > *arg1) << 31);
+		else if(vm->pProgram->instr[instr_idx] == CMP)	vm->pMemory->FLAGS = ((*arg0 == *arg1) | (*arg0 > *arg1) << 1);
 		else if(vm->pProgram->instr[instr_idx] == JMP)	instr_idx = *arg0 - 1;
 		else if(vm->pProgram->instr[instr_idx] == JE
-			&& (vm->pMemory->FLAGS & 0x100000000)) 	instr_idx = *arg0 - 1;
+			&& (vm->pMemory->FLAGS & 0x1)) 	instr_idx = *arg0 - 1;
 		else if(vm->pProgram->instr[instr_idx] == JNE
-			&& !(vm->pMemory->FLAGS & 0x100000000))	instr_idx = *arg0 - 1;
+			&& !(vm->pMemory->FLAGS & 0x1))	instr_idx = *arg0 - 1;
 		else if(vm->pProgram->instr[instr_idx] == JG
-			&& (vm->pMemory->FLAGS & 0x80000000)) 	instr_idx = *arg0 - 1;
+			&& (vm->pMemory->FLAGS & 0x2)) 	instr_idx = *arg0 - 1;
 		else if(vm->pProgram->instr[instr_idx] == JGE
-			&& (vm->pMemory->FLAGS & 0x180000000))	instr_idx = *arg0 - 1;
+			&& (vm->pMemory->FLAGS & 0x3))	instr_idx = *arg0 - 1;
 		else if(vm->pProgram->instr[instr_idx] == JL
-			&& !(vm->pMemory->FLAGS & 0x180000000))	instr_idx = *arg0 - 1;
+			&& !(vm->pMemory->FLAGS & 0x3))	instr_idx = *arg0 - 1;
 		else if(vm->pProgram->instr[instr_idx] == JLE
-			&& !(vm->pMemory->FLAGS & 0x80000000))	instr_idx = *arg0 - 1;
+			&& !(vm->pMemory->FLAGS & 0x2))	instr_idx = *arg0 - 1;
 	}
 }
