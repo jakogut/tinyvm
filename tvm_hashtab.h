@@ -1,5 +1,5 @@
-#ifndef TVM_HASH_TABLE_H_
-#define TVM_HASH_TABLE_H_
+#ifndef TVM_HASHTAB_H_
+#define TVM_HASHTAB_H_
 
 #define KEY_LENGTH 64
 #define HTAB_SIZE 4096
