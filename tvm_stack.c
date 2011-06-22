@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "stack.h"
+#include "tvm_stack.h"
 
 void stack_push(stack* s, int* item)
 {

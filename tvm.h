@@ -1,9 +1,9 @@
-#ifndef VIRTUAL_MACHINE_H_
-#define VIRTUAL_MACHINE_H_
+#ifndef TVM_H_
+#define TVM_H_
 
-#include "memory.h"
-#include "program.h"
-#include "stack.h"
+#include "tvm_memory.h"
+#include "tvm_program.h"
+#include "tvm_stack.h"
 
 typedef struct
 {

@@ -1,4 +1,4 @@
-#include "memory.h"
+#include "tvm_memory.h"
 
 #include <string.h>
 

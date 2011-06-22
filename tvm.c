@@ -1,4 +1,4 @@
-#include "virtual_machine.h"
+#include "tvm.h"
 
 virtual_machine* create_vm(char* filename)
 {

@@ -1,5 +1,5 @@
-#ifndef STACK_H_
-#define STACK_H_
+#ifndef TVM_STACK_H_
+#define TVM_STACK_H_
 
 typedef struct
 {

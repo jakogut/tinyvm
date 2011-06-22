@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "virtual_machine.h"
+#include "tvm.h"
 
 int main(int argc, char** argv)
 {

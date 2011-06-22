@@ -1,5 +1,5 @@
-#ifndef VIRTUALMEMORY_H_
-#define VIRTUALMEMORY_H_
+#ifndef TVM_MEMORY_H_
+#define TVM_MEMORY_H_
 
 #include <stdlib.h>
 

@@ -1,13 +1,13 @@
-#ifndef PROGRAM_H_
-#define PROGRAM_H_
+#ifndef TVM_PROGRAM_H_
+#define TVM_PROGRAM_H_
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "instruction_index.h"
-#include "hash_table.h"
-#include "memory.h"
+#include "tvm_instr_idx.h"
+#include "tvm_hash_table.h"
+#include "tvm_memory.h"
 
 typedef struct
 {

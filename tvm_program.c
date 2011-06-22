@@ -1,11 +1,13 @@
-#include "program.h"
+#include "tvm_file.h"
+#include "tvm_program.h"
 
 #define MAX_ARGS 2
 
 program* create_program(char* filename, memory* pMemory)
 {
 	// Open our file in read-only mode
-	FILE* pFile = fopen(filename, "r");
+	FILE* pFile;
+	pFile = tvm_openfile(filename, ".vm", "r");
 
 	if(!pFile)
 	{
@@ -210,5 +212,4 @@ int parse_value(char* str)
 	}
 
 	return strtoul(str, NULL, base);
-
 }
