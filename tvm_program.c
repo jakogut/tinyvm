@@ -44,18 +44,22 @@ program* create_program(char* filename, memory* pMemory)
 		char* pToken = 0;
 		int token_idx = 0;
 
-		// Skip commented out lines
-		if(line[0] == '#' || line[0] == ';') continue;
-
 		// Tokenize our source line
 		pToken = strtok(line, "	 ,");
 
 		while(pToken)
 		{
-			if(pToken) strcpy(tokens[token_idx], pToken);
-			else strcpy(tokens[token_idx], "");
+			// Ignore comments
+			char* comment_delimiter = strchr(pToken, '#');
 
-			pToken = strtok(NULL, "	 ,");
+			if(comment_delimiter)
+				*comment_delimiter = 0;
+
+			if(pToken)
+				strcpy(tokens[token_idx], pToken);
+
+			if(comment_delimiter) break;
+			else pToken = strtok(NULL, "	 ,");
 
 			++token_idx;
 		}
