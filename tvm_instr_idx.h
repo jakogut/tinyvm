@@ -5,49 +5,50 @@
 
 // End of the program
 #define END -1
+#define COM 0
 
 // Move a value to an address
-#define MOV 0
+#define MOV 1
 
 // Stack instructions
-#define PUSH 1
-#define POP 2
+#define PUSH 2
+#define POP 3
 
 // Increment/Decrement
-#define INC 3
-#define DEC 4
+#define INC 4
+#define DEC 5
 
 // Arithmetic
-#define ADD 5
-#define SUB 6
-#define MUL 7
-#define DIV 8	// Divide, storing the quotient in the first argument
-#define MOD 9	// Divide, storing the remainder in the remainder register
-#define REM 10	// Copy the remainder register to the address specified by the first argument
+#define ADD 6
+#define SUB 7
+#define MUL 8
+#define DIV 9	// Divide, storing the quotient in the first argument
+#define MOD 10	// Divide, storing the remainder in the remainder register
+#define REM 11	// Copy the remainder register to the address specified by the first argument
 
 // Bitwise instructions
-#define NOT 11
-#define XOR 12
-#define OR  13
-#define AND 14
+#define NOT 12
+#define XOR 13
+#define OR  14
+#define AND 15
 
 // Shifts
-#define SHL 15
-#define SHR 16
+#define SHL 16
+#define SHR 17
 
 // Compare
-#define CMP 17
+#define CMP 18
 
 // Conditionals
-#define JMP 18
+#define JMP 19
 
-#define JE  19
-#define JNE 20
+#define JE  20
+#define JNE 21
 
-#define JG 21
-#define JGE 22
+#define JG 22
+#define JGE 23
 
-#define JL 23
-#define JLE 24
+#define JL 24
+#define JLE 25
 
 #endif

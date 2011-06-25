@@ -44,6 +44,9 @@ program* create_program(char* filename, memory* pMemory)
 		char* pToken = 0;
 		int token_idx = 0;
 
+		// Skip commented out lines
+		if(line[0] == '#' || line[0] == ';') continue;
+
 		// Tokenize our source line
 		pToken = strtok(line, "	 ,");
 
@@ -57,6 +60,7 @@ program* create_program(char* filename, memory* pMemory)
 			++token_idx;
 		}
 
+		// Parse labels
 		for(token_idx = 0; token_idx < 4; token_idx++)
 		{
 			// Figure out if the token we're dealing with is a label
@@ -76,7 +80,11 @@ program* create_program(char* filename, memory* pMemory)
 				// Advance to the next token
 				++token_idx;
 			}
+		}
 
+		// Parse instructions
+		for(token_idx = 0; token_idx < 4; token_idx++)
+		{
 			// Figure out if the token we're dealing with is an opcode
 			int valid_opcode = 1;
 
@@ -161,6 +169,11 @@ program* create_program(char* filename, memory* pMemory)
 	fclose(pFile);
 	return p;
 }
+
+void parse_labels()
+{
+}
+
 
 void destroy_program(program* p)
 {
