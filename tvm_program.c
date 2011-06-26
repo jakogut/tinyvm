@@ -2,6 +2,7 @@
 #include "tvm_program.h"
 
 #define MAX_ARGS 2
+#define MAX_TOKENS 4
 
 static void tokenize_line(char** tokens, char* line);
 static void parse_labels(program* p, char** tokens);
@@ -33,10 +34,10 @@ program* create_program(char* filename, memory* pMemory)
 	char line[128];
 	memset(line, 0, 128);
 
-	char** tokens = malloc(sizeof(char*) * 4);
+	char** tokens = malloc(sizeof(char*) * MAX_TOKENS);
 
 	int i;
-	for(i = 0; i < 4; i++)
+	for(i = 0; i < MAX_TOKENS; i++)
 	{
 		tokens[i] = malloc(sizeof(char) * 32);
 		memset(tokens[i], 0, sizeof(char) * 32);
@@ -54,7 +55,7 @@ program* create_program(char* filename, memory* pMemory)
 		parse_instructions(p, tokens, pMemory);
 	}
 
-	for(i = 0; i < 4; i++)
+	for(i = 0; i < MAX_TOKENS; i++)
 		if(tokens[i]) free(tokens[i]);
 
 	if(tokens) free(tokens);
@@ -112,7 +113,7 @@ void parse_labels(program* p, char** tokens)
 {
 	int token_idx;
 
-	for(token_idx = 0; token_idx < 4; token_idx++)
+	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
 		// Figure out if the token we're dealing with is a label
 		char* label_delimiter = strchr(tokens[token_idx], ':');
@@ -137,7 +138,7 @@ void parse_labels(program* p, char** tokens)
 void parse_instructions(program* p, char** tokens, memory* pMemory)
 {
 	int token_idx;
-	for(token_idx = 0; token_idx < 4; token_idx++)
+	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
 		// Figure out if the token we're dealing with is an opcode
 		int valid_opcode = 1;
