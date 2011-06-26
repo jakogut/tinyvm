@@ -11,7 +11,7 @@ static void parse_instructions(program* p, char** tokens, memory* pMemory);
 program* create_program(char* filename, memory* pMemory)
 {
 	// Open our file in read-only mode
-	FILE* pFile;
+	FILE* pFile = NULL;
 	pFile = tvm_openfile(filename, ".vm", "r");
 
 	if(!pFile)
@@ -25,7 +25,13 @@ program* create_program(char* filename, memory* pMemory)
 
 	// Initialize the members of program
 	p->start = 0;
+
+	p->instr = NULL;
 	p->num_instructions = 0;
+
+	p->args = NULL;
+
+	p->values = NULL;
 	p->num_values = 0;
 
 	// Create our label hash table
@@ -73,15 +79,14 @@ void destroy_program(program* p)
 	destroy_htab(p->label_htab);
 
 	int i;
-
 	for(i = 0; i < p->num_values; i++) free(p->values[i]);
-	if(p->values) free(p->values);
+	free(p->values);
 
 	for(i = 0; i < p->num_instructions; i++) free(p->args[i]);
-	if(p->args) free(p->args);
+	free(p->args);
 
-	if(p->instr) free(p->instr);
-	if(p) free(p);
+	free(p->instr);
+	free(p);
 }
 
 void tokenize_line(char** tokens, char* line)
