@@ -3,6 +3,86 @@
 
 #define MAX_ARGS 2
 
+static void tokenize_line(char** tokens, char* line);
+static void parse_labels(program* p, char** tokens);
+static void parse_instructions(program* p, char** tokens, memory* pMemory);
+
+program* create_program(char* filename, memory* pMemory)
+{
+	// Open our file in read-only mode
+	FILE* pFile;
+	pFile = tvm_openfile(filename, ".vm", "r");
+
+	if(!pFile)
+	{
+		printf("File was not found, or does not exist. Unable to interpret.\n");
+		return NULL;
+	}
+
+	// Allocate space for our program
+	program* p = (program*)malloc(sizeof(program));
+
+	// Initialize the members of program
+	p->start = 0;
+	p->num_instructions = 0;
+	p->num_values = 0;
+
+	// Create our label hash table
+	p->label_htab = create_htab();
+
+	char line[128];
+	memset(line, 0, 128);
+
+	char** tokens = malloc(sizeof(char*) * 4);
+
+	int i;
+	for(i = 0; i < 4; i++)
+	{
+		tokens[i] = malloc(sizeof(char) * 32);
+		memset(tokens[i], 0, sizeof(char) * 32);
+	}
+
+	// Get one line from the source file
+	while(fgets(line, 128, pFile))
+	{
+		p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
+		p->args = realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
+		p->args[p->num_instructions] = malloc(sizeof(int*) * MAX_ARGS);
+
+		tokenize_line(tokens, line);
+		parse_labels(p, tokens);
+		parse_instructions(p, tokens, pMemory);
+	}
+
+	for(i = 0; i < 4; i++)
+		if(tokens[i]) free(tokens[i]);
+
+	if(tokens) free(tokens);
+
+	// Specify the end of the program
+	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
+	p->instr[p->num_instructions] = END;
+
+	fclose(pFile);
+	return p;
+}
+
+void destroy_program(program* p)
+{
+	destroy_htab(p->label_htab);
+
+	int i;
+
+	for(i = 0; i < p->num_values; i++) free(p->values[i]);
+	if(p->values) free(p->values);
+
+	for(i = 0; i < p->num_instructions; i++) free(p->args[i]);
+	if(p->args) free(p->args);
+
+	if(p->instr) free(p->instr);
+	if(p) free(p);
+}
+
 void tokenize_line(char** tokens, char* line)
 {
 	int token_idx = 0;
@@ -54,159 +134,86 @@ void parse_labels(program* p, char** tokens)
 	}
 }
 
-program* create_program(char* filename, memory* pMemory)
+void parse_instructions(program* p, char** tokens, memory* pMemory)
 {
-	// Open our file in read-only mode
-	FILE* pFile;
-	pFile = tvm_openfile(filename, ".vm", "r");
-
-	if(!pFile)
+	int token_idx;
+	for(token_idx = 0; token_idx < 4; token_idx++)
 	{
-		printf("File was not found, or does not exist. Unable to interpret.\n");
-		return NULL;
-	}
+		// Figure out if the token we're dealing with is an opcode
+		int valid_opcode = 1;
 
-	// Allocate space for our program
-	program* p = (program*)malloc(sizeof(program));
+		if(strcmp(tokens[token_idx], "mov") == 0)	p->instr[p->num_instructions] = MOV;
+		else if(strcmp(tokens[token_idx], "push") == 0)	p->instr[p->num_instructions] = PUSH;
+		else if(strcmp(tokens[token_idx], "pop") == 0)	p->instr[p->num_instructions] = POP;
+		else if(strcmp(tokens[token_idx], "inc") == 0)	p->instr[p->num_instructions] = INC;
+		else if(strcmp(tokens[token_idx], "dec") == 0)	p->instr[p->num_instructions] = DEC;
+		else if(strcmp(tokens[token_idx], "add") == 0)	p->instr[p->num_instructions] = ADD;
+		else if(strcmp(tokens[token_idx], "sub") == 0)	p->instr[p->num_instructions] = SUB;
+		else if(strcmp(tokens[token_idx], "mul") == 0)	p->instr[p->num_instructions] = MUL;
+		else if(strcmp(tokens[token_idx], "div") == 0)	p->instr[p->num_instructions] = DIV;
+		else if(strcmp(tokens[token_idx], "mod") == 0)	p->instr[p->num_instructions] = MOD;
+		else if(strcmp(tokens[token_idx], "rem") == 0)	p->instr[p->num_instructions] = REM;
+		else if(strcmp(tokens[token_idx], "not") == 0)	p->instr[p->num_instructions] = NOT;
+		else if(strcmp(tokens[token_idx], "xor") == 0)	p->instr[p->num_instructions] = XOR;
+		else if(strcmp(tokens[token_idx], "or") == 0)	p->instr[p->num_instructions] = OR;
+		else if(strcmp(tokens[token_idx], "and") == 0)	p->instr[p->num_instructions] = AND;
+		else if(strcmp(tokens[token_idx], "shl") == 0)	p->instr[p->num_instructions] = SHL;
+		else if(strcmp(tokens[token_idx], "shr") == 0)	p->instr[p->num_instructions] = SHR;
+		else if(strcmp(tokens[token_idx], "cmp") == 0)	p->instr[p->num_instructions] = CMP;
+		else if(strcmp(tokens[token_idx], "jmp") == 0)	p->instr[p->num_instructions] = JMP;
+		else if(strcmp(tokens[token_idx], "je") == 0)	p->instr[p->num_instructions] = JE;
+		else if(strcmp(tokens[token_idx], "jne") == 0)	p->instr[p->num_instructions] = JNE;
+		else if(strcmp(tokens[token_idx], "jg") == 0)	p->instr[p->num_instructions] = JG;
+		else if(strcmp(tokens[token_idx], "jge") == 0)	p->instr[p->num_instructions] = JGE;
+		else if(strcmp(tokens[token_idx], "jl") == 0)	p->instr[p->num_instructions] = JL;
+		else if(strcmp(tokens[token_idx], "jle") == 0)	p->instr[p->num_instructions] = JLE;
+		else
+			valid_opcode = 0;
 
-	// Initialize the members of program
-	p->start = 0;
-	p->num_instructions = 0;
-	p->num_values = 0;
-
-	// Create our label hash table
-	p->label_htab = create_htab();
-
-	char line[128];
-	memset(line, 0, 128);
-
-	char** tokens = malloc(sizeof(char*) * 4);
-
-	int i;
-	for(i = 0; i < 4; i++)
-	{
-		tokens[i] = malloc(sizeof(char) * 32);
-		memset(tokens[i], 0, sizeof(char) * 32);
-	}
-
-	// Get one line from the source file
-	while(fgets(line, 128, pFile))
-	{
-		p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
-		p->args = realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
-		p->args[p->num_instructions] = malloc(sizeof(int*) * MAX_ARGS);
-
-		int token_idx = 0;
-
-		tokenize_line(tokens, line);
-		parse_labels(p, tokens);
-
-		// Parse instructions
-		for(token_idx = 0; token_idx < 4; token_idx++)
+		// If it *is* an opcode, parse the arguments
+		if(valid_opcode)
 		{
-			// Figure out if the token we're dealing with is an opcode
-			int valid_opcode = 1;
+			int i, num_instr = p->num_instructions;
+			++p->num_instructions;
 
-			if(strcmp(tokens[token_idx], "mov") == 0)	p->instr[p->num_instructions] = MOV;
-			else if(strcmp(tokens[token_idx], "push") == 0)	p->instr[p->num_instructions] = PUSH;
-			else if(strcmp(tokens[token_idx], "pop") == 0)	p->instr[p->num_instructions] = POP;
-			else if(strcmp(tokens[token_idx], "inc") == 0)	p->instr[p->num_instructions] = INC;
-			else if(strcmp(tokens[token_idx], "dec") == 0)	p->instr[p->num_instructions] = DEC;
-			else if(strcmp(tokens[token_idx], "add") == 0)	p->instr[p->num_instructions] = ADD;
-			else if(strcmp(tokens[token_idx], "sub") == 0)	p->instr[p->num_instructions] = SUB;
-			else if(strcmp(tokens[token_idx], "mul") == 0)	p->instr[p->num_instructions] = MUL;
-			else if(strcmp(tokens[token_idx], "div") == 0)	p->instr[p->num_instructions] = DIV;
-			else if(strcmp(tokens[token_idx], "mod") == 0)	p->instr[p->num_instructions] = MOD;
-			else if(strcmp(tokens[token_idx], "rem") == 0)	p->instr[p->num_instructions] = REM;
-			else if(strcmp(tokens[token_idx], "not") == 0)	p->instr[p->num_instructions] = NOT;
-			else if(strcmp(tokens[token_idx], "xor") == 0)	p->instr[p->num_instructions] = XOR;
-			else if(strcmp(tokens[token_idx], "or") == 0)	p->instr[p->num_instructions] = OR;
-			else if(strcmp(tokens[token_idx], "and") == 0)	p->instr[p->num_instructions] = AND;
-			else if(strcmp(tokens[token_idx], "shl") == 0)	p->instr[p->num_instructions] = SHL;
-			else if(strcmp(tokens[token_idx], "shr") == 0)	p->instr[p->num_instructions] = SHR;
-			else if(strcmp(tokens[token_idx], "cmp") == 0)	p->instr[p->num_instructions] = CMP;
-			else if(strcmp(tokens[token_idx], "jmp") == 0)	p->instr[p->num_instructions] = JMP;
-			else if(strcmp(tokens[token_idx], "je") == 0)	p->instr[p->num_instructions] = JE;
-			else if(strcmp(tokens[token_idx], "jne") == 0)	p->instr[p->num_instructions] = JNE;
-			else if(strcmp(tokens[token_idx], "jg") == 0)	p->instr[p->num_instructions] = JG;
-			else if(strcmp(tokens[token_idx], "jge") == 0)	p->instr[p->num_instructions] = JGE;
-			else if(strcmp(tokens[token_idx], "jl") == 0)	p->instr[p->num_instructions] = JL;
-			else if(strcmp(tokens[token_idx], "jle") == 0)	p->instr[p->num_instructions] = JLE;
-			else
-				valid_opcode = 0;
-
-			// If it *is* an opcode, parse the arguments
-			if(valid_opcode)
+			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
-				int i, num_instr = p->num_instructions;
-				++p->num_instructions;
+				// If the token is empty, do not attempt to parse it
+				if(strlen(tokens[i]) <= 0) continue;
 
-				for(i = ++token_idx; i < (token_idx + 2); ++i)
+				// Remove any trailing newline from the token
+				char* newline = strchr(tokens[i], '\n');
+				if(newline) *newline = 0;
+
+				// Check to see whether the token specifies an address
+				if(tokens[i][0] == '[')
 				{
-					// If the token is empty, do not attempt to parse it
-					if(strlen(tokens[i]) <= 0) continue;
+					char* end_symbol = strchr(tokens[i], ']');
+					if(end_symbol) *end_symbol = 0;
 
-					// Remove any trailing newline from the token
-					char* newline = strchr(tokens[i], '\n');
-					if(newline) *newline = 0;
+					p->args[num_instr][i - token_idx] = &pMemory->int32[parse_value(tokens[i] + 1)];
+					continue;
+				}
+				// If it's not an address, check if the argument is a label
+				else
+				{
+					// Search the hash map for the label
+					int instr_idx = htab_find(p->label_htab, tokens[i]);
 
-					// Check to see whether the token specifies an address
-					if(tokens[i][0] == '[')
+					// If the label was found, create the argument
+					if(instr_idx >= 0)
 					{
-						char* end_symbol = strchr(tokens[i], ']');
-						if(end_symbol) *end_symbol = 0;
-
-						p->args[num_instr][i - token_idx] = &pMemory->int32[parse_value(tokens[i] + 1)];
+						p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
 						continue;
 					}
-					// If it's not an address, check if the argument is a label
-					else
-					{
-						// Search the hash map for the label
-						int instr_idx = htab_find(p->label_htab, tokens[i]);
-
-						// If the label was found, create the argument
-						if(instr_idx >= 0)
-						{
-							p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
-							continue;
-						}
-					}
-
-					// If it's not an address, and it's not a label, parse it as a value
-					int value = parse_value(tokens[i]);
-					p->args[num_instr][i - token_idx] = add_value(p, value);
 				}
+
+				// If it's not an address, and it's not a label, parse it as a value
+				int value = parse_value(tokens[i]);
+				p->args[num_instr][i - token_idx] = add_value(p, value);
 			}
 		}
 	}
-
-	i = 0;
-	while(tokens[i]) free(tokens[i++]);
-	if(tokens) free(tokens);
-
-	// Specify the end of the program
-	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
-	p->instr[p->num_instructions] = END;
-
-	fclose(pFile);
-	return p;
-}
-
-void destroy_program(program* p)
-{
-	destroy_htab(p->label_htab);
-
-	int i;
-
-	for(i = 0; i < p->num_values; i++) free(p->values[i]);
-	if(p->values) free(p->values);
-
-	for(i = 0; i < p->num_instructions; i++) free(p->args[i]);
-	if(p->args) free(p->args);
-
-	if(p->instr) free(p->instr);
-	if(p) free(p);
 }
 
 int* add_value(program* p, const int val)
