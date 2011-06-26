@@ -3,6 +3,57 @@
 
 #define MAX_ARGS 2
 
+void tokenize_line(char** tokens, char* line)
+{
+	int token_idx = 0;
+	char* pToken;
+
+	pToken = strtok(line, "	 ,");
+
+	while(pToken)
+	{
+		// Ignore comments
+		char* comment_delimiter = strchr(pToken, '#');
+
+		if(comment_delimiter)
+			*comment_delimiter = 0;
+
+		if(pToken)
+			strcpy(tokens[token_idx], pToken);
+
+		if(comment_delimiter) break;
+		else pToken = strtok(NULL, "	 ,");
+
+		++token_idx;
+	}
+}
+
+void parse_labels(program* p, char** tokens)
+{
+	int token_idx;
+
+	for(token_idx = 0; token_idx < 4; token_idx++)
+	{
+		// Figure out if the token we're dealing with is a label
+		char* label_delimiter = strchr(tokens[token_idx], ':');
+
+		if(label_delimiter != NULL)
+		{
+			// Get rid of the label delimiter
+			*label_delimiter = 0;
+
+			// If the label is "start," set the program to begin there.
+			if(strcmp(tokens[token_idx], "start") == 0) p->start = p->num_instructions;
+
+			// Add that fucker to the hash table with the corresponding instruction index
+			htab_add(p->label_htab, tokens[token_idx], p->num_instructions);
+
+			// Advance to the next token
+			++token_idx;
+		}
+	}
+}
+
 program* create_program(char* filename, memory* pMemory)
 {
 	// Open our file in read-only mode
@@ -29,6 +80,15 @@ program* create_program(char* filename, memory* pMemory)
 	char line[128];
 	memset(line, 0, 128);
 
+	char** tokens = malloc(sizeof(char*) * 4);
+
+	int i;
+	for(i = 0; i < 4; i++)
+	{
+		tokens[i] = malloc(sizeof(char) * 32);
+		memset(tokens[i], 0, sizeof(char) * 32);
+	}
+
 	// Get one line from the source file
 	while(fgets(line, 128, pFile))
 	{
@@ -36,55 +96,10 @@ program* create_program(char* filename, memory* pMemory)
 		p->args = realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
 		p->args[p->num_instructions] = malloc(sizeof(int*) * MAX_ARGS);
 
-		line[strlen(line) - 1] = '\0';
-
-		char tokens[4][32];
-		memset(tokens, 0, 4 * 32);
-
-		char* pToken = 0;
 		int token_idx = 0;
 
-		// Tokenize our source line
-		pToken = strtok(line, "	 ,");
-
-		while(pToken)
-		{
-			// Ignore comments
-			char* comment_delimiter = strchr(pToken, '#');
-
-			if(comment_delimiter)
-				*comment_delimiter = 0;
-
-			if(pToken)
-				strcpy(tokens[token_idx], pToken);
-
-			if(comment_delimiter) break;
-			else pToken = strtok(NULL, "	 ,");
-
-			++token_idx;
-		}
-
-		// Parse labels
-		for(token_idx = 0; token_idx < 4; token_idx++)
-		{
-			// Figure out if the token we're dealing with is a label
-			char* label_delimiter = strchr(tokens[token_idx], ':');
-
-			if(label_delimiter != NULL)
-			{
-				// Get rid of the label delimiter
-				*label_delimiter = 0;
-
-				// If the label is "start," set the program to begin there.
-				if(strcmp(tokens[token_idx], "start") == 0) p->start = p->num_instructions;
-
-				// Add that fucker to the hash table with the corresponding instruction index
-				htab_add(p->label_htab, tokens[token_idx], p->num_instructions);
-
-				// Advance to the next token
-				++token_idx;
-			}
-		}
+		tokenize_line(tokens, line);
+		parse_labels(p, tokens);
 
 		// Parse instructions
 		for(token_idx = 0; token_idx < 4; token_idx++)
@@ -166,6 +181,10 @@ program* create_program(char* filename, memory* pMemory)
 		}
 	}
 
+	i = 0;
+	while(tokens[i]) free(tokens[i++]);
+	if(tokens) free(tokens);
+
 	// Specify the end of the program
 	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
 	p->instr[p->num_instructions] = END;
@@ -173,11 +192,6 @@ program* create_program(char* filename, memory* pMemory)
 	fclose(pFile);
 	return p;
 }
-
-void parse_labels()
-{
-}
-
 
 void destroy_program(program* p)
 {
