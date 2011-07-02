@@ -11,8 +11,7 @@ static void parse_instructions(program* p, char** tokens, memory* pMemory);
 program* create_program(char* filename, memory* pMemory)
 {
 	// Open our file in read-only mode
-	FILE* pFile = NULL;
-	pFile = tvm_openfile(filename, ".vm", "r");
+	FILE* pFile = tvm_openfile(filename, ".vm", "r");
 
 	if(!pFile)
 	{
@@ -26,19 +25,16 @@ program* create_program(char* filename, memory* pMemory)
 	// Initialize the members of program
 	p->start = 0;
 
-	p->instr = NULL;
+	p->instr = 0;
 	p->num_instructions = 0;
 
-	p->args = NULL;
+	p->args = 0;
 
-	p->values = NULL;
+	p->values = 0;
 	p->num_values = 0;
 
 	// Create our label hash table
 	p->label_htab = create_htab();
-
-	char line[128];
-	memset(line, 0, 128);
 
 	char** tokens = malloc(sizeof(char*) * MAX_TOKENS);
 
@@ -48,6 +44,8 @@ program* create_program(char* filename, memory* pMemory)
 		tokens[i] = malloc(sizeof(char) * 32);
 		memset(tokens[i], 0, sizeof(char) * 32);
 	}
+
+	char line[128] = {0};
 
 	// Get one line from the source file
 	while(fgets(line, 128, pFile))
