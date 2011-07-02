@@ -2,22 +2,33 @@
 
 #include "tvm_stack.h"
 
+#define STACK_CACHE 64
+
 void stack_push(stack* s, int* item)
 {
 	s->num_items++;
-	s->items = (int*)realloc(s->items, s->num_items * sizeof(int));
+
+	if(s->num_slots <= s->num_items)
+	{
+		s->num_slots = s->num_items + STACK_CACHE;
+		s->items = (int*)realloc(s->items, s->num_slots * sizeof(int));
+	}
 
 	s->items[s->num_items - 1] = *item;
 }
 
 void stack_pop(stack* s, int* dest)
 {
-	if(s->num_items <= 0) return;
+	if(s->num_items > 0)
+	{
+		*dest = s->items[s->num_items - 1];
 
-	*dest = s->items[s->num_items - 1];
-
-	s->num_items--;
-	s->items = (int*)realloc(s->items, s->num_items * sizeof(int));
+		if(s->num_slots >= s->num_items + STACK_CACHE)
+		{
+			s->items = (int*)realloc(s->items, s->num_items * sizeof(int));
+			s->num_slots = --s->num_items;
+		}
+	}
 }
 
 stack* create_stack()

@@ -5,6 +5,8 @@ typedef struct
 {
 	int* items;
 	int num_items;
+
+	int num_slots;
 } stack;
 
 stack* create_stack();
