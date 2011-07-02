@@ -12,6 +12,8 @@ void stack_push(stack* s, int* item)
 
 void stack_pop(stack* s, int* dest)
 {
+	if(s->num_items <= 0) return;
+
 	*dest = s->items[s->num_items - 1];
 
 	s->num_items--;

@@ -1,0 +1,14 @@
+start:	mov [0], 50000000
+	mov [1], 0
+
+loop0:	
+	push 0
+	inc [1]
+	cmp [1], [0]
+	jne loop0
+
+loop1:	
+	pop [2]
+	dec [1]
+	cmp [1], 0
+	jne loop1
