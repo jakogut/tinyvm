@@ -13,12 +13,6 @@ FILE* tvm_openfile(const char* filename, const char* extension, const char* mode
 	{
 		strcat(fname, extension);
 		pFile = fopen(fname, mode);
-
-		if(!pFile)
-		{
-			free(fname);
-			return NULL;
-		}
 	}
 
 	free(fname);
