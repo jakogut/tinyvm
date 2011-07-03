@@ -36,36 +36,33 @@ void run_vm(virtual_machine* vm)
 	{
 		int *arg0 = vm->pProgram->args[instr_idx][0], *arg1 = vm->pProgram->args[instr_idx][1];
 
-		if(vm->pProgram->instr[instr_idx] == MOV)	*arg0 = *arg1;
-		else if(vm->pProgram->instr[instr_idx] == PUSH) stack_push(vm->pStack, arg0);
-		else if(vm->pProgram->instr[instr_idx] == POP)	stack_pop(vm->pStack, arg0);
-		else if(vm->pProgram->instr[instr_idx] == INC)	++(*arg0);
-		else if(vm->pProgram->instr[instr_idx] == DEC)	--(*arg0);
-		else if(vm->pProgram->instr[instr_idx] == ADD)	*arg0 += *arg1;
-		else if(vm->pProgram->instr[instr_idx] == SUB)	*arg0 -= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == MUL)	*arg0 *= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == DIV)	*arg0 /= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == MOD)	vm->pMemory->remainder = *arg0 % *arg1;
-		else if(vm->pProgram->instr[instr_idx] == REM)	*arg0 = vm->pMemory->remainder;
-		else if(vm->pProgram->instr[instr_idx] == NOT)	*arg0 = ~(*arg0);
-		else if(vm->pProgram->instr[instr_idx] == XOR)	*arg0 ^= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == OR)	*arg0 |= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == AND)	*arg0 &= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == SHL)	*arg0 <<= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == SHR)	*arg0 >>= *arg1;
-		else if(vm->pProgram->instr[instr_idx] == CMP)	vm->pMemory->FLAGS = ((*arg0 == *arg1) | (*arg0 > *arg1) << 1);
-		else if(vm->pProgram->instr[instr_idx] == JMP)	instr_idx = *arg0 - 1;
-		else if(vm->pProgram->instr[instr_idx] == JE
-			&& (vm->pMemory->FLAGS & 0x1)) 	instr_idx = *arg0 - 1;
-		else if(vm->pProgram->instr[instr_idx] == JNE
-			&& !(vm->pMemory->FLAGS & 0x1))	instr_idx = *arg0 - 1;
-		else if(vm->pProgram->instr[instr_idx] == JG
-			&& (vm->pMemory->FLAGS & 0x2)) 	instr_idx = *arg0 - 1;
-		else if(vm->pProgram->instr[instr_idx] == JGE
-			&& (vm->pMemory->FLAGS & 0x3))	instr_idx = *arg0 - 1;
-		else if(vm->pProgram->instr[instr_idx] == JL
-			&& !(vm->pMemory->FLAGS & 0x3))	instr_idx = *arg0 - 1;
-		else if(vm->pProgram->instr[instr_idx] == JLE
-			&& !(vm->pMemory->FLAGS & 0x2))	instr_idx = *arg0 - 1;
+		switch(vm->pProgram->instr[instr_idx])
+		{
+			case MOV:  *arg0 = *arg1; break;
+			case PUSH: stack_push(vm->pStack, arg0); break;
+			case POP:  stack_pop(vm->pStack, arg0); break;
+			case INC:  ++(*arg0); break;
+			case DEC:  --(*arg0); break;
+			case ADD:  *arg0 += *arg1; break;
+			case SUB:  *arg0 -= *arg1; break;
+			case MUL:  *arg0 *= *arg1; break;
+			case DIV:  *arg0 /= *arg1; break;
+			case MOD:  vm->pMemory->remainder = *arg0 % *arg1; break;
+			case REM:  *arg0 = vm->pMemory->remainder; break;
+			case NOT:  *arg0 = ~(*arg0); break;
+			case XOR:  *arg0 ^= *arg1;   break;
+			case OR:   *arg0 |= *arg1;   break;
+			case AND:  *arg0 &= *arg1;   break;
+			case SHL:  *arg0 <<= *arg1;  break;
+			case SHR:  *arg0 >>= *arg1;  break;
+			case CMP:  vm->pMemory->FLAGS = ((*arg0 == *arg1) | (*arg0 > *arg1) << 1); break;
+			case JMP:  instr_idx = *arg0 - 1; break;
+			case JE:   if(vm->pMemory->FLAGS   & 0x1)  instr_idx = *arg0 - 1; break;
+			case JNE:  if(!(vm->pMemory->FLAGS & 0x1)) instr_idx = *arg0 - 1; break;
+			case JG:   if(vm->pMemory->FLAGS   & 0x2)  instr_idx = *arg0 - 1; break;
+			case JGE:  if(vm->pMemory->FLAGS   & 0x3)  instr_idx = *arg0 - 1; break;
+			case JL:   if(!(vm->pMemory->FLAGS & 0x3)) instr_idx = *arg0 - 1; break;
+			case JLE:  if(!(vm->pMemory->FLAGS & 0x2)) instr_idx = *arg0 - 1; break;
+		};
 	}
 }
