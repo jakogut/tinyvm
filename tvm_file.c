@@ -2,7 +2,8 @@
 
 FILE* tvm_openfile(const char* filename, const char* extension, const char* mode)
 {
-	char* fname = malloc(sizeof(char) * (strlen(filename) + 5));
+	size_t fname_chars = strlen(filename) + strlen(extension) + 1;
+	char* fname = malloc(sizeof(char) * fname_chars);
 	strcpy(fname, filename);
 
 	FILE* pFile;
@@ -12,8 +13,6 @@ FILE* tvm_openfile(const char* filename, const char* extension, const char* mode
 	{
 		strcat(fname, extension);
 		pFile = fopen(fname, mode);
-
-		if(!pFile) return NULL;
 	}
 
 	free(fname);
