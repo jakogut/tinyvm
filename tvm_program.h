@@ -22,6 +22,7 @@ typedef struct
 	int num_values;
 
 	hash_table* label_htab;
+	hash_table* lookup_table;
 
 } program;
 
@@ -30,5 +31,5 @@ void destroy_program(program* p);
 
 int* add_value(program* p, const int val);
 int parse_value(char* str);
-
+void parse_line(program* p, char** tokens, memory* pMemory);
 #endif
