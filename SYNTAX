@@ -3,11 +3,12 @@ This virtual machine loosely follows traditional Intel x86 assembly syntax.
 //////////////////////////////////////////////////
 // Table of Contents /////////////////////////////
 //////////////////////////////////////////////////
-0. VALUES
-1. REGISTERS
-2. MEMORY
-3. LABELS
-4. INSTRUCTION LISTING
+0. VARIABLES
+1. VALUES
+2. REGISTERS
+3. MEMORY
+4. LABELS
+5. INSTRUCTION LISTING
 	I.   Memory
 	II.  Stack
 	III. Arithmetic Operators
@@ -16,7 +17,15 @@ This virtual machine loosely follows traditional Intel x86 assembly syntax.
 	VI.  Control Flow Manipulation
 
 //////////////////////////////////////////////////
-// 0. VALUES /////////////////////////////////////
+// 0. VARIABLES /////////////////////////////////////
+//////////////////////////////////////////////////
+
+Variables are strings and must not start with any numeral. They point to one of the memory locations.
+Integer type of variables are only handled. strings or chars are not supported by TinyVM
+
+
+//////////////////////////////////////////////////
+// 1. VALUES /////////////////////////////////////
 //////////////////////////////////////////////////
 
 Values can be specified in decimal, hexadecimal, or binary. The only difference between Intel syntax assembly, and TVM
@@ -27,13 +36,13 @@ Values can also be specified using base identifiers. To specify the value "32," 
 using a base identifier, or 100000:b for binary using a base identifer.
 
 //////////////////////////////////////////////////
-// 1. REGISTERS //////////////////////////////////
+// 2. REGISTERS //////////////////////////////////
 //////////////////////////////////////////////////
 
 Registers have not yet been implemented. Addressing memory directly, though not as efficient, works just as well.
 
 //////////////////////////////////////////////////
-// 2. MEMORY /////////////////////////////////////
+// 3. MEMORY /////////////////////////////////////
 //////////////////////////////////////////////////
 
 Memory addresses are specified using brackets. Programs running within the virtual machine have their own address space, 
@@ -43,7 +52,7 @@ To specify the 256th word in the address space, you can use [256], [100:h], [0x1
 valid when specifying a value is valid when specifying an address. 
 
 //////////////////////////////////////////////////
-// 3. LABELS /////////////////////////////////////
+// 4. LABELS /////////////////////////////////////
 //////////////////////////////////////////////////
 
 Labels are specified by appending a colon to an identifier. Local labels are not yet supported.
@@ -51,7 +60,7 @@ Labels are specified by appending a colon to an identifier. Local labels are not
 Labels must be specified at the beginning of a line, or on their own line.
 
 //////////////////////////////////////////////////
-// 4. INSTRUCTION LISTING ////////////////////////
+// 5. INSTRUCTION LISTING ////////////////////////
 //////////////////////////////////////////////////
 
 Instructions listed are displayed in complete usage form, with example arguments, enclosed in square brackets.
