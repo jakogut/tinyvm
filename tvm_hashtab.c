@@ -44,6 +44,37 @@ int htab_add(hash_table* htab, char* k, int v)
 
 	return 0;
 }
+int htab_addc(hash_table* htab, char* k, char *v,int type)
+{
+  int hash = htab_hash(k);
+
+  // If the node is not already occupied, allocate space, and copy the key/value pair.
+  if(htab->nodes[hash] == NULL) htab->nodes[hash] = malloc(sizeof(htable_node));
+  else return 1;
+
+  htab->nodes[hash]->key = (char*)malloc(sizeof(char) * (strlen(k) + 1));
+  htab->nodes[hash]->type = type;
+  strcpy(htab->nodes[hash]->key, k);
+  htab->nodes[hash]->valuec = v;
+
+  return 0;
+ }
+
+ int htab_add_var(hash_table* htab, char* k, int *v,int type)
+ {
+  int hash = htab_hash(k);
+
+  // If the node is not already occupied, allocate space, and copy the key/value pair.
+  if(htab->nodes[hash] == NULL) htab->nodes[hash] = malloc(sizeof(htable_node));
+  else return 1;
+
+  htab->nodes[hash]->key = (char*)malloc(sizeof(char) * (strlen(k) + 1));
+  strcpy(htab->nodes[hash]->key, k);
+  htab->nodes[hash]->type = type;
+  htab->nodes[hash]->address = v;
+
+  return 0;
+ }
 
 int htab_find(hash_table* htab, char* key)
 {
@@ -52,6 +83,37 @@ int htab_find(hash_table* htab, char* key)
 	if(htab->nodes[hash] != NULL) return htab->nodes[hash]->value;
 	else return -1;
 }
+
+ int* htab_find_var(hash_table* htab, char* key,int type)
+ {
+  int hash = htab_hash(key);
+
+  if(htab->nodes[hash] != NULL){
+       if(htab->nodes[hash]->type == type){
+         return htab->nodes[hash]->address;
+       }else{
+        return NULL;
+       }
+  }else{
+        return NULL;
+  }
+ }
+
+ char* htab_findc(hash_table* htab, char* key, int type)
+ {
+  int hash = htab_hash(key);
+
+  if(htab->nodes[hash] != NULL){
+       if(htab->nodes[hash]->type == type){
+        return htab->nodes[hash]->valuec;
+       }else{
+        return NULL;
+       }
+  }
+  else{
+  return NULL;
+  }
+ }
 
 unsigned int htab_hash(char* k)
 {
