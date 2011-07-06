@@ -18,6 +18,7 @@ typedef struct
 
 	// System memory
 	int* int32;
+	int max;
 
 } memory;
 

@@ -63,6 +63,7 @@ void run_vm(virtual_machine* vm)
 			case JGE:  if(vm->pMemory->FLAGS   & 0x3)  instr_idx = *arg0 - 1; break;
 			case JL:   if(!(vm->pMemory->FLAGS & 0x3)) instr_idx = *arg0 - 1; break;
 			case JLE:  if(!(vm->pMemory->FLAGS & 0x2)) instr_idx = *arg0 - 1; break;
+                        case PRI: printf("%d\n",*arg0);break;
 		};
 	}
 }

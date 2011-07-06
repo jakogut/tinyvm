@@ -36,6 +36,9 @@ program* create_program(char* filename, memory* pMemory)
 	// Create our label hash table
 	p->label_htab = create_htab();
 
+	// Create lookup table
+	p->lookup_table = create_htab();
+
 	char** tokens = malloc(sizeof(char*) * MAX_TOKENS);
 
 	int i;
@@ -55,8 +58,9 @@ program* create_program(char* filename, memory* pMemory)
 		p->args[p->num_instructions] = malloc(sizeof(int*) * MAX_ARGS);
 
 		tokenize_line(tokens, line);
-		parse_labels(p, tokens);
-		parse_instructions(p, tokens, pMemory);
+		/*parse_labels(p, tokens);*/
+		/*parse_labels(p, tokens);
+		parse_line(p, tokens, pMemory);
 	}
 
 	for(i = 0; i < MAX_TOKENS; i++)
@@ -110,6 +114,12 @@ void tokenize_line(char** tokens, char* line)
 
 		++token_idx;
 	}
+}
+
+void parse_line(program* p, char** tokens, memory *pMemory)
+{
+   parse_labels(p,tokens);
+   parse_instructions(p,tokens,pMemory);
 }
 
 void parse_labels(program* p, char** tokens)
@@ -171,6 +181,7 @@ void parse_instructions(program* p, char** tokens, memory* pMemory)
 		else if(strcmp(tokens[token_idx], "jge") == 0)	p->instr[p->num_instructions] = JGE;
 		else if(strcmp(tokens[token_idx], "jl") == 0)	p->instr[p->num_instructions] = JL;
 		else if(strcmp(tokens[token_idx], "jle") == 0)	p->instr[p->num_instructions] = JLE;
+		else if(strcmp(tokens[token_idx], "pri") == 0)	p->instr[p->num_instructions] = PRI;
 		else
 			valid_opcode = 0;
 
@@ -194,8 +205,12 @@ void parse_instructions(program* p, char** tokens, memory* pMemory)
 				{
 					char* end_symbol = strchr(tokens[i], ']');
 					if(end_symbol) *end_symbol = 0;
-
-					p->args[num_instr][i - token_idx] = &pMemory->int32[parse_value(tokens[i] + 1)];
+					int add = parse_value(tokens[i] + 1);
+					if(add > pMemory->max)
+					{
+					     pMemory->max = add;
+					}
+					p->args[num_instr][i - token_idx] = &pMemory->int32[add];
 					continue;
 				}
 				// If it's not an address, check if the argument is a label
@@ -209,7 +224,19 @@ void parse_instructions(program* p, char** tokens, memory* pMemory)
 					{
 						p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
 						continue;
-					}
+					}else if((tokens[i][0] > 64 && tokens[i][0] <= 90) 
+|| (tokens[i][0] > 96 && tokens[i][0] <=122)){
+                                                int* mem = htab_find_var(p->lookup_table,tokens[i],0);
+                                                if(mem==NULL){
+                                                        htab_add_var(p->lookup_table,tokens[i],&pMemory->int32[pMemory->max],0);
+                                                        p->args[num_instr][i - token_idx] = &pMemory->int32[pMemory->max];
+                                                        pMemory->max = pMemory->max+1;
+                                                }else{
+                                                        p->args[num_instr][i - token_idx] = mem;
+                                                }
+                                                continue;
+
+}
 				}
 
 				// If it's not an address, and it's not a label, parse it as a value

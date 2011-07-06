@@ -1,7 +1,7 @@
 #ifndef INSTRUCTION_INDEX_H_
 #define INSTRUCTION_INDEX_H_
 
-#define NUM_INSTRUCTIONS 25
+#define NUM_INSTRUCTIONS 26
 
 // End of the program
 #define END -1
@@ -50,5 +50,7 @@
 
 #define JL 24
 #define JLE 25
+
+#define PRI 26
 
 #endif
