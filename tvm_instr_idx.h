@@ -1,54 +1,57 @@
 #ifndef INSTRUCTION_INDEX_H_
 #define INSTRUCTION_INDEX_H_
 
-#define NUM_INSTRUCTIONS 25
-
 // End of the program
 #define END -1
+
+// Comment
 #define COM 0
 
+// Interrupt
+#define INT 1
+
 // Move a value to an address
-#define MOV 1
+#define MOV 2
 
 // Stack instructions
-#define PUSH 2
-#define POP 3
+#define PUSH 3
+#define POP 4
 
 // Increment/Decrement
-#define INC 4
-#define DEC 5
+#define INC 5
+#define DEC 6
 
 // Arithmetic
-#define ADD 6
-#define SUB 7
-#define MUL 8
-#define DIV 9	// Divide, storing the quotient in the first argument
-#define MOD 10	// Divide, storing the remainder in the remainder register
-#define REM 11	// Copy the remainder register to the address specified by the first argument
+#define ADD 7
+#define SUB 8
+#define MUL 9
+#define DIV 10	// Divide, storing the quotient in the first argument
+#define MOD 11	// Divide, storing the remainder in the remainder register
+#define REM 12	// Copy the remainder register to the address specified by the first argument
 
 // Bitwise instructions
-#define NOT 12
-#define XOR 13
-#define OR  14
-#define AND 15
+#define NOT 13
+#define XOR 14
+#define OR  15
+#define AND 16
 
 // Shifts
-#define SHL 16
-#define SHR 17
+#define SHL 17
+#define SHR 18
 
 // Compare
-#define CMP 18
+#define CMP 19
 
 // Conditionals
-#define JMP 19
+#define JMP 20
 
-#define JE  20
-#define JNE 21
+#define JE  21
+#define JNE 22
 
-#define JG 22
-#define JGE 23
+#define JG 23
+#define JGE 24
 
-#define JL 24
-#define JLE 25
+#define JL 25
+#define JLE 26
 
 #endif

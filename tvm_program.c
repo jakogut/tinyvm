@@ -195,7 +195,7 @@ void parse_instructions(program* p, char** tokens, memory* pMemory)
 					char* end_symbol = strchr(tokens[i], ']');
 					if(end_symbol) *end_symbol = 0;
 
-					p->args[num_instr][i - token_idx] = &pMemory->int32[parse_value(tokens[i] + 1)];
+					p->args[num_instr][i - token_idx] = &((int*)pMemory->mem_space)[parse_value(tokens[i] + 1)];
 					continue;
 				}
 				// If it's not an address, check if the argument is a label

@@ -1,4 +1,5 @@
 #include "tvm.h"
+#include "tvm_reg_idx.h"
 
 virtual_machine* create_vm(char* filename)
 {
@@ -7,10 +8,12 @@ virtual_machine* create_vm(char* filename)
 	vm = (virtual_machine*)malloc(sizeof(virtual_machine));
 
 	vm->pStack = create_stack();
-	vm->pMemory = create_memory(512000);
-	vm->pProgram = create_program(filename, vm->pMemory);
+	if(!vm->pStack) return NULL;
 
-	// Make sure the program was interpreted properly
+	vm->pMemory = create_memory(512000);
+	if(!vm->pMemory) return NULL;
+
+	vm->pProgram = create_program(filename, vm->pMemory);
 	if(!vm->pProgram) return NULL;
 
 	return vm;
@@ -30,13 +33,14 @@ void destroy_vm(virtual_machine* vm)
 
 void run_vm(virtual_machine* vm)
 {
-	int instr_idx = vm->pProgram->start;
+	int* instr_idx = &vm->pMemory->registers[IP].i32;
+	*instr_idx = vm->pProgram->start;
 
-	for(;vm->pProgram->instr[instr_idx] != END; ++instr_idx)
+	for(;vm->pProgram->instr[*instr_idx] != END; ++(*instr_idx))
 	{
-		int *arg0 = vm->pProgram->args[instr_idx][0], *arg1 = vm->pProgram->args[instr_idx][1];
+		int *arg0 = vm->pProgram->args[*instr_idx][0], *arg1 = vm->pProgram->args[*instr_idx][1];
 
-		switch(vm->pProgram->instr[instr_idx])
+		switch(vm->pProgram->instr[*instr_idx])
 		{
 			case MOV:  *arg0 = *arg1; break;
 			case PUSH: stack_push(vm->pStack, arg0); break;
@@ -56,13 +60,13 @@ void run_vm(virtual_machine* vm)
 			case SHL:  *arg0 <<= *arg1;  break;
 			case SHR:  *arg0 >>= *arg1;  break;
 			case CMP:  vm->pMemory->FLAGS = ((*arg0 == *arg1) | (*arg0 > *arg1) << 1); break;
-			case JMP:  instr_idx = *arg0 - 1; break;
-			case JE:   if(vm->pMemory->FLAGS   & 0x1)  instr_idx = *arg0 - 1; break;
-			case JNE:  if(!(vm->pMemory->FLAGS & 0x1)) instr_idx = *arg0 - 1; break;
-			case JG:   if(vm->pMemory->FLAGS   & 0x2)  instr_idx = *arg0 - 1; break;
-			case JGE:  if(vm->pMemory->FLAGS   & 0x3)  instr_idx = *arg0 - 1; break;
-			case JL:   if(!(vm->pMemory->FLAGS & 0x3)) instr_idx = *arg0 - 1; break;
-			case JLE:  if(!(vm->pMemory->FLAGS & 0x2)) instr_idx = *arg0 - 1; break;
+			case JMP:  *instr_idx = *arg0 - 1; break;
+			case JE:   if(vm->pMemory->FLAGS   & 0x1)  *instr_idx = *arg0 - 1; break;
+			case JNE:  if(!(vm->pMemory->FLAGS & 0x1)) *instr_idx = *arg0 - 1; break;
+			case JG:   if(vm->pMemory->FLAGS   & 0x2)  *instr_idx = *arg0 - 1; break;
+			case JGE:  if(vm->pMemory->FLAGS   & 0x3)  *instr_idx = *arg0 - 1; break;
+			case JL:   if(!(vm->pMemory->FLAGS & 0x3)) *instr_idx = *arg0 - 1; break;
+			case JLE:  if(!(vm->pMemory->FLAGS & 0x2)) *instr_idx = *arg0 - 1; break;
 		};
 	}
 }

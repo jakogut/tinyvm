@@ -1,7 +1,7 @@
 CC = gcc
 AS = as
 
-CXXFLAGS = -Wall -O3
+CXXFLAGS = -Wall -O3 -pipe
 CFLAGS = $(CXXFLAGS) -c
 LFLAGS = $(CXXFLAGS)
 ASFLAGS =

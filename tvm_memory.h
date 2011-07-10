@@ -3,8 +3,26 @@
 
 #include <stdlib.h>
 
+#define BYTE int8_t
+#define WORD int32_t
+#define DBYTE int16_t
+#define DWORD int64_t
+
+typedef union
+{
+	WORD i32;
+
+	union
+	{
+		DBYTE h;
+		DBYTE l;
+	} i16;
+
+} tvm_register;
+
 typedef struct
 {
+
 	/*
 	Similar to x86 FLAGS register
 
@@ -16,8 +34,10 @@ typedef struct
 	unsigned int FLAGS;
 	int remainder;
 
-	// System memory
-	int* int32;
+	void* mem_space;
+	int mem_space_size;
+
+	tvm_register* registers;
 
 } memory;
 
