@@ -39,6 +39,7 @@ stack* create_stack()
 
 	s->items = NULL;
 	s->num_items = 0;
+    s->num_slots = 0;
 
 	return s;
 }
