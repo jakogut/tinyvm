@@ -25,7 +25,12 @@ typedef struct
 
 } program;
 
-program* create_program(char* filename, memory* pMemory);
+// Create and initialize an empty program object
+program* create_program();
+
+// Interpret a source file into bytecode, and store it in a program object
+int interpret_program(program* p, char* filename, memory* pMemory);
+
 void destroy_program(program* p);
 
 int* add_value(program* p, const int val);

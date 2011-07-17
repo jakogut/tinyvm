@@ -8,19 +8,13 @@ static void tokenize_line(char** tokens, char* line);
 static void parse_labels(program* p, char** tokens);
 static void parse_instructions(program* p, char** tokens, memory* pMemory);
 
-program* create_program(char* filename, memory* pMemory)
+program* create_program()
 {
-	// Open our file in read-only mode
-	FILE* pFile = tvm_openfile(filename, ".vm", "r");
-
-	if(!pFile)
-	{
-		printf("File was not found, or does not exist. Unable to interpret.\n");
-		return NULL;
-	}
-
 	// Allocate space for our program
 	program* p = (program*)malloc(sizeof(program));
+
+	// Create our label hash table
+	p->label_htab = create_htab();
 
 	// Initialize the members of program
 	p->start = 0;
@@ -33,8 +27,19 @@ program* create_program(char* filename, memory* pMemory)
 	p->values = 0;
 	p->num_values = 0;
 
-	// Create our label hash table
-	p->label_htab = create_htab();
+	return p;
+}
+
+int interpret_program(program* p, char* filename, memory* pMemory)
+{
+	// Open our file in read-only mode
+	FILE* pFile = tvm_openfile(filename, ".vm", "r");
+
+	if(!pFile)
+	{
+		printf("File was not found, or does not exist. Unable to interpret.\n");
+		return 1;
+	}
 
 	char** tokens = malloc(sizeof(char*) * MAX_TOKENS);
 
@@ -69,7 +74,8 @@ program* create_program(char* filename, memory* pMemory)
 	p->instr[p->num_instructions] = END;
 
 	fclose(pFile);
-	return p;
+
+	return 0;
 }
 
 void destroy_program(program* p)

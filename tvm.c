@@ -13,8 +13,10 @@ virtual_machine* create_vm(char* filename)
 	vm->pMemory = create_memory(512000);
 	if(!vm->pMemory) return NULL;
 
-	vm->pProgram = create_program(filename, vm->pMemory);
+	vm->pProgram = create_program();
 	if(!vm->pProgram) return NULL;
+
+	interpret_program(vm->pProgram, filename, vm->pMemory);
 
 	return vm;
 }
