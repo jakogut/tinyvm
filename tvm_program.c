@@ -32,8 +32,12 @@ program* create_program()
 
 int interpret_program(program* p, char* filename, memory* pMemory)
 {
-	// Open our file in read-only mode
-	FILE* pFile = tvm_openfile(filename, ".vm", "r");
+	FILE* pFile = NULL;
+
+	// Attempt to open the file. If the file cannot be opened, try once more.
+	int i;
+	for(i = 0; i < 2; i++)
+		if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
 
 	if(!pFile)
 	{
@@ -43,7 +47,6 @@ int interpret_program(program* p, char* filename, memory* pMemory)
 
 	char** tokens = malloc(sizeof(char*) * MAX_TOKENS);
 
-	int i;
 	for(i = 0; i < MAX_TOKENS; i++)
 	{
 		tokens[i] = malloc(sizeof(char) * 32);
