@@ -7,6 +7,8 @@
 const char* tvm_opcode_map[] = {"int", "mov", "push", "pop", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
 				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "je", "jne", "jg", "jge", "jl", "jle", 0};
 
+const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", 0};
+
 static void tokenize_line(char** tokens, char* line);
 static void parse_labels(tvm_program_t* p, char** tokens);
 static void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory);
@@ -161,12 +163,31 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 
 			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
+				int j;
 				char* newline;
+				int valid_register;
 
 				if(!tokens[i] || strlen(tokens[i]) <= 0) continue;
 
 				newline = strchr(tokens[i], '\n');
 				if(newline) *newline = 0;
+
+				/* Check to see if the token specifies a register */
+				j = 0;
+				valid_register = 0;
+
+				while(tvm_register_map[j])
+				{
+					if(strcmp(tokens[i], tvm_register_map[j]) == 0)
+					{
+						p->args[num_instr][i - token_idx] = &pMemory->registers[j].i32;
+						valid_register = 1;
+
+						break;
+					}
+					else j++;
+				}
+				if(valid_register) continue;
 
 				/* Check to see whether the token specifies an address */
 				if(tokens[i][0] == '[')
