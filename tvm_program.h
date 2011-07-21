@@ -9,7 +9,7 @@
 #include "tvm_hashtab.h"
 #include "tvm_memory.h"
 
-typedef struct
+typedef struct tvm_program_s
 {
 	int start;
 
@@ -21,19 +21,19 @@ typedef struct
 	int** values;
 	int num_values;
 
-	hash_table* label_htab;
+	tvm_htab_t* label_htab;
 
-} program;
+} tvm_program_t;
 
 // Create and initialize an empty program object
-program* create_program();
+tvm_program_t* create_program();
 
 // Interpret a source file into bytecode, and store it in a program object
-int interpret_program(program* p, char* filename, memory* pMemory);
+int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory);
 
-void destroy_program(program* p);
+void destroy_program(tvm_program_t* p);
 
-int* add_value(program* p, const int val);
+int* add_value(tvm_program_t* p, const int val);
 int parse_value(char* str);
 
 #endif

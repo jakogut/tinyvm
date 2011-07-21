@@ -18,7 +18,7 @@ typedef union
 		DBYTE l;
 	} i16;
 
-} tvm_register;
+} tvm_register_t;
 
 typedef struct
 {
@@ -37,11 +37,11 @@ typedef struct
 	void* mem_space;
 	int mem_space_size;
 
-	tvm_register* registers;
+	tvm_register_t* registers;
 
-} memory;
+} tvm_memory_t;
 
-memory* create_memory(size_t size);
-void destroy_memory(memory* mem);
+tvm_memory_t* create_memory(size_t size);
+void destroy_memory(tvm_memory_t* mem);
 
 #endif

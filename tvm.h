@@ -5,19 +5,19 @@
 #include "tvm_program.h"
 #include "tvm_stack.h"
 
-typedef struct
+typedef struct tvm_s
 {
-	program* pProgram;
+	tvm_program_t* pProgram;
 
-	stack* pStack;
+	tvm_stack_t* pStack;
 
-	memory* pMemory;
+	tvm_memory_t* pMemory;
 
-} virtual_machine;
+} tvm_t;
 
-virtual_machine* create_vm(char* filename);
-void destroy_vm(virtual_machine* vm);
+tvm_t* create_vm(char* filename);
+void destroy_vm(tvm_t* vm);
 
-void run_vm(virtual_machine* vm);
+void run_vm(tvm_t* vm);
 
 #endif

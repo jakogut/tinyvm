@@ -4,7 +4,7 @@
 
 #define STACK_CACHE 64
 
-void stack_push(stack* s, int* item)
+void stack_push(tvm_stack_t* s, int* item)
 {
 	s->num_items++;
 
@@ -17,7 +17,7 @@ void stack_push(stack* s, int* item)
 	s->items[s->num_items - 1] = *item;
 }
 
-void stack_pop(stack* s, int* dest)
+void stack_pop(tvm_stack_t* s, int* dest)
 {
 	if(s->num_items > 0)
 	{
@@ -31,20 +31,14 @@ void stack_pop(stack* s, int* dest)
 	}
 }
 
-stack* create_stack()
+tvm_stack_t* create_stack()
 {
-	stack* s;
-
-	s = (stack*)malloc(sizeof(stack));
-
-	s->items = NULL;
-	s->num_items = 0;
-    s->num_slots = 0;
+	tvm_stack_t* s = (tvm_stack_t*)calloc(1, sizeof(tvm_stack_t));
 
 	return s;
 }
 
-void destroy_stack(stack* s)
+void destroy_stack(tvm_stack_t* s)
 {
 	if(s->items) free(s->items);
 	free(s);

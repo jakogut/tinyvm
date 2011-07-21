@@ -1,11 +1,11 @@
 #include "tvm.h"
 #include "tvm_reg_idx.h"
 
-virtual_machine* create_vm(char* filename)
+tvm_t* create_vm(char* filename)
 {
-	virtual_machine* vm;
+	tvm_t* vm;
 
-	vm = (virtual_machine*)malloc(sizeof(virtual_machine));
+	vm = (tvm_t*)malloc(sizeof(tvm_t));
 
 	vm->pStack = create_stack();
 	if(!vm->pStack) return NULL;
@@ -21,7 +21,7 @@ virtual_machine* create_vm(char* filename)
 	return vm;
 }
 
-void destroy_vm(virtual_machine* vm)
+void destroy_vm(tvm_t* vm)
 {
 	if(vm)
 	{
@@ -33,7 +33,7 @@ void destroy_vm(virtual_machine* vm)
 	}
 }
 
-void run_vm(virtual_machine* vm)
+void run_vm(tvm_t* vm)
 {
 	int* instr_idx = &vm->pMemory->registers[IP].i32;
 	*instr_idx = vm->pProgram->start;

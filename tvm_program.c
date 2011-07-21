@@ -5,32 +5,21 @@
 #define MAX_TOKENS 4
 
 static void tokenize_line(char** tokens, char* line);
-static void parse_labels(program* p, char** tokens);
-static void parse_instructions(program* p, char** tokens, memory* pMemory);
+static void parse_labels(tvm_program_t* p, char** tokens);
+static void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory);
 
-program* create_program()
+tvm_program_t* create_program()
 {
 	// Allocate space for our program
-	program* p = (program*)malloc(sizeof(program));
+	tvm_program_t* p = (tvm_program_t*)calloc(1, sizeof(tvm_program_t));
 
 	// Create our label hash table
 	p->label_htab = create_htab();
 
-	// Initialize the members of program
-	p->start = 0;
-
-	p->instr = 0;
-	p->num_instructions = 0;
-
-	p->args = 0;
-
-	p->values = 0;
-	p->num_values = 0;
-
 	return p;
 }
 
-int interpret_program(program* p, char* filename, memory* pMemory)
+int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 {
 	FILE* pFile = NULL;
 
@@ -45,13 +34,10 @@ int interpret_program(program* p, char* filename, memory* pMemory)
 		return 1;
 	}
 
-	char** tokens = malloc(sizeof(char*) * MAX_TOKENS);
+	char** tokens = calloc(MAX_TOKENS, sizeof(char*));
 
 	for(i = 0; i < MAX_TOKENS; i++)
-	{
-		tokens[i] = malloc(sizeof(char) * 32);
-		memset(tokens[i], 0, sizeof(char) * 32);
-	}
+		tokens[i] = calloc(32, sizeof(char));
 
 	char line[128] = {0};
 
@@ -60,7 +46,7 @@ int interpret_program(program* p, char* filename, memory* pMemory)
 	{
 		p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
 		p->args = realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
-		p->args[p->num_instructions] = malloc(sizeof(int*) * MAX_ARGS);
+		p->args[p->num_instructions] = calloc(MAX_ARGS, sizeof(int*));
 
 		tokenize_line(tokens, line);
 		parse_labels(p, tokens);
@@ -81,7 +67,7 @@ int interpret_program(program* p, char* filename, memory* pMemory)
 	return 0;
 }
 
-void destroy_program(program* p)
+void destroy_program(tvm_program_t* p)
 {
 	destroy_htab(p->label_htab);
 
@@ -121,7 +107,7 @@ void tokenize_line(char** tokens, char* line)
 	}
 }
 
-void parse_labels(program* p, char** tokens)
+void parse_labels(tvm_program_t* p, char** tokens)
 {
 	int token_idx;
 
@@ -147,7 +133,7 @@ void parse_labels(program* p, char** tokens)
 	}
 }
 
-void parse_instructions(program* p, char** tokens, memory* pMemory)
+void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 {
 	int token_idx;
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
@@ -229,10 +215,10 @@ void parse_instructions(program* p, char** tokens, memory* pMemory)
 	}
 }
 
-int* add_value(program* p, const int val)
+int* add_value(tvm_program_t* p, const int val)
 {
 	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
-	p->values[p->num_values] = malloc(sizeof(int));
+	p->values[p->num_values] = calloc(1, sizeof(int));
 
 	*p->values[p->num_values] = val;
 

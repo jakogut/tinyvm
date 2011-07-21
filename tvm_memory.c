@@ -4,24 +4,21 @@
 
 #define NUM_REGISTERS 16
 
-memory* create_memory(size_t size)
+tvm_memory_t* create_memory(size_t size)
 {
-	memory* m =  (memory*)malloc(sizeof(memory));
+	tvm_memory_t* m =  (tvm_memory_t*)calloc(1, sizeof(tvm_memory_t));
 
 	int num_words = size / sizeof(int);
 
 	m->mem_space_size = size;
-	m->mem_space = (int*)malloc(num_words * sizeof(int));
+	m->mem_space = (int*)calloc(num_words, sizeof(int));
 
-	m->registers = malloc(sizeof(tvm_register) * NUM_REGISTERS);
-
-	m->FLAGS = 0;
-	m->remainder = 0;
+	m->registers = calloc(NUM_REGISTERS, sizeof(tvm_register_t));
 
 	return m;
 }
 
-void destroy_memory(memory* m)
+void destroy_memory(tvm_memory_t* m)
 {
 	free(m->mem_space);
 	free(m->registers);

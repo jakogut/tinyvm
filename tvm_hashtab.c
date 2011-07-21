@@ -3,17 +3,17 @@
 
 #include "tvm_hashtab.h"
 
-hash_table* create_htab()
+tvm_htab_t* create_htab()
 {
-	hash_table* htab;
+	tvm_htab_t* htab;
 
-	htab = (hash_table*)malloc(sizeof(hash_table));
+	htab = (tvm_htab_t*)malloc(sizeof(tvm_htab_t));
 	int i; for(i = 0; i < HTAB_SIZE; i++) htab->nodes[i] = NULL;
 
 	return htab;
 }
 
-void destroy_htab(hash_table* htab)
+void destroy_htab(tvm_htab_t* htab)
 {
 	int i; for(i = 0; i < HTAB_SIZE; i++)
 	{
@@ -29,12 +29,12 @@ void destroy_htab(hash_table* htab)
 	htab = NULL;
 }
 
-int htab_add(hash_table* htab, char* k, int v)
+int htab_add(tvm_htab_t* htab, char* k, int v)
 {
 	int hash = htab_hash(k);
 
 	// If the node is not already occupied, allocate space, and copy the key/value pair.
-	if(htab->nodes[hash] == NULL) htab->nodes[hash] = malloc(sizeof(htable_node));
+	if(htab->nodes[hash] == NULL) htab->nodes[hash] = calloc(1, sizeof(tvm_htable_node_t));
 	else return 1;
 
 	htab->nodes[hash]->key = (char*)malloc(sizeof(char) * (strlen(k) + 1));
@@ -45,7 +45,7 @@ int htab_add(hash_table* htab, char* k, int v)
 	return 0;
 }
 
-int htab_find(hash_table* htab, char* key)
+int htab_find(tvm_htab_t* htab, char* key)
 {
 	int hash = htab_hash(key);
 
