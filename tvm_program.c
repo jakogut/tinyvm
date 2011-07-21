@@ -4,6 +4,9 @@
 #define MAX_ARGS 2
 #define MAX_TOKENS 4
 
+const char* tvm_opcode_map[] = {"int", "mov", "push", "pop", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
+				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "je", "jne", "jg", "jge", "jl", "jle", 0};
+
 static void tokenize_line(char** tokens, char* line);
 static void parse_labels(tvm_program_t* p, char** tokens);
 static void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory);
@@ -139,35 +142,20 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
 		// Figure out if the token we're dealing with is an opcode
-		int valid_opcode = 1;
+		int valid_opcode = 0;
 
-		if(strcmp(tokens[token_idx], "mov") == 0)	p->instr[p->num_instructions] = MOV;
-		else if(strcmp(tokens[token_idx], "push") == 0)	p->instr[p->num_instructions] = PUSH;
-		else if(strcmp(tokens[token_idx], "pop") == 0)	p->instr[p->num_instructions] = POP;
-		else if(strcmp(tokens[token_idx], "inc") == 0)	p->instr[p->num_instructions] = INC;
-		else if(strcmp(tokens[token_idx], "dec") == 0)	p->instr[p->num_instructions] = DEC;
-		else if(strcmp(tokens[token_idx], "add") == 0)	p->instr[p->num_instructions] = ADD;
-		else if(strcmp(tokens[token_idx], "sub") == 0)	p->instr[p->num_instructions] = SUB;
-		else if(strcmp(tokens[token_idx], "mul") == 0)	p->instr[p->num_instructions] = MUL;
-		else if(strcmp(tokens[token_idx], "div") == 0)	p->instr[p->num_instructions] = DIV;
-		else if(strcmp(tokens[token_idx], "mod") == 0)	p->instr[p->num_instructions] = MOD;
-		else if(strcmp(tokens[token_idx], "rem") == 0)	p->instr[p->num_instructions] = REM;
-		else if(strcmp(tokens[token_idx], "not") == 0)	p->instr[p->num_instructions] = NOT;
-		else if(strcmp(tokens[token_idx], "xor") == 0)	p->instr[p->num_instructions] = XOR;
-		else if(strcmp(tokens[token_idx], "or") == 0)	p->instr[p->num_instructions] = OR;
-		else if(strcmp(tokens[token_idx], "and") == 0)	p->instr[p->num_instructions] = AND;
-		else if(strcmp(tokens[token_idx], "shl") == 0)	p->instr[p->num_instructions] = SHL;
-		else if(strcmp(tokens[token_idx], "shr") == 0)	p->instr[p->num_instructions] = SHR;
-		else if(strcmp(tokens[token_idx], "cmp") == 0)	p->instr[p->num_instructions] = CMP;
-		else if(strcmp(tokens[token_idx], "jmp") == 0)	p->instr[p->num_instructions] = JMP;
-		else if(strcmp(tokens[token_idx], "je") == 0)	p->instr[p->num_instructions] = JE;
-		else if(strcmp(tokens[token_idx], "jne") == 0)	p->instr[p->num_instructions] = JNE;
-		else if(strcmp(tokens[token_idx], "jg") == 0)	p->instr[p->num_instructions] = JG;
-		else if(strcmp(tokens[token_idx], "jge") == 0)	p->instr[p->num_instructions] = JGE;
-		else if(strcmp(tokens[token_idx], "jl") == 0)	p->instr[p->num_instructions] = JL;
-		else if(strcmp(tokens[token_idx], "jle") == 0)	p->instr[p->num_instructions] = JLE;
-		else
-			valid_opcode = 0;
+		int i = 0;
+		while(tvm_opcode_map[i])
+		{
+			if(strcmp(tokens[token_idx], tvm_opcode_map[i]) == 0)
+			{
+				p->instr[p->num_instructions] = i;
+				valid_opcode = 1;
+
+				break;
+			}
+			else i++;
+		}
 
 		// If it *is* an opcode, parse the arguments
 		if(valid_opcode)
