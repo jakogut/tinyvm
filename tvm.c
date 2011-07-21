@@ -16,7 +16,8 @@ tvm_t* create_vm(char* filename)
 	vm->pProgram = create_program();
 	if(!vm->pProgram) return NULL;
 
-	interpret_program(vm->pProgram, filename, vm->pMemory);
+	if(interpret_program(vm->pProgram, filename, vm->pMemory)==1)
+		return NULL;
 
 	return vm;
 }
