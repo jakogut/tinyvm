@@ -1,15 +1,15 @@
 # This is a really inefficient solution to the first Project Euler problem.
 # See euler1_nodiv.vm for a much better solution.
 
-start:	mov [0], 0
-	mov [1], 0
+start:	mov eax, 0
+	mov ebx, 0
 
-loop:	mov [2], [1]
-	mod [2], 3
-	rem [2]
-	cmp [2], 0
+loop:	mov ecx, ebx
+	mod ecx, 3
+	rem ecx
+	cmp ecx, 0
 	jne 8
-	add [0], [1]
+	add eax, ebx
 	je 15
 
 #	When jumping, you can specify a label, which is tied to an address, 
@@ -18,12 +18,14 @@ loop:	mov [2], [1]
 #	jumping to labels below the current source line doesn't quite work properly.
 #	This will be fixed soon.)
 
-	mov [2], [1]
-	mod [2], 5
-	rem [2]
-	cmp [2], 0
+	mov ecx, ebx
+	mod ecx, 5
+	rem ecx
+	cmp ecx, 0
 	jne 15
-	add [0], [1]
-	inc [1]
-	cmp [1], 1000000
+	add eax, ebx
+	inc ebx
+	cmp ebx, 1000000
 	jl loop
+
+	mov [0], eax
