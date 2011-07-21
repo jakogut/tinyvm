@@ -52,7 +52,7 @@ asm:	$(AS_SOURCES)
 	$(CC) -S -masm=intel $< -o $@
 
 clean:
-	rm -f $(BIN_NAME) $(BIN_NAME)-debug gmon.out *.save *.o *.asm.o *.asm
+	rm -f $(BIN_NAME) $(BIN_NAME)-debug gmon.out *.save *.o *.asm.o *.asm core* vgcore*
 
 rebuild: clean tinyvm
 
