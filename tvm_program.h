@@ -25,10 +25,10 @@ typedef struct tvm_program_s
 
 } tvm_program_t;
 
-// Create and initialize an empty program object
+/* Create and initialize an empty program object */
 tvm_program_t* create_program();
 
-// Interpret a source file into bytecode, and store it in a program object
+/* Interpret a source file into bytecode, and store it in a program object */
 int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory);
 
 void destroy_program(tvm_program_t* p);

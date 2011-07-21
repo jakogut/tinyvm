@@ -1,5 +1,6 @@
 #include "tvm_memory.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #define NUM_REGISTERS 16

@@ -1,7 +1,8 @@
 #ifndef TVM_MEMORY_H_
 #define TVM_MEMORY_H_
 
-#include <stdlib.h>
+#include <stdint.h>
+#include <stddef.h>
 
 #define BYTE int8_t
 #define WORD int32_t

@@ -13,10 +13,8 @@ static void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pM
 
 tvm_program_t* create_program()
 {
-	// Allocate space for our program
 	tvm_program_t* p = (tvm_program_t*)calloc(1, sizeof(tvm_program_t));
 
-	// Create our label hash table
 	p->label_htab = create_htab();
 
 	return p;
@@ -25,8 +23,10 @@ tvm_program_t* create_program()
 int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 {
 	FILE* pFile = NULL;
+	char** tokens = NULL;
+	char line[128];
 
-	// Attempt to open the file. If the file cannot be opened, try once more.
+	/* Attempt to open the file. If the file cannot be opened, try once more. */
 	int i;
 	for(i = 0; i < 2; i++)
 		if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
@@ -37,19 +37,16 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 		return 1;
 	}
 
-	char** tokens = calloc(MAX_TOKENS, sizeof(char*));
+	tokens = (char**)calloc(MAX_TOKENS, sizeof(char*));
 
 	for(i = 0; i < MAX_TOKENS; i++)
-		tokens[i] = calloc(32, sizeof(char));
+		tokens[i] = (char*)calloc(32, sizeof(char));
 
-	char line[128] = {0};
-
-	// Get one line from the source file
 	while(fgets(line, 128, pFile))
 	{
-		p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
-		p->args = realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
-		p->args[p->num_instructions] = calloc(MAX_ARGS, sizeof(int*));
+		p->instr = (int*)realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
+		p->args = (int***)realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
+		p->args[p->num_instructions] = (int**)calloc(MAX_ARGS, sizeof(int*));
 
 		tokenize_line(tokens, line);
 		parse_labels(p, tokens);
@@ -61,7 +58,7 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 
 	if(tokens) free(tokens);
 
-	// Specify the end of the program
+	/* Specify the end of the program */
 	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
 	p->instr[p->num_instructions] = END;
 
@@ -72,9 +69,10 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 
 void destroy_program(tvm_program_t* p)
 {
+	int i;
+
 	destroy_htab(p->label_htab);
 
-	int i;
 	for(i = 0; i < p->num_values; i++) free(p->values[i]);
 	free(p->values);
 
@@ -94,7 +92,7 @@ void tokenize_line(char** tokens, char* line)
 
 	while(pToken)
 	{
-		// Ignore comments
+		/* Ignore comments delimited by '#' */
 		char* comment_delimiter = strchr(pToken, '#');
 
 		if(comment_delimiter)
@@ -116,21 +114,19 @@ void parse_labels(tvm_program_t* p, char** tokens)
 
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
-		// Figure out if the token we're dealing with is a label
+		/* Figure out if the token we're dealing with is a label */
 		char* label_delimiter = strchr(tokens[token_idx], ':');
 
 		if(label_delimiter != NULL)
 		{
-			// Get rid of the label delimiter
 			*label_delimiter = 0;
 
-			// If the label is "start," set the program to begin there.
+			/* If the label is "start," set the program to begin there */
 			if(strcmp(tokens[token_idx], "start") == 0) p->start = p->num_instructions;
 
-			// Add that fucker to the hash table with the corresponding instruction index
+			/* Add that fucker to the hash table with the corresponding instruction index */
 			htab_add(p->label_htab, tokens[token_idx], p->num_instructions);
 
-			// Advance to the next token
 			++token_idx;
 		}
 	}
@@ -141,7 +137,7 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 	int token_idx;
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
-		// Figure out if the token we're dealing with is an opcode
+		/* Figure out if the token we're dealing with is an opcode */
 		int valid_opcode = 0;
 
 		int i = 0;
@@ -157,7 +153,7 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 			else i++;
 		}
 
-		// If it *is* an opcode, parse the arguments
+		/* If it *is* an opcode, parse the arguments */
 		if(valid_opcode)
 		{
 			int i, num_instr = p->num_instructions;
@@ -165,14 +161,14 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 
 			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
-				// If the token is empty, do not attempt to parse it
-				if(strlen(tokens[i]) <= 0) continue;
+				char* newline;
 
-				// Remove any trailing newline from the token
-				char* newline = strchr(tokens[i], '\n');
+				if(!tokens[i] || strlen(tokens[i]) <= 0) continue;
+
+				newline = strchr(tokens[i], '\n');
 				if(newline) *newline = 0;
 
-				// Check to see whether the token specifies an address
+				/* Check to see whether the token specifies an address */
 				if(tokens[i][0] == '[')
 				{
 					char* end_symbol = strchr(tokens[i], ']');
@@ -181,13 +177,11 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 					p->args[num_instr][i - token_idx] = &((int*)pMemory->mem_space)[parse_value(tokens[i] + 1)];
 					continue;
 				}
-				// If it's not an address, check if the argument is a label
+				/* If it's not an address, check if the argument is a label */
 				else
 				{
-					// Search the hash map for the label
 					int instr_idx = htab_find(p->label_htab, tokens[i]);
 
-					// If the label was found, create the argument
 					if(instr_idx >= 0)
 					{
 						p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
@@ -195,9 +189,8 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 					}
 				}
 
-				// If it's not an address, and it's not a label, parse it as a value
-				int value = parse_value(tokens[i]);
-				p->args[num_instr][i - token_idx] = add_value(p, value);
+				/* If it's not an address, and it's not a label, parse it as a value */
+				p->args[num_instr][i - token_idx] = add_value(p, parse_value(tokens[i]));
 			}
 		}
 	}
@@ -206,7 +199,7 @@ void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
 int* add_value(tvm_program_t* p, const int val)
 {
 	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
-	p->values[p->num_values] = calloc(1, sizeof(int));
+	p->values[p->num_values] = (int*)calloc(1, sizeof(int));
 
 	*p->values[p->num_values] = val;
 

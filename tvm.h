@@ -1,6 +1,8 @@
 #ifndef TVM_H_
 #define TVM_H_
 
+#include <stddef.h>
+
 #include "tvm_memory.h"
 #include "tvm_program.h"
 #include "tvm_stack.h"

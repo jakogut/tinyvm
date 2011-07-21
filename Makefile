@@ -1,7 +1,7 @@
 CC = gcc
 AS = as
 
-CXXFLAGS = -Wall -O3 -pipe
+CXXFLAGS = -Wall -ansi -pedantic-errors -pipe
 CFLAGS = $(CXXFLAGS) -c
 LFLAGS = $(CXXFLAGS)
 ASFLAGS =
@@ -15,15 +15,19 @@ BIN_NAME = tinyvm
 
 DEBUG = no
 PROFILE = no
+OPTIMIZATION = -O3
 
 ifeq ($(DEBUG), yes)
 	CXXFLAGS += -g
+	OPTIMIZATION = -O0
 	BIN_NAME := $(BIN_NAME)-debug
 endif
 
 ifeq ($(PROFILE), yes)
 	CXXFLAGS += -pg
 endif
+
+CXXFLAGS += $(OPTIMIZATION)
 
 all: tinyvm
 

@@ -5,10 +5,11 @@
 
 tvm_htab_t* create_htab()
 {
+	int i;
 	tvm_htab_t* htab;
 
 	htab = (tvm_htab_t*)malloc(sizeof(tvm_htab_t));
-	int i; for(i = 0; i < HTAB_SIZE; i++) htab->nodes[i] = NULL;
+	for(i = 0; i < HTAB_SIZE; i++) htab->nodes[i] = NULL;
 
 	return htab;
 }
@@ -33,7 +34,7 @@ int htab_add(tvm_htab_t* htab, char* k, int v)
 {
 	int hash = htab_hash(k);
 
-	// If the node is not already occupied, allocate space, and copy the key/value pair.
+	/* If the node is not already occupied, allocate space, and copy the key/value pair. */
 	if(htab->nodes[hash] == NULL) htab->nodes[hash] = calloc(1, sizeof(tvm_htable_node_t));
 	else return 1;
 

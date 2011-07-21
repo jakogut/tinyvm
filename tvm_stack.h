@@ -12,7 +12,7 @@ typedef struct tvm_stack_s
 tvm_stack_t* create_stack();
 void destroy_stack(tvm_stack_t* s);
 
-inline void stack_push(tvm_stack_t* s, int* item);
-inline void stack_pop(tvm_stack_t* s, int* dest);
+void stack_push(tvm_stack_t* s, int* item);
+void stack_pop(tvm_stack_t* s, int* dest);
 
 #endif
