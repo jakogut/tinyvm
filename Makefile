@@ -1,10 +1,11 @@
 CC = gcc
 AS = as
 
-CXXFLAGS = -Wall -ansi -pedantic-errors -pipe
+CXXFLAGS = -Wall -pipe
 CFLAGS = $(CXXFLAGS) -c
 LFLAGS = $(CXXFLAGS)
 ASFLAGS =
+PEDANTIC_FLAGS = -ansi -pedantic -pedantic-errors
 
 SOURCES = $(wildcard *.c)
 AS_SOURCES = $(SOURCES:.c=.asm)
@@ -15,6 +16,7 @@ BIN_NAME = tinyvm
 
 DEBUG = no
 PROFILE = no
+PEDANTIC = no
 OPTIMIZATION = -O3
 
 ifeq ($(DEBUG), yes)
@@ -25,6 +27,10 @@ endif
 
 ifeq ($(PROFILE), yes)
 	CXXFLAGS += -pg
+endif
+
+ifeq ($(PEDANTIC), yes)
+	CXXFLAGS += $(PEDANTIC_FLAGS)
 endif
 
 CXXFLAGS += $(OPTIMIZATION)
