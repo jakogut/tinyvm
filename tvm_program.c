@@ -1,21 +1,19 @@
 #include "tvm_file.h"
 #include "tvm_program.h"
-
-#define MAX_ARGS 2
-#define MAX_TOKENS 4
+#include "tvm_lexer.h"
 
 const char* tvm_opcode_map[] = {"int", "mov", "push", "pop", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
 				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "je", "jne", "jg", "jge", "jl", "jle", 0};
 
 const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", 0};
 
-static void tokenize_line(char** tokens, char* line);
-static void parse_labels(tvm_program_t* p, char** tokens);
-static void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory);
+static void parse_labels(tvm_program_t* p, const char** tokens);
+static void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory);
 
 tvm_program_t* create_program()
 {
 	tvm_program_t* p = (tvm_program_t*)calloc(1, sizeof(tvm_program_t));
+	if(!p) return NULL;
 
 	p->label_htab = create_htab();
 
@@ -24,10 +22,13 @@ tvm_program_t* create_program()
 
 int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 {
-	FILE* pFile = NULL;
-	char** tokens = NULL;
-	char line[128];
 	int i;
+	FILE* pFile = NULL;
+
+	int source_length = 0;
+	char* source = NULL;
+
+	tvm_lexer_t* lexer = NULL;
 
 	/* If no file name was specified, accept standard input */
 	if(filename == NULL)
@@ -47,26 +48,28 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 		return 1;
 	}
 
-	tokens = (char**)calloc(MAX_TOKENS, sizeof(char*));
+	source_length = tvm_flength(pFile);
+	source = malloc(source_length);
 
-	for(i = 0; i < MAX_TOKENS; i++)
-		tokens[i] = (char*)calloc(32, sizeof(char));
+	tvm_fcopy(source, source_length, pFile);
 
-	while(fgets(line, 128, pFile))
+	lexer = lexer_create();
+	lex(lexer, source);
+
+	i = 0;
+	while(lexer->tokens[i])
 	{
 		p->instr = (int*)realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
 		p->args = (int***)realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
 		p->args[p->num_instructions] = (int**)calloc(MAX_ARGS, sizeof(int*));
 
-		tokenize_line(tokens, line);
-		parse_labels(p, tokens);
-		parse_instructions(p, tokens, pMemory);
+		parse_labels(p, (const char*)lexer->tokens[i]);
+		parse_instructions(p, (const char*)lexer->tokens[i], pMemory);
+		i++;
 	}
 
-	for(i = 0; i < MAX_TOKENS; i++)
-		if(tokens[i]) free(tokens[i]);
-
-	if(tokens) free(tokens);
+	lexer_destroy(lexer);
+	free(source);
 
 	/* Specify the end of the program */
 	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
@@ -93,37 +96,14 @@ void destroy_program(tvm_program_t* p)
 	free(p);
 }
 
-void tokenize_line(char** tokens, char* line)
-{
-	int token_idx = 0;
-	char* pToken;
-
-	pToken = strtok(line, "	 ,");
-
-	while(pToken)
-	{
-		/* Ignore comments delimited by '#' */
-		char* comment_delimiter = strchr(pToken, '#');
-
-		if(comment_delimiter)
-			*comment_delimiter = 0;
-
-		if(pToken)
-			strcpy(tokens[token_idx], pToken);
-
-		if(comment_delimiter) break;
-		else pToken = strtok(NULL, "	 ,");
-
-		++token_idx;
-	}
-}
-
-void parse_labels(tvm_program_t* p, char** tokens)
+void parse_labels(tvm_program_t* p, const char** tokens)
 {
 	int token_idx;
 
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
+		if(!tokens[token_idx]) continue;
+
 		/* Figure out if the token we're dealing with is a label */
 		char* label_delimiter = strchr(tokens[token_idx], ':');
 
@@ -142,11 +122,13 @@ void parse_labels(tvm_program_t* p, char** tokens)
 	}
 }
 
-void parse_instructions(tvm_program_t* p, char** tokens, tvm_memory_t* pMemory)
+void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory)
 {
 	int token_idx;
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
+		if(!tokens[token_idx]) continue;
+
 		/* Figure out if the token we're dealing with is an opcode */
 		int valid_opcode = 0;
 

@@ -32,10 +32,10 @@ int tvm_fcopy(char* dest, size_t size, FILE* src)
 	fpos_t pos;
 	fgetpos(src, &pos);
 
-	for(i = 0; i < size && !feof(src); i++)
-	{
+	for(i = 0; (i < size) && !feof(src); i++)
 		dest[i] = fgetc(src);
-	}
+
+	dest[i - 1] = 0;
 
 	fsetpos(src, &pos);
 
