@@ -19,9 +19,9 @@ typedef struct tvm_htab_s
 tvm_htab_t* create_htab();
 void destroy_htab(tvm_htab_t* htab);
 
-int htab_add(tvm_htab_t* htab, char* key, int value);
-int htab_find(tvm_htab_t* htab, char* key);
+int htab_add(tvm_htab_t* htab, const char* key, int value);
+int htab_find(tvm_htab_t* htab, const char* key);
 
-unsigned int htab_hash(char* key);
+unsigned int htab_hash(const char* key);
 
 #endif

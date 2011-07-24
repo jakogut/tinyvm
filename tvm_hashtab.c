@@ -30,7 +30,7 @@ void destroy_htab(tvm_htab_t* htab)
 	htab = NULL;
 }
 
-int htab_add(tvm_htab_t* htab, char* k, int v)
+int htab_add(tvm_htab_t* htab, const char* k, int v)
 {
 	int hash = htab_hash(k);
 
@@ -46,7 +46,7 @@ int htab_add(tvm_htab_t* htab, char* k, int v)
 	return 0;
 }
 
-int htab_find(tvm_htab_t* htab, char* key)
+int htab_find(tvm_htab_t* htab, const char* key)
 {
 	int hash = htab_hash(key);
 
@@ -54,11 +54,11 @@ int htab_find(tvm_htab_t* htab, char* key)
 	else return -1;
 }
 
-unsigned int htab_hash(char* k)
+unsigned int htab_hash(const char* k)
 {
 	unsigned int hash = 1;
 
-	char* c; for(c = k; *c; c++)
+	char* c; for(c = (char*)k; *c; c++)
 		hash += (hash << *c) - *c;
 
 	return hash % HTAB_SIZE;

@@ -63,8 +63,8 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 		p->args = (int***)realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
 		p->args[p->num_instructions] = (int**)calloc(MAX_ARGS, sizeof(int*));
 
-		parse_labels(p, (const char*)lexer->tokens[i]);
-		parse_instructions(p, (const char*)lexer->tokens[i], pMemory);
+		parse_labels(p, (const char**)lexer->tokens[i]);
+		parse_instructions(p, (const char**)lexer->tokens[i], pMemory);
 		i++;
 	}
 
@@ -217,7 +217,7 @@ int* add_value(tvm_program_t* p, const int val)
 	return p->values[p->num_values++];
 }
 
-int parse_value(char* str)
+int parse_value(const char* str)
 {
 	char* delimiter = strchr(str, ':');
 	int base = 0;
