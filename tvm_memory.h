@@ -4,14 +4,19 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define MIN_MEMORY_SIZE 16384
+
 #define BYTE int8_t
 #define WORD int32_t
 #define DBYTE int16_t
 #define DWORD int64_t
 
+#define WORD_PTR int32_t*
+
 typedef union
 {
 	WORD i32;
+	WORD_PTR i32_ptr;
 
 	union
 	{

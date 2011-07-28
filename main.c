@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	if(vm != NULL) run_vm(vm);
 
 	/* Print the first memory address (later this will be replaced by an interrupt)*/
-	if(vm) printf("%i\n", ((int*)vm->pMemory->mem_space)[0]);
+	if(vm) printf("%i\n", vm->pMemory->registers[0].i32);
 
 	destroy_vm(vm);
 

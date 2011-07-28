@@ -1,45 +1,22 @@
 #include <stdlib.h>
 
 #include "tvm_stack.h"
+#include "tvm_reg_idx.h"
 
-#define STACK_CACHE 64
-
-void stack_push(tvm_stack_t* s, int* item)
+void create_stack(tvm_memory_t* mem, size_t size)
 {
-	s->num_items++;
-
-	if(s->num_slots <= s->num_items)
-	{
-		s->num_slots = s->num_items + STACK_CACHE;
-		s->items = (int*)realloc(s->items, s->num_slots * sizeof(int));
-	}
-
-	s->items[s->num_items - 1] = *item;
+	mem->registers[BP].i32_ptr = ((int32_t*)mem->mem_space) + size;
+	mem->registers[SP].i32_ptr = mem->registers[BP].i32_ptr;
 }
 
-void stack_pop(tvm_stack_t* s, int* dest)
+void stack_push(tvm_memory_t* mem, int* item)
 {
-	if(s->num_items > 0)
-	{
-		*dest = s->items[s->num_items - 1];
-
-		if(s->num_slots >= s->num_items + STACK_CACHE)
-		{
-			s->items = (int*)realloc(s->items, s->num_items * sizeof(int));
-			s->num_slots = --s->num_items;
-		}
-	}
+	mem->registers[SP].i32_ptr -= 1;
+	*mem->registers[SP].i32_ptr = *item;
 }
 
-tvm_stack_t* create_stack()
+void stack_pop(tvm_memory_t* mem, int* dest)
 {
-	tvm_stack_t* s = (tvm_stack_t*)calloc(1, sizeof(tvm_stack_t));
-
-	return s;
-}
-
-void destroy_stack(tvm_stack_t* s)
-{
-	if(s->items) free(s->items);
-	free(s);
+	*dest = *mem->registers[SP].i32_ptr;
+	mem->registers[SP].i32_ptr += 1;
 }

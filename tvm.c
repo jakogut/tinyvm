@@ -7,11 +7,10 @@ tvm_t* create_vm(char* filename)
 
 	vm = (tvm_t*)malloc(sizeof(tvm_t));
 
-	vm->pStack = create_stack();
-	if(!vm->pStack) return NULL;
-
-	vm->pMemory = create_memory(512000);
+	vm->pMemory = create_memory(MIN_MEMORY_SIZE);
 	if(!vm->pMemory) return NULL;
+
+	create_stack(vm->pMemory, MIN_STACK_SIZE);
 
 	vm->pProgram = create_program();
 	if(!vm->pProgram) return NULL;
@@ -27,7 +26,6 @@ void destroy_vm(tvm_t* vm)
 	if(vm)
 	{
 		if(vm->pMemory) destroy_memory(vm->pMemory);
-		if(vm->pStack) destroy_stack(vm->pStack);
 		if(vm->pProgram) destroy_program(vm->pProgram);
 
 		free(vm);
@@ -46,8 +44,8 @@ void run_vm(tvm_t* vm)
 		switch(vm->pProgram->instr[*instr_idx])
 		{
 			case MOV:  *arg0 = *arg1; break;
-			case PUSH: stack_push(vm->pStack, arg0); break;
-			case POP:  stack_pop(vm->pStack, arg0); break;
+			case PUSH: stack_push(vm->pMemory, arg0); break;
+			case POP:  stack_pop(vm->pMemory, arg0); break;
 			case INC:  ++(*arg0); break;
 			case DEC:  --(*arg0); break;
 			case ADD:  *arg0 += *arg1; break;
