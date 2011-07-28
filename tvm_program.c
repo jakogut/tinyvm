@@ -30,17 +30,9 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 
 	tvm_lexer_t* lexer = NULL;
 
-	/* If no file name was specified, accept standard input */
-	if(filename == NULL)
-	{
-		pFile = stdin;
-	}
-	else
-	{
-		/* Attempt to open the file. If the file cannot be opened, try once more. */
-		for(i = 0; i < 2; i++)
-			if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
-	}
+	/* Attempt to open the file. If the file cannot be opened, try once more. */
+	for(i = 0; i < 2; i++)
+		if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
 
 	if(!pFile)
 	{
