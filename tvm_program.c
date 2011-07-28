@@ -102,10 +102,14 @@ void parse_labels(tvm_program_t* p, const char** tokens)
 
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
+		/* Pointer to the label delimiter in the token */
+		char* label_delimiter;
+
+		/* Skip empty tokens */
 		if(!tokens[token_idx]) continue;
 
-		/* Figure out if the token we're dealing with is a label */
-		char* label_delimiter = strchr(tokens[token_idx], ':');
+		/* Figure out if the token we're dealing with has a label delimiter */
+		label_delimiter = strchr(tokens[token_idx], ':');
 
 		if(label_delimiter != NULL)
 		{
@@ -127,12 +131,11 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 	int token_idx;
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
+		int valid_opcode = 0, i = 0;
+
+		/* Skip empty tokens */
 		if(!tokens[token_idx]) continue;
 
-		/* Figure out if the token we're dealing with is an opcode */
-		int valid_opcode = 0;
-
-		int i = 0;
 		while(tvm_opcode_map[i])
 		{
 			if(strcmp(tokens[token_idx], tvm_opcode_map[i]) == 0)
