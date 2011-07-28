@@ -46,6 +46,8 @@ void run_vm(tvm_t* vm)
 			case MOV:  *arg0 = *arg1; break;
 			case PUSH: stack_push(vm->pMemory, arg0); break;
 			case POP:  stack_pop(vm->pMemory, arg0); break;
+			case PUSHF: stack_push(vm->pMemory, &vm->pMemory->FLAGS); break;
+			case POPF:  stack_pop(vm->pMemory, arg0); break;
 			case INC:  ++(*arg0); break;
 			case DEC:  --(*arg0); break;
 			case ADD:  *arg0 += *arg1; break;

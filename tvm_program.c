@@ -2,7 +2,7 @@
 #include "tvm_program.h"
 #include "tvm_lexer.h"
 
-const char* tvm_opcode_map[] = {"int", "mov", "push", "pop", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
+const char* tvm_opcode_map[] = {"int", "mov", "push", "pop", "pushf", "popf", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
 				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "je", "jne", "jg", "jge", "jl", "jle", 0};
 
 const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", 0};

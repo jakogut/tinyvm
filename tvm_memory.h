@@ -37,7 +37,7 @@ typedef struct
 
 	*/
 
-	unsigned int FLAGS;
+	int FLAGS;
 	int remainder;
 
 	void* mem_space;
