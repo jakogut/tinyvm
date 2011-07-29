@@ -23,24 +23,42 @@ Values can be specified in decimal, hexadecimal, or binary. The only difference 
 syntax is the delimiter between the value, and the base specifier. By default, values without a base specifier are assumed
 to be in decimal. Any value prepended with "0x" is assumed to be in hexadecimal. 
 
-Values can also be specified using base identifiers. To specify the value "32," I can use 0x20 for hexadecimal, 20:h for hexadecimal
-using a base identifier, or 100000:b for binary using a base identifer.
+Values can also be specified using base identifiers. To specify the value "32," I can use 0x20 for hexadecimal, 20|h for hexadecimal
+using a base identifier, or 100000|b for binary using a base identifer.
 
 //////////////////////////////////////////////////
 // 1. REGISTERS //////////////////////////////////
 //////////////////////////////////////////////////
 
-Registers have not yet been implemented. Addressing memory directly, though not as efficient, works just as well.
+TVM has 9 registers, modeled after x86 registers
+
+(EAX - EDX, General Purpose)
+EAX
+EBX
+ECX
+EDX
+
+ESI
+EDI
+
+ESP - Stack pointer, points to the top of the stack
+EBP - Base pointer, points to the base of the stack
+
+EIP - Instruction pointer, this is modified with the jump commands, never directly
 
 //////////////////////////////////////////////////
 // 2. MEMORY /////////////////////////////////////
 //////////////////////////////////////////////////
 
-Memory addresses are specified using brackets. Programs running within the virtual machine have their own address space, 
-so no positive address within the address space is off limits.
+Memory addresses are specified using brackets, in units of four bytes. Programs running within the virtual machine have their own 
+address space, so no positive address within the address space is off limits.
 
-To specify the 256th word in the address space, you can use [256], [100:h], [0x100], or [100000000:b]. Any syntax that's
-valid when specifying a value is valid when specifying an address. 
+It is important to note that certain areas of memory are used for vital program function, such as the memory used by the stack.
+Overwriting such parts of memory will likely cause the program to crash. As such, it is recommended that no absolute addressing be used.
+Instead, address memory relatively. 
+
+To specify the 256th word in the address space, you can use [256], [100|h], [0x100], or [100000000|b]. Any syntax that's
+valid when specifying a value is valid when specifying an address.
 
 //////////////////////////////////////////////////
 // 3. LABELS /////////////////////////////////////
@@ -69,6 +87,12 @@ The square brackets are not to be used in actual TVM programs.
 
 		[pop arg]
 		Pops a value from the stack, storing it in arg
+
+		[pushf]
+		Pushes the FLAGS register to the stack
+
+		[popf arg]
+		Pops the flag register to arg
 
 	// III. Arithmetic Operators //
 
