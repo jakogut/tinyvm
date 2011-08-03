@@ -5,7 +5,7 @@
 
 void create_stack(tvm_memory_t* mem, size_t size)
 {
-	mem->registers[BP].i32_ptr = ((int32_t*)mem->mem_space) + size;
+	mem->registers[BP].i32_ptr = ((int32_t*)mem->mem_space) + (size / sizeof(int32_t));
 	mem->registers[SP].i32_ptr = mem->registers[BP].i32_ptr;
 }
 

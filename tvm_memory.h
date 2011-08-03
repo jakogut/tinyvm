@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define MIN_MEMORY_SIZE 16384
+#define MIN_MEMORY_SIZE (64 * 1024 * 1024) /* 64 MB */
 
 #define BYTE int8_t
 #define WORD int32_t

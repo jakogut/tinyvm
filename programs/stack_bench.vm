@@ -1,4 +1,4 @@
-start:	mov eax, 1024
+start:	mov eax, 0xFFFF
 	mov ebx, 0
 
 loop0:	

@@ -1,7 +1,7 @@
 #ifndef TVM_STACK_H_
 #define TVM_STACK_H_
 
-#define MIN_STACK_SIZE 1024
+#define MIN_STACK_SIZE (2 * 1024 * 1024) /* 2 MB */
 
 #include "tvm_memory.h"
 

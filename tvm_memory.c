@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NUM_REGISTERS 16
+#define NUM_REGISTERS 9
 
 tvm_memory_t* create_memory(size_t size)
 {
