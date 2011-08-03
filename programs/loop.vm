@@ -1,4 +1,3 @@
-	xor [0], [0]
-loop:	inc [0]
-	cmp [0], 100:h
+loop:	inc eax
+	cmp eax, 1000|h
 	jl loop

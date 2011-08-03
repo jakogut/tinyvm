@@ -28,4 +28,5 @@ loop2:	add edx, eax
 	add eax, 15
 	cmp eax, ebx
 	jl loop2
-	mov [0], edx
+
+	mov eax, edx

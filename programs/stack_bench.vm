@@ -1,14 +1,14 @@
-start:	mov [0], 50000000
-	mov [1], 0
+start:	mov eax, 1024
+	mov ebx, 0
 
 loop0:	
 	push 0
-	inc [1]
-	cmp [1], [0]
+	inc ebx
+	cmp ebx, eax
 	jne loop0
 
 loop1:	
-	pop [2]
-	dec [1]
-	cmp [1], 0
+	pop ecx
+	dec ebx
+	cmp ebx, 0
 	jne loop1

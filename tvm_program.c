@@ -214,7 +214,7 @@ int* add_value(tvm_program_t* p, const int val)
 
 int parse_value(const char* str)
 {
-	char* delimiter = strchr(str, ':');
+	char* delimiter = strchr(str, '|');
 	int base = 0;
 
 	if(delimiter)
