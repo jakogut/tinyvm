@@ -14,6 +14,7 @@ typedef struct tvm_lexer_s
 tvm_lexer_t* lexer_create();
 void lexer_destroy(tvm_lexer_t* l);
 
+/* Tokenize the character array "source" into lines and tokens */
 int lex(tvm_lexer_t* lexer, char* source);
 
 #endif

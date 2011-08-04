@@ -13,8 +13,6 @@ static void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory
 tvm_program_t* create_program()
 {
 	tvm_program_t* p = (tvm_program_t*)calloc(1, sizeof(tvm_program_t));
-	if(!p) return NULL;
-
 	p->label_htab = create_htab();
 
 	return p;

@@ -5,6 +5,7 @@
 
 #include "tvm_memory.h"
 
+/* Initialize our stack by setting the base pointer and stack pointer */
 void create_stack(tvm_memory_t* mem, size_t size);
 
 void stack_push(tvm_memory_t* mem, int* item);
