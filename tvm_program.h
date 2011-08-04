@@ -13,8 +13,8 @@ typedef struct tvm_program_s
 {
 	int start;
 
-        int* instr;
 	int num_instructions;
+        int* instr;
 
         int*** args;
 

@@ -5,18 +5,13 @@
 
 tvm_htab_t* create_htab()
 {
-	int i;
-	tvm_htab_t* htab;
-
-	htab = (tvm_htab_t*)malloc(sizeof(tvm_htab_t));
-	for(i = 0; i < HTAB_SIZE; i++) htab->nodes[i] = NULL;
-
-	return htab;
+	return (tvm_htab_t*)calloc(1, sizeof(tvm_htab_t));
 }
 
 void destroy_htab(tvm_htab_t* htab)
 {
-	int i; for(i = 0; i < HTAB_SIZE; i++)
+	int i;
+	for(i = 0; i < HTAB_SIZE; i++)
 	{
 		if(htab->nodes[i])
 		{
@@ -26,8 +21,6 @@ void destroy_htab(tvm_htab_t* htab)
 	}
 
 	free(htab);
-
-	htab = NULL;
 }
 
 int htab_add(tvm_htab_t* htab, const char* k, int v)

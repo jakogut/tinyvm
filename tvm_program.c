@@ -142,14 +142,13 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 		/* If it *is* an opcode, parse the arguments */
 		if(valid_opcode)
 		{
-			int i, num_instr = p->num_instructions;
+			int i, instr_idx = 0, num_instr = p->num_instructions;
 			++p->num_instructions;
 
 			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
-				int j;
 				char* newline;
-				int valid_register;
+				int valid_register = 0, j = 0;
 
 				if(!tokens[i] || strlen(tokens[i]) <= 0) continue;
 
@@ -157,9 +156,6 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 				if(newline) *newline = 0;
 
 				/* Check to see if the token specifies a register */
-				j = 0;
-				valid_register = 0;
-
 				while(tvm_register_map[j])
 				{
 					if(strcmp(tokens[i], tvm_register_map[j]) == 0)
@@ -168,8 +164,8 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 						valid_register = 1;
 
 						break;
-					}
-					else j++;
+
+					} else j++;
 				}
 				if(valid_register) continue;
 
@@ -177,21 +173,22 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 				if(tokens[i][0] == '[')
 				{
 					char* end_symbol = strchr(tokens[i], ']');
-					if(end_symbol) *end_symbol = 0;
-
-					p->args[num_instr][i - token_idx] = &((int*)pMemory->mem_space)[parse_value(tokens[i] + 1)];
-					continue;
-				}
-				/* If it's not an address, check if the argument is a label */
-				else
-				{
-					int instr_idx = htab_find(p->label_htab, tokens[i]);
-
-					if(instr_idx >= 0)
+					if(end_symbol)
 					{
-						p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
+						*end_symbol = 0;
+						p->args[num_instr][i - token_idx] = &((int*)pMemory->mem_space)[parse_value(tokens[i] + 1)];
+
 						continue;
 					}
+				}
+
+				/* If it's not an address, check if the argument is a label */
+				instr_idx = htab_find(p->label_htab, tokens[i]);
+
+				if(instr_idx >= 0)
+				{
+					p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
+					continue;
 				}
 
 				/* If it's not an address, and it's not a label, parse it as a value */
@@ -203,7 +200,7 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 
 int* add_value(tvm_program_t* p, const int val)
 {
-	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 2));
+	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
 	p->values[p->num_values] = (int*)calloc(1, sizeof(int));
 
 	*p->values[p->num_values] = val;
@@ -213,8 +210,7 @@ int* add_value(tvm_program_t* p, const int val)
 
 int parse_value(const char* str)
 {
-	char* delimiter = strchr(str, '|');
-	int base = 0;
+	char* delimiter = strchr(str, '|'), base = 0;
 
 	if(delimiter)
 	{
@@ -222,15 +218,9 @@ int parse_value(const char* str)
 
 		switch(*identifier)
 		{
-			case 'h':
-				base = 16;
-				break;
-			case 'b':
-				base = 2;
-				break;
-			default:
-				base = 0;
-				break;
+			case 'h': base = 16; break;
+			case 'b': base = 2;  break;
+			default:  base = 0;  break;
 		}
 	}
 

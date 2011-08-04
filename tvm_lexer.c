@@ -12,9 +12,7 @@ tvm_lexer_t* lexer_create()
 void lexer_destroy(tvm_lexer_t* lexer)
 {
 	int i = 0, j = 0;
-	while(lexer->source_lines[i])
-		free(lexer->source_lines[i++]);
-
+	while(lexer->source_lines[i]) free(lexer->source_lines[i++]);
 	free(lexer->source_lines);
 
 	i = 0;
@@ -26,10 +24,8 @@ void lexer_destroy(tvm_lexer_t* lexer)
 		free(lexer->tokens[i++]);
 	}
 
-	free(lexer->tokens);
-
+	if(lexer->tokens) free(lexer->tokens);
 	if(lexer) free(lexer);
-	lexer = NULL;
 }
 
 int lex(tvm_lexer_t* lexer, char* source)

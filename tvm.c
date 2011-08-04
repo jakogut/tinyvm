@@ -3,9 +3,7 @@
 
 tvm_t* create_vm(char* filename)
 {
-	tvm_t* vm;
-
-	vm = (tvm_t*)malloc(sizeof(tvm_t));
+	tvm_t* vm = (tvm_t*)malloc(sizeof(tvm_t));
 
 	vm->pMemory = create_memory(MIN_MEMORY_SIZE);
 	if(!vm->pMemory) return NULL;
@@ -15,7 +13,7 @@ tvm_t* create_vm(char* filename)
 	vm->pProgram = create_program();
 	if(!vm->pProgram) return NULL;
 
-	if(interpret_program(vm->pProgram, filename, vm->pMemory)==1)
+	if(interpret_program(vm->pProgram, filename, vm->pMemory) != 0)
 		return NULL;
 
 	return vm;
