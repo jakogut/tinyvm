@@ -48,12 +48,15 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	lexer = lexer_create();
 	lex(lexer, source);
 
+	free(source);
+	tvm_fclose(pFile);
+
 	i = 0;
 	while(lexer->tokens[i])
 	{
-		p->instr = (int*)realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
-		p->args = (int***)realloc(p->args, sizeof(int**) * (p->num_instructions + 1));
-		p->args[p->num_instructions] = (int**)calloc(MAX_ARGS, sizeof(int*));
+		p->instr = (int*)realloc(p->instr, sizeof(int) * (i + 2));
+		p->args = (int***)realloc(p->args, sizeof(int**) * (i + 2));
+		p->args[i] = (int**)calloc(MAX_ARGS, sizeof(int*));
 
 		parse_labels(p, (const char**)lexer->tokens[i]);
 		parse_instructions(p, (const char**)lexer->tokens[i], pMemory);
@@ -61,27 +64,23 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	}
 
 	lexer_destroy(lexer);
-	free(source);
 
-	/* Specify the end of the program */
-	p->instr = realloc(p->instr, sizeof(int) * (p->num_instructions + 1));
-	p->instr[p->num_instructions] = END;
-
-	fclose(pFile);
+	p->args[i] = NULL;
+	p->instr[i] = END;
 
 	return 0;
 }
 
 void destroy_program(tvm_program_t* p)
 {
-	int i;
-
+	int i = 0;
 	destroy_htab(p->label_htab);
 
 	for(i = 0; i < p->num_values; i++) free(p->values[i]);
 	free(p->values);
 
-	for(i = 0; i < p->num_instructions; i++) free(p->args[i]);
+	i = 0;
+	while(p->args[i]) free(p->args[i++]);
 	free(p->args);
 
 	free(p->instr);
@@ -204,7 +203,7 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 
 int* add_value(tvm_program_t* p, const int val)
 {
-	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
+	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 2));
 	p->values[p->num_values] = (int*)calloc(1, sizeof(int));
 
 	*p->values[p->num_values] = val;

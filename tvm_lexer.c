@@ -11,6 +11,23 @@ tvm_lexer_t* lexer_create()
 
 void lexer_destroy(tvm_lexer_t* lexer)
 {
+	int i = 0, j = 0;
+	while(lexer->source_lines[i])
+		free(lexer->source_lines[i++]);
+
+	free(lexer->source_lines);
+
+	i = 0;
+	while(lexer->tokens[i])
+	{
+		for(j = 0; j < MAX_TOKENS; j++)
+			if(lexer->tokens[i][j]) free(lexer->tokens[i][j]);
+
+		free(lexer->tokens[i++]);
+	}
+
+	free(lexer->tokens);
+
 	if(lexer) free(lexer);
 	lexer = NULL;
 }
@@ -27,7 +44,7 @@ int lex(tvm_lexer_t* lexer, char* source)
 	{
 		char* comment_delimiter;
 
-		lexer->source_lines = (char**)realloc(lexer->source_lines, sizeof(char*) * (i + 1));
+		lexer->source_lines = (char**)realloc(lexer->source_lines, sizeof(char*) * (i + 2));
 		lexer->source_lines[i] = (char*)calloc(1, strlen(pLine) + 1);
 
 		strcpy(lexer->source_lines[i], pLine);
@@ -42,13 +59,14 @@ int lex(tvm_lexer_t* lexer, char* source)
 		i++;
 	}
 
+	/* NULL terminate the array to make iteration later easier*/
 	lexer->source_lines[i] = NULL;
 
 	/* Split the source into individual tokens */
 	i = 0;
 	while(lexer->source_lines[i])
 	{
-		lexer->tokens = (char***)realloc(lexer->tokens, sizeof(char**) * (i + 1));
+		lexer->tokens = (char***)realloc(lexer->tokens, sizeof(char**) * (i + 2));
 		lexer->tokens[i] = (char**)calloc(MAX_TOKENS, sizeof(char*));
 
 		pToken = strtok(lexer->source_lines[i], " 	,");
