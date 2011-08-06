@@ -29,8 +29,9 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	tvm_lexer_t* lexer = NULL;
 
 	/* Attempt to open the file. If the file cannot be opened, try once more. */
-	for(i = 0; i < 2; i++)
-		if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
+	if(filename)
+		for(i = 0; i < 2; i++)
+			if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
 
 	if(!pFile)
 	{
