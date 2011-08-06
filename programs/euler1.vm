@@ -28,4 +28,4 @@ loop:	mov ecx, ebx
 	cmp ebx, 1000000
 	jl loop
 
-	mov [0], eax
+	prn eax

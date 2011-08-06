@@ -2,27 +2,20 @@
 
 FILE* tvm_fopen(const char* filename, const char* extension, const char* mode)
 {
-	FILE* pFile;
+	FILE* pFile = NULL;
 	size_t fname_chars = strlen(filename) + strlen(extension) + 1;
 	char* fname = malloc(sizeof(char) * fname_chars);
 
 	strcpy(fname, filename);
 
-	pFile = fopen(fname, mode);
-
-	if(!pFile)
+	int i; for(i = 0; i < 2 && !pFile; i++)
 	{
-		strcat(fname, extension);
+		if(i > 0) strcat(fname, extension);
 		pFile = fopen(fname, mode);
 	}
 
 	free(fname);
 	return pFile;
-}
-
-void tvm_fclose(FILE* f)
-{
-	fclose(f);
 }
 
 int tvm_fcopy(char* dest, size_t size, FILE* src)
@@ -32,9 +25,7 @@ int tvm_fcopy(char* dest, size_t size, FILE* src)
 	fpos_t pos;
 	fgetpos(src, &pos);
 
-	for(i = 0; (i < size) && !feof(src); i++)
-		dest[i] = fgetc(src);
-
+	for(i = 0; !feof(src); i++) dest[i] = fgetc(src);
 	dest[i - 1] = 0;
 
 	fsetpos(src, &pos);
@@ -49,11 +40,7 @@ int tvm_flength(FILE* f)
 	fpos_t pos;
 	fgetpos(f, &pos);
 
-	while(!feof(f))
-	{
-		fgetc(f);
-		length++;
-	}
+	for(length = 0; !feof(f); length++) fgetc(f);
 
 	fsetpos(f, &pos);
 

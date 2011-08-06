@@ -1,73 +1,66 @@
 #include "tvm.h"
-#include "tvm_reg_idx.h"
 
 tvm_t* create_vm(char* filename)
 {
 	tvm_t* vm = (tvm_t*)malloc(sizeof(tvm_t));
 
 	vm->pMemory = create_memory(MIN_MEMORY_SIZE);
-	if(!vm->pMemory) return NULL;
+	vm->pProgram = create_program();
 
 	create_stack(vm->pMemory, MIN_STACK_SIZE);
 
-	vm->pProgram = create_program();
-	if(!vm->pProgram) return NULL;
+	if(interpret_program(vm->pProgram, filename, vm->pMemory) != 0) return NULL;
 
-	if(interpret_program(vm->pProgram, filename, vm->pMemory) != 0)
-		return NULL;
+	if(!vm || !vm->pMemory || !vm->pProgram) return NULL;
 
 	return vm;
 }
 
 void destroy_vm(tvm_t* vm)
 {
-	if(vm)
-	{
-		if(vm->pMemory) destroy_memory(vm->pMemory);
-		if(vm->pProgram) destroy_program(vm->pProgram);
-
-		free(vm);
-	}
+	if(vm && vm->pMemory)destroy_memory(vm->pMemory);
+	if(vm && vm->pProgram)destroy_program(vm->pProgram);
+	if(vm) free(vm);
 }
 
 void run_vm(tvm_t* vm)
 {
-	int* instr_idx = &vm->pMemory->registers[IP].i32;
-	*instr_idx = vm->pProgram->start;
+	int* instr_idx = &vm->pMemory->registers[0x8].i32; *instr_idx = vm->pProgram->start;
 
-	for(;vm->pProgram->instr[*instr_idx] != END; ++(*instr_idx))
+	for(;vm->pProgram->instr[*instr_idx] != -0x1; ++(*instr_idx))
 	{
 		int *arg0 = vm->pProgram->args[*instr_idx][0], *arg1 = vm->pProgram->args[*instr_idx][1];
 
 		switch(vm->pProgram->instr[*instr_idx])
 		{
-			case MOV:  *arg0 = *arg1; break;
-			case PUSH: stack_push(vm->pMemory, arg0); break;
-			case POP:  stack_pop(vm->pMemory, arg0); break;
-			case PUSHF: stack_push(vm->pMemory, &vm->pMemory->FLAGS); break;
-			case POPF:  stack_pop(vm->pMemory, arg0); break;
-			case INC:  ++(*arg0); break;
-			case DEC:  --(*arg0); break;
-			case ADD:  *arg0 += *arg1; break;
-			case SUB:  *arg0 -= *arg1; break;
-			case MUL:  *arg0 *= *arg1; break;
-			case DIV:  *arg0 /= *arg1; break;
-			case MOD:  vm->pMemory->remainder = *arg0 % *arg1; break;
-			case REM:  *arg0 = vm->pMemory->remainder; break;
-			case NOT:  *arg0 = ~(*arg0); break;
-			case XOR:  *arg0 ^= *arg1;   break;
-			case OR:   *arg0 |= *arg1;   break;
-			case AND:  *arg0 &= *arg1;   break;
-			case SHL:  *arg0 <<= *arg1;  break;
-			case SHR:  *arg0 >>= *arg1;  break;
-			case CMP:  vm->pMemory->FLAGS = ((*arg0 == *arg1) | (*arg0 > *arg1) << 1); break;
-			case JMP:  *instr_idx = *arg0 - 1; break;
-			case JE:   if(vm->pMemory->FLAGS   & 0x1)  *instr_idx = *arg0 - 1; break;
-			case JNE:  if(!(vm->pMemory->FLAGS & 0x1)) *instr_idx = *arg0 - 1; break;
-			case JG:   if(vm->pMemory->FLAGS   & 0x2)  *instr_idx = *arg0 - 1; break;
-			case JGE:  if(vm->pMemory->FLAGS   & 0x3)  *instr_idx = *arg0 - 1; break;
-			case JL:   if(!(vm->pMemory->FLAGS & 0x3)) *instr_idx = *arg0 - 1; break;
-			case JLE:  if(!(vm->pMemory->FLAGS & 0x2)) *instr_idx = *arg0 - 1; break;
+			case 0x1:  *arg0 = *arg1; break;
+			case 0x2:  stack_push(vm->pMemory, arg0); break;
+			case 0x3:  stack_pop(vm->pMemory, arg0); break;
+			case 0x4:  stack_push(vm->pMemory, &vm->pMemory->FLAGS); break;
+			case 0x5:  stack_pop(vm->pMemory, arg0); break;
+			case 0x6:  ++(*arg0); break;
+			case 0x7:  --(*arg0); break;
+			case 0x8:  *arg0 += *arg1; break;
+			case 0x9:  *arg0 -= *arg1; break;
+			case 0xA:  *arg0 *= *arg1; break;
+			case 0xB:  *arg0 /= *arg1; break;
+			case 0xC:  vm->pMemory->remainder = *arg0 % *arg1; break;
+			case 0xD:  *arg0 = vm->pMemory->remainder; break;
+			case 0xE:  *arg0 = ~(*arg0); break;
+			case 0xF:  *arg0 ^= *arg1;   break;
+			case 0x10: *arg0 |= *arg1;   break;
+			case 0x11: *arg0 &= *arg1;   break;
+			case 0x12: *arg0 <<= *arg1;  break;
+			case 0x13: *arg0 >>= *arg1;  break;
+			case 0x14: vm->pMemory->FLAGS = ((*arg0 == *arg1) | (*arg0 > *arg1) << 1); break;
+			case 0x15: *instr_idx = *arg0 - 1; break;
+			case 0x16: if(vm->pMemory->FLAGS   & 0x1)  *instr_idx = *arg0 - 1; break;
+			case 0x17: if(!(vm->pMemory->FLAGS & 0x1)) *instr_idx = *arg0 - 1; break;
+			case 0x18: if(vm->pMemory->FLAGS   & 0x2)  *instr_idx = *arg0 - 1; break;
+			case 0x19: if(vm->pMemory->FLAGS   & 0x3)  *instr_idx = *arg0 - 1; break;
+			case 0x1A: if(!(vm->pMemory->FLAGS & 0x3)) *instr_idx = *arg0 - 1; break;
+			case 0x1B: if(!(vm->pMemory->FLAGS & 0x2)) *instr_idx = *arg0 - 1; break;
+			case 0x1C: printf("%i\n", *arg0);
 		};
 	}
 }

@@ -1,14 +1,16 @@
-start:	mov eax, 0xFFFF
+start:	mov eax, 0xF
 	mov ebx, 0
 
 loop0:	
 	push 0
 	inc ebx
 	cmp ebx, eax
+	prn ebx
 	jne loop0
 
 loop1:	
 	pop ecx
 	dec ebx
 	cmp ebx, 0
+	prn ebx
 	jne loop1

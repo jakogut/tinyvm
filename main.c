@@ -8,14 +8,10 @@ int main(int argc, char** argv)
 	char* filename = NULL;
 	tvm_t* vm;
 
-	if(argc == 2)
-		filename = argv[1];
+	if(argc == 2) filename = argv[1];
 
 	vm = create_vm(filename);
 	if(vm != NULL) run_vm(vm);
-
-	/* Print the first memory address (later this will be replaced by an interrupt)*/
-	if(vm) printf("%i\n", vm->pMemory->registers[0].i32);
 
 	destroy_vm(vm);
 

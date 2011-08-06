@@ -3,7 +3,7 @@
 #include "tvm_lexer.h"
 
 const char* tvm_opcode_map[] = {"int", "mov", "push", "pop", "pushf", "popf", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
-				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "je", "jne", "jg", "jge", "jl", "jle", 0};
+				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "je", "jne", "jg", "jge", "jl", "jle", "prn", 0};
 
 const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", 0};
 
@@ -48,10 +48,9 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	lex(lexer, source);
 
 	free(source);
-	tvm_fclose(pFile);
+	fclose(pFile);
 
-	i = 0;
-	while(lexer->tokens[i])
+	for(i = 0; lexer->tokens[i]; i++)
 	{
 		p->instr = (int*)realloc(p->instr, sizeof(int) * (i + 2));
 		p->args = (int***)realloc(p->args, sizeof(int**) * (i + 2));
@@ -59,13 +58,12 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 
 		parse_labels(p, (const char**)lexer->tokens[i]);
 		parse_instructions(p, (const char**)lexer->tokens[i], pMemory);
-		i++;
 	}
 
 	lexer_destroy(lexer);
 
 	p->args[i] = NULL;
-	p->instr[i] = END;
+	p->instr[i] = -0x1;
 
 	return 0;
 }
@@ -78,8 +76,7 @@ void destroy_program(tvm_program_t* p)
 	for(i = 0; i < p->num_values; i++) free(p->values[i]);
 	free(p->values);
 
-	i = 0;
-	while(p->args[i]) free(p->args[i++]);
+	for(i = 0; p->args[i]; i++) free(p->args[i]);
 	free(p->args);
 
 	free(p->instr);
@@ -89,13 +86,10 @@ void destroy_program(tvm_program_t* p)
 void parse_labels(tvm_program_t* p, const char** tokens)
 {
 	int token_idx;
-
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
-		/* Pointer to the label delimiter in the token */
 		char* label_delimiter;
 
-		/* Skip empty tokens */
 		if(!tokens[token_idx]) continue;
 
 		/* Figure out if the token we're dealing with has a label delimiter */
@@ -111,7 +105,7 @@ void parse_labels(tvm_program_t* p, const char** tokens)
 			/* Add that fucker to the hash table with the corresponding instruction index */
 			htab_add(p->label_htab, tokens[token_idx], p->num_instructions);
 
-			++token_idx;
+			continue;
 		}
 	}
 }
@@ -181,7 +175,7 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 					}
 				}
 
-				/* If it's not an address, check if the argument is a label */
+				/* Check if the argument is a label */
 				instr_idx = htab_find(p->label_htab, tokens[i]);
 
 				if(instr_idx >= 0)
@@ -190,7 +184,7 @@ void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMe
 					continue;
 				}
 
-				/* If it's not an address, and it's not a label, parse it as a value */
+				/* Fuck it, parse it as a value */
 				p->args[num_instr][i - token_idx] = add_value(p, parse_value(tokens[i]));
 			}
 		}

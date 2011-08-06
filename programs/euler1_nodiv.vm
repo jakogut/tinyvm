@@ -29,4 +29,4 @@ loop2:	add edx, eax
 	cmp eax, ebx
 	jl loop2
 
-	mov eax, edx
+	prn edx

@@ -11,32 +11,29 @@ tvm_lexer_t* lexer_create()
 
 void lexer_destroy(tvm_lexer_t* lexer)
 {
-	int i = 0, j = 0;
-	while(lexer->source_lines[i]) free(lexer->source_lines[i++]);
+	int i, j;
+	for(i = 0; lexer->source_lines[i]; i++) free(lexer->source_lines[i]);
 	free(lexer->source_lines);
 
-	i = 0;
-	while(lexer->tokens[i])
+	for(i = 0; lexer->tokens[i]; i++)
 	{
 		for(j = 0; j < MAX_TOKENS; j++)
-			if(lexer->tokens[i][j]) free(lexer->tokens[i][j]);
+			free(lexer->tokens[i][j]);
 
-		free(lexer->tokens[i++]);
+		free(lexer->tokens[i]);
 	}
 
-	if(lexer->tokens) free(lexer->tokens);
-	if(lexer) free(lexer);
+	free(lexer->tokens);
+	free(lexer);
 }
 
-int lex(tvm_lexer_t* lexer, char* source)
+void lex(tvm_lexer_t* lexer, char* source)
 {
-	int i = 0, j = 0;
-
-	char* pToken;
-	char* pLine = strtok(source, "\n");
+	int i, j;
+	char *pToken, *pLine = strtok(source, "\n");
 
 	/* Split the source into individual lines */
-	while(pLine)
+	for(i = 0; pLine; i++)
 	{
 		char* comment_delimiter;
 
@@ -48,39 +45,30 @@ int lex(tvm_lexer_t* lexer, char* source)
 		/* Ignore comments delimited by '#' */
 		comment_delimiter = strchr(lexer->source_lines[i], '#');
 
-		if(comment_delimiter)
-			*comment_delimiter = 0;
+		if(comment_delimiter) *comment_delimiter = 0;
 
 		pLine = strtok(NULL, "\n");
-		i++;
 	}
 
 	/* NULL terminate the array to make iteration later easier*/
 	lexer->source_lines[i] = NULL;
 
 	/* Split the source into individual tokens */
-	i = 0;
-	while(lexer->source_lines[i])
+	for(i = 0; lexer->source_lines[i]; i++)
 	{
 		lexer->tokens = (char***)realloc(lexer->tokens, sizeof(char**) * (i + 2));
 		lexer->tokens[i] = (char**)calloc(MAX_TOKENS, sizeof(char*));
 
 		pToken = strtok(lexer->source_lines[i], " 	,");
 
-		j = 0;
-		while(pToken && j < MAX_TOKENS)
+		for(j = 0; (pToken && j < MAX_TOKENS); j++)
 		{
 			lexer->tokens[i][j] = (char*)calloc(1, (strlen(pToken) + 1));
 			strcpy(lexer->tokens[i][j], pToken);
 
 			pToken = strtok(NULL, " 	,");
-			j++;
-
 		}
-
-		i++;
 	}
 
 	lexer->tokens[i] = NULL;
-	return 0;
 }

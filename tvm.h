@@ -10,9 +10,7 @@
 typedef struct tvm_s
 {
 	tvm_program_t* pProgram;
-
 	tvm_memory_t* pMemory;
-
 } tvm_t;
 
 tvm_t* create_vm(char* filename);
