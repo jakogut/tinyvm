@@ -14,6 +14,7 @@ This virtual machine loosely follows traditional Intel x86 assembly syntax.
 	IV.  Binary Operators
 	V.   Comparison
 	VI.  Control Flow Manipulation
+	VII. Input / Output
 
 //////////////////////////////////////////////////
 // 0. VALUES /////////////////////////////////////
@@ -168,3 +169,7 @@ The square brackets are not to be used in actual TVM programs.
 		[jle address]
 		Jump if lesser or equal
 
+	// VII. Input / Output //
+
+		[prn arg]
+		Print an integer
