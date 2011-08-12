@@ -10,6 +10,8 @@ const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp
 static void parse_labels(tvm_program_t* p, const char*** tokens);
 static void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory);
 
+static int instr_to_opcode(const char* instr);
+
 tvm_program_t* create_program()
 {
 	tvm_program_t* p = (tvm_program_t*)calloc(1, sizeof(tvm_program_t));
@@ -92,19 +94,13 @@ void parse_labels(tvm_program_t* p, const char*** tokens)
 		int token_idx, valid_instruction = 0;
 		for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 		{
-			int j;
 			char* label_delimiter;
 
+			// If the token is empty, or non-existent, skip it
 			if(!tokens[i][token_idx]) continue;
 
-			for(j = 0; tvm_opcode_map[j]; j++)
-			{
-				if(strcmp(tokens[i][token_idx], tvm_opcode_map[j]) == 0)
-				{
-					valid_instruction = 1;
-					break;
-				}
-			}
+			// Figure out if the source line we're on contains a valid instruction
+			if(instr_to_opcode(tokens[i][token_idx]) != -1) valid_instruction = 1;
 
 			/* Figure out if the token we're dealing with has a label delimiter */
 			label_delimiter = strchr(tokens[i][token_idx], ':');
@@ -132,28 +128,19 @@ void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMem
 	int token_idx;
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 	{
-		int valid_opcode = 0, i = 0;
+		int opcode = 0;
 
 		/* Skip empty tokens */
 		if(!tokens[token_idx]) continue;
 
-		while(tvm_opcode_map[i])
-		{
-			if(strcmp(tokens[token_idx], tvm_opcode_map[i]) == 0)
-			{
-				p->instr[p->num_instructions] = i;
-				valid_opcode = 1;
-
-				break;
-			}
-			else i++;
-		}
+		opcode = instr_to_opcode(tokens[token_idx]);
 
 		/* If it *is* an opcode, parse the arguments */
-		if(valid_opcode)
+		if(opcode != -1)
 		{
 			int i, instr_idx = 0, num_instr = p->num_instructions;
-			++p->num_instructions;
+			p->instr[p->num_instructions++] = opcode;
+			//++p->num_instructions;
 
 			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
@@ -206,6 +193,16 @@ void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMem
 			}
 		}
 	}
+}
+
+int instr_to_opcode(const char* instr)
+{
+	int i;
+	for(i = 0; tvm_opcode_map[i]; i++)
+		if(strcmp(instr, tvm_opcode_map[i]) == 0)
+			return i;
+
+	return -1;
 }
 
 int* add_value(tvm_program_t* p, const int val)
