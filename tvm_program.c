@@ -7,8 +7,8 @@ const char* tvm_opcode_map[] = {"int", "mov", "push", "pop", "pushf", "popf", "i
 
 const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", 0};
 
-static void parse_labels(tvm_program_t* p, const char** tokens);
-static void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory);
+static void parse_labels(tvm_program_t* p, const char*** tokens);
+static void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory);
 
 tvm_program_t* create_program()
 {
@@ -50,14 +50,15 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	free(source);
 	fclose(pFile);
 
+	parse_labels(p, (const char***)lexer->tokens);
+
 	for(i = 0; lexer->tokens[i]; i++)
 	{
 		p->instr = (int*)realloc(p->instr, sizeof(int) * (i + 2));
 		p->args = (int***)realloc(p->args, sizeof(int**) * (i + 2));
 		p->args[i] = (int**)calloc(MAX_ARGS, sizeof(int*));
 
-		parse_labels(p, (const char**)lexer->tokens[i]);
-		parse_instructions(p, (const char**)lexer->tokens[i], pMemory);
+		parse_instruction(p, (const char**)lexer->tokens[i], pMemory);
 	}
 
 	lexer_destroy(lexer);
@@ -83,34 +84,50 @@ void destroy_program(tvm_program_t* p)
 	free(p);
 }
 
-void parse_labels(tvm_program_t* p, const char** tokens)
+void parse_labels(tvm_program_t* p, const char*** tokens)
 {
-	int token_idx;
-	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
+	int i, num_instructions = 0;
+	for(i = 0; tokens[i]; i++)
 	{
-		char* label_delimiter;
-
-		if(!tokens[token_idx]) continue;
-
-		/* Figure out if the token we're dealing with has a label delimiter */
-		label_delimiter = strchr(tokens[token_idx], ':');
-
-		if(label_delimiter != NULL)
+		int token_idx, valid_instruction = 0;
+		for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 		{
-			*label_delimiter = 0;
+			int j;
+			char* label_delimiter;
 
-			/* If the label is "start," set the program to begin there */
-			if(strcmp(tokens[token_idx], "start") == 0) p->start = p->num_instructions;
+			if(!tokens[i][token_idx]) continue;
 
-			/* Add that fucker to the hash table with the corresponding instruction index */
-			htab_add(p->label_htab, tokens[token_idx], p->num_instructions);
+			for(j = 0; tvm_opcode_map[j]; j++)
+			{
+				if(strcmp(tokens[i][token_idx], tvm_opcode_map[j]) == 0)
+				{
+					valid_instruction = 1;
+					break;
+				}
+			}
 
-			continue;
+			/* Figure out if the token we're dealing with has a label delimiter */
+			label_delimiter = strchr(tokens[i][token_idx], ':');
+
+			if(label_delimiter != NULL)
+			{
+				*label_delimiter = 0;
+
+				/* If the label is "start," set the program to begin there */
+				if(strcmp(tokens[i][token_idx], "start") == 0) p->start = num_instructions;
+
+				/* Add that fucker to the hash table with the corresponding instruction index */
+				htab_add(p->label_htab, tokens[i][token_idx], num_instructions);
+
+				continue;
+			}
 		}
+
+		if(valid_instruction) num_instructions++;
 	}
 }
 
-void parse_instructions(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory)
+void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory)
 {
 	int token_idx;
 	for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
