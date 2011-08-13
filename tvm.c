@@ -33,8 +33,8 @@ void run_vm(tvm_t* vm)
 
 		switch(vm->pProgram->instr[*instr_idx])
 		{
-			case 0x0:  break;
-			case 0x1:
+/* nop */		case 0x0:  break;
+/* interrupt */		case 0x1:  break;
 			case 0x2:  *arg0 = *arg1; break;
 			case 0x3:  stack_push(vm->pMemory, arg0); break;
 			case 0x4:  stack_pop(vm->pMemory, arg0); break;
