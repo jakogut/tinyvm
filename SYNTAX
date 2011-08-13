@@ -8,13 +8,14 @@ This virtual machine loosely follows traditional Intel x86 assembly syntax.
 2. MEMORY
 3. LABELS
 4. INSTRUCTION LISTING
-	I.   Memory
-	II.  Stack
-	III. Arithmetic Operators
-	IV.  Binary Operators
-	V.   Comparison
-	VI.  Control Flow Manipulation
-	VII. Input / Output
+	I.    Memory
+	II.   Stack
+	III.  Calling Conventions
+	IV.   Arithmetic Operators
+	V.    Binary Operators
+	VI.   Comparison
+	VII.  Control Flow Manipulation
+	VIII. Input / Output
 
 //////////////////////////////////////////////////
 // 0. VALUES /////////////////////////////////////
@@ -95,7 +96,15 @@ The square brackets are not to be used in actual TVM programs.
 		[popf arg]
 		Pops the flag register to arg
 
-	// III. Arithmetic Operators //
+	// III. Calling Conventions //
+
+		[call address]
+		Push the current address to the stack, and jump to the sumroutine specified
+
+		[ret]
+		Pop the previous address from the stack to the instruction pointer to return control to the caller
+
+	// IV. Arithmetic Operators //
 
 		[inc arg]
 		Increments arg
@@ -121,7 +130,7 @@ The square brackets are not to be used in actual TVM programs.
 		[rem arg]
 		Retrieves the value stored in the remainder register, storing it in arg
 
-	// IV. Binary Operators //
+	// V. Binary Operators //
 
 		[not arg]
 		Calculates the binary NOT of arg, storing it in arg
@@ -141,12 +150,12 @@ The square brackets are not to be used in actual TVM programs.
 		[shr arg0, arg1]
 		Shifts arg0 right by arg1 places
 
-	// V. Comparison //
+	// VI. Comparison //
 
 		[cmp arg0, arg1]
 		Compares arg0 and arg1, storing the result in the FLAGS register
 
-	// VI. Control Flow Manipulation //
+	// VII. Control Flow Manipulation //
 
 		[jmp address]
 		Jumps to an address, or label
@@ -169,7 +178,7 @@ The square brackets are not to be used in actual TVM programs.
 		[jle address]
 		Jump if lesser or equal
 
-	// VII. Input / Output //
+	// VIII. Input / Output //
 
 		[prn arg]
 		Print an integer
