@@ -1,31 +1,29 @@
-# This is a really inefficient solution to the first Project Euler problem.
-# See euler1_nodiv.vm for a much better solution.
+start:
+	mov esi, 1000000
+	mov eax, 0
 
-start:	mov eax, 0
-	mov ebx, 0
+L0:
+	mov ebx, eax
+	mod ebx, 3
+	rem ebx
+	cmp ebx, 0
+	jne L1
 
-loop:	mov ecx, ebx
-	mod ecx, 3
-	rem ecx
-	cmp ecx, 0
-	jne 8
-	add eax, ebx
-	je 15
+	add edx, eax
+	je check
 
-#	When jumping, you can specify a label, which is tied to an address, 
-#	which points to a certain instruction, or you can just specify an address.
-#	Both forms are used in this program. (Straight addresses are used because
-#	jumping to labels below the current source line doesn't quite work properly.
-#	This will be fixed soon.)
+L1:
+	mov ebx, eax
+	mod ebx, 5
+	rem ebx
+	cmp ebx, 0
+	jne check
 
-	mov ecx, ebx
-	mod ecx, 5
-	rem ecx
-	cmp ecx, 0
-	jne 15
-	add eax, ebx
-	inc ebx
-	cmp ebx, 1000000
-	jl loop
+	add edx, eax
 
-	prn eax
+check:	
+	inc eax
+	cmp eax, esi
+	jl L0
+
+	prn edx
