@@ -57,6 +57,8 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	for(i = 0; lexer->tokens[i]; i++)
 	{
 		p->instr = (int*)realloc(p->instr, sizeof(int) * (i + 2));
+		p->instr[i] = 0;
+
 		p->args = (int***)realloc(p->args, sizeof(int**) * (i + 2));
 		p->args[i] = (int**)calloc(MAX_ARGS, sizeof(int*));
 
