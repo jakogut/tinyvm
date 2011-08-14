@@ -11,10 +11,8 @@ tvm_memory_t* create_memory(size_t size)
 
 	m->registers = calloc(NUM_REGISTERS, sizeof(tvm_register_t));
 
-	int num_words = size / sizeof(int);
-
 	m->mem_space_size = size;
-	m->mem_space = (int*)calloc(num_words, sizeof(int));
+	m->mem_space = (int*)calloc(size, 1);
 
 	return m;
 }

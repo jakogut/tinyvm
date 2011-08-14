@@ -5,10 +5,11 @@ FILE* tvm_fopen(const char* filename, const char* extension, const char* mode)
 	FILE* pFile = NULL;
 	size_t fname_chars = strlen(filename) + strlen(extension) + 1;
 	char* fname = malloc(sizeof(char) * fname_chars);
+	int i;
 
 	strcpy(fname, filename);
 
-	int i; for(i = 0; i < 2 && !pFile; i++)
+	for(i = 0; i < 2 && !pFile; i++)
 	{
 		if(i > 0) strcat(fname, extension);
 		pFile = fopen(fname, mode);

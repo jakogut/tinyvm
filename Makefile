@@ -27,6 +27,7 @@ endif
 
 ifeq ($(PROFILE), yes)
 	CXXFLAGS += -pg
+	BIN_NAME := $(BIN_NAME)
 endif
 
 ifeq ($(PEDANTIC), yes)
@@ -58,7 +59,7 @@ asm:	$(AS_SOURCES)
 	$(CC) -S -masm=intel $< -o $@
 
 clean:
-	rm -f $(BIN_NAME) $(BIN_NAME)-debug gmon.out *.save *.o *.asm.o *.asm core* vgcore*
+	rm -f $(BIN_NAME)* gmon.out *.save *.o *.asm.o *.asm core* vgcore*
 
 rebuild: clean tinyvm
 

@@ -98,10 +98,10 @@ void parse_labels(tvm_program_t* p, const char*** tokens)
 		{
 			char* label_delimiter;
 
-			// If the token is empty, or non-existent, skip it
+			/* If the token is empty, or non-existent, skip it */
 			if(!tokens[i][token_idx]) continue;
 
-			// Figure out if the source line we're on contains a valid instruction
+			/* Figure out if the source line we're on contains a valid instruction */
 			if(instr_to_opcode(tokens[i][token_idx]) != -1) valid_instruction = 1;
 
 			/* Figure out if the token we're dealing with has a label delimiter */
@@ -142,7 +142,6 @@ void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMem
 		{
 			int i, instr_idx = 0, num_instr = p->num_instructions;
 			p->instr[p->num_instructions++] = opcode;
-			//++p->num_instructions;
 
 			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
