@@ -7,7 +7,7 @@ const char* tvm_opcode_map[] = {"nop", "int", "mov", "push", "pop", "pushf", "po
 
 const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", 0};
 
-static void parse_labels(tvm_program_t* p, const char*** tokens);
+static int parse_labels(tvm_program_t* p, const char*** tokens);
 static void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory);
 
 static int instr_to_opcode(const char* instr);
@@ -52,7 +52,8 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	free(source);
 	fclose(pFile);
 
-	parse_labels(p, (const char***)lexer->tokens);
+	if(parse_labels(p, (const char***)lexer->tokens) != 0)
+		return 1;
 
 	for(i = 0; lexer->tokens[i]; i++)
 	{
@@ -88,7 +89,7 @@ void destroy_program(tvm_program_t* p)
 	free(p);
 }
 
-void parse_labels(tvm_program_t* p, const char*** tokens)
+int parse_labels(tvm_program_t* p, const char*** tokens)
 {
 	int i, num_instructions = 0;
 	for(i = 0; tokens[i]; i++)
@@ -114,8 +115,17 @@ void parse_labels(tvm_program_t* p, const char*** tokens)
 				/* If the label is "start," set the program to begin there */
 				if(strcmp(tokens[i][token_idx], "start") == 0) p->start = num_instructions;
 
-				/* Add that fucker to the hash table with the corresponding instruction index */
-				htab_add(p->label_htab, tokens[i][token_idx], num_instructions);
+				/* Check if the label already exists */
+				if(htab_find(p->label_htab, tokens[i][token_idx]) != -1)
+				{
+					printf("Label '%s' defined twice\n", tokens[i][token_idx]);
+					return 1;
+				}
+				else
+				{
+					/* Add that fucker to the hash table with the corresponding instruction index */
+					htab_add(p->label_htab, tokens[i][token_idx], num_instructions);
+				}
 
 				continue;
 			}
@@ -123,6 +133,8 @@ void parse_labels(tvm_program_t* p, const char*** tokens)
 
 		if(valid_instruction) num_instructions++;
 	}
+
+	return 0;
 }
 
 void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory)
