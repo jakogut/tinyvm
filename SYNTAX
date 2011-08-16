@@ -21,8 +21,8 @@ This virtual machine loosely follows traditional Intel x86 assembly syntax.
 // 0. VALUES /////////////////////////////////////
 //////////////////////////////////////////////////
 
-Values can be specified in decimal, hexadecimal, or binary. The only difference between Intel syntax assembly, and TVM
-syntax is the delimiter between the value, and the base specifier. By default, values without a base specifier are assumed
+Values can be specified in decimal, hexadecimal, or binary. The only difference between Intel syntax assembly and TVM
+syntax is the delimiter between the value and the base specifier. By default, values without a base specifier are assumed
 to be in decimal. Any value prepended with "0x" is assumed to be in hexadecimal. 
 
 Values can also be specified using base identifiers. To specify the value "32," I can use 0x20 for hexadecimal, 20|h for hexadecimal
@@ -68,7 +68,7 @@ valid when specifying a value is valid when specifying an address.
 
 Labels are specified by appending a colon to an identifier. Local labels are not yet supported.
 
-Labels must be specified at the beginning of a line, or on their own line.
+Labels must be specified at the beginning of a line or on their own line.
 
 //////////////////////////////////////////////////
 // 4. INSTRUCTION LISTING ////////////////////////
@@ -99,7 +99,7 @@ The square brackets are not to be used in actual TVM programs.
 	// III. Calling Conventions //
 
 		[call address]
-		Push the current address to the stack, and jump to the sumroutine specified
+		Push the current address to the stack and jump to the subroutine specified
 
 		[ret]
 		Pop the previous address from the stack to the instruction pointer to return control to the caller
@@ -119,13 +119,13 @@ The square brackets are not to be used in actual TVM programs.
 		Subtracts arg1 from arg0, storing the result in arg0
 
 		[mul arg0, arg1]
-		multiplies arg1 and arg0, storing the result in arg0
+		Multiplies arg1 and arg0, storing the result in arg0
 
 		[div arg0, arg1]
 		Divides arg0 by arg1, storing the quotient in arg0
 
 		[mod arg0, arg1]
-		Same as the '%' (modulous) operator in C. Calculates arg0 mod arg1, and stores the result in the remainder register.
+		Same as the '%' (modulus) operator in C. Calculates arg0 mod arg1 and stores the result in the remainder register.
 
 		[rem arg]
 		Retrieves the value stored in the remainder register, storing it in arg
@@ -139,10 +139,10 @@ The square brackets are not to be used in actual TVM programs.
 		Calculates the binary XOR of arg0 and arg1, storing the result in arg0
 
 		[or arg0, arg1]
-		Calculates the binary OR of arg0, and arg1, storing the result in arg0
+		Calculates the binary OR of arg0 and arg1, storing the result in arg0
 
 		[and arg0, arg1]
-		Calculates the binary AND of arg0, and arg1, storing the result in arg0
+		Calculates the binary AND of arg0 and arg1, storing the result in arg0
 
 		[shl arg0, arg1]
 		Shift arg0 left by arg1 places
@@ -158,7 +158,7 @@ The square brackets are not to be used in actual TVM programs.
 	// VII. Control Flow Manipulation //
 
 		[jmp address]
-		Jumps to an address, or label
+		Jumps to an address or label
 
 		[je address]
 		Jump if equal
