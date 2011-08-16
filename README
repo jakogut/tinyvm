@@ -4,7 +4,7 @@ virtual machine has been branched into several other projects, including
 FastVM and SimpleVM, where performance and simplicity are the main goals 
 respectively.
 
-TinyVM, and all of its branches, have differing goals, but they're each designed
+TinyVM and all of its branches have differing goals, but they're each designed
 to execute the same code. FastVM may have better performance than TinyVM and SimpleVM,
 but it may also use more memory, more complex code, and take longer to compile. TinyVM
 may be smaller, and have a lighter footprint than the other branches, but it doesn't have
