@@ -1,0 +1,13 @@
+start:
+	mov [0], 1
+	mov [1], 0
+
+loop:	add [0], [1]
+	add [1], [0]
+
+	prn [0]
+	prn [1]
+
+	cmp 1, [0]
+	jle loop
+
