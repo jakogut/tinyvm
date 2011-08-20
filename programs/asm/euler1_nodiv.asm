@@ -29,8 +29,6 @@ loop2:	add edx, eax
 	cmp eax, ebx
 	jl loop2
 
-	mov [0], edx
-
 	; Push our arguments onto the stack
 	push edx
 	push dword str
