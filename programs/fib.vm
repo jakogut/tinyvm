@@ -1,13 +1,19 @@
 start:
-	mov [0], 1
-	mov [1], 0
+	mov eax, 1
+	mov ebx, 0
 
-loop:	add [0], [1]
-	add [1], [0]
+loop:	add eax, ebx
+	add ebx, eax
 
-	prn [0]
-	prn [1]
+	prn eax
+	prn ebx
 
-	cmp 1, [0]
-	jle loop
+	cmp eax, 0
+	jl end
 
+	cmp ebx, 0
+	jl end
+
+	jmp loop
+
+end:
