@@ -1,0 +1,35 @@
+
+
+start:
+	mov eax, 1
+	mov ebx, 0
+
+	mov ecx, 0	# ECX is our sum
+
+loop:	add eax, ebx
+	add ebx, eax
+
+	mov edx, eax
+	and edx, 1
+	cmp edx, 0
+	jne L0
+	add ecx, eax
+
+L0:
+	mov edx, ebx
+	and edx, 1
+	cmp edx, 0
+	jne L1
+	add ecx, ebx
+
+L1:
+	cmp eax, 4000000
+	jg end
+
+	cmp ebx, 4000000
+	jg end
+
+	jmp loop
+
+end:
+	prn ecx
