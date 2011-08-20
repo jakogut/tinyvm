@@ -29,4 +29,5 @@ L1:
 	cmp ebx, 4000000
 	jl loop
 
+end:
 	prn ecx
