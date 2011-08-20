@@ -27,9 +27,6 @@ L1:
 	jg end
 
 	cmp ebx, 4000000
-	jg end
+	jl loop
 
-	jmp loop
-
-end:
 	prn ecx
