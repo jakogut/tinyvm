@@ -12,8 +12,6 @@ loop:	add eax, ebx
 	jl end
 
 	cmp ebx, 0
-	jl end
-
-	jmp loop
+	jg loop
 
 end:
