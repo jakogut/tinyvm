@@ -12,6 +12,8 @@ AS_SOURCES = $(SOURCES:.c=.asm)
 OBJECTS = $(SOURCES:.c=.o)
 AS_OBJECTS = $(SOURCES:.c=.asm.o)
 
+PROGRAM_DIR = programs
+BIN_DIR = bin
 BIN_NAME = tinyvm
 
 DEBUG = no
@@ -40,7 +42,8 @@ all: tinyvm
 
 # Build TVM from the C sources
 tinyvm: $(OBJECTS)
-	$(CC) $(LFLAGS) $(OBJECTS) -o $(BIN_NAME)
+	$(CC) $(LFLAGS) $(OBJECTS) -o $(BIN_DIR)/$(BIN_NAME)
+	ln -s ../$(BIN_DIR)/$(BIN_NAME) ./$(PROGRAM_DIR)
 
 # Assemble TVM from the assembly sources provided by AS_SOURCES
 tinyvm-asm: $(AS_OBJECTS)
@@ -59,7 +62,7 @@ asm:	$(AS_SOURCES)
 	$(CC) -S -masm=intel $< -o $@
 
 clean:
-	rm -f $(BIN_NAME)* gmon.out *.save *.o *.asm.o *.asm core* vgcore*
+	rm -f $(BIN_DIR)/* $(PROGRAM_DIR)/$(BIN_NAME)* gmon.out *.save *.o *.asm.o *.asm core* vgcore*
 
 rebuild: clean tinyvm
 
