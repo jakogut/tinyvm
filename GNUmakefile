@@ -42,6 +42,7 @@ all: tinyvm
 
 # Build TVM from the C sources
 tinyvm: $(OBJECTS)
+	@mkdir -p $(BIN_DIR)
 	$(CC) $(LFLAGS) $(OBJECTS) -o $(BIN_DIR)/$(BIN_NAME)
 	ln -s ../$(BIN_DIR)/$(BIN_NAME) ./$(PROGRAM_DIR)
 
