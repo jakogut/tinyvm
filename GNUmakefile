@@ -69,7 +69,7 @@ asm:	$(AS_SOURCES)
 clean:
 	rm -f $(BIN_DIR)/* $(PROGRAM_DIR)/$(BIN_NAME)* gmon.out *.save *.o *.asm.o *.asm core* vgcore*
 
-rebuild: clean tinyvm
+rebuild: clean all
 
 .PHONY : clean
 .SILENT : clean
