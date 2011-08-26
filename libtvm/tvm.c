@@ -1,6 +1,6 @@
-#include "tvm.h"
+#include <tvm/tvm.h>
 
-tvm_t* create_vm(char* filename)
+tvm_t* tvm_create(char* filename)
 {
 	tvm_t* vm = (tvm_t*)malloc(sizeof(tvm_t));
 
@@ -16,14 +16,14 @@ tvm_t* create_vm(char* filename)
 	return vm;
 }
 
-void destroy_vm(tvm_t* vm)
+void tvm_destroy(tvm_t* vm)
 {
 	if(vm && vm->pMemory)destroy_memory(vm->pMemory);
 	if(vm && vm->pProgram)destroy_program(vm->pProgram);
 	if(vm) free(vm);
 }
 
-void run_vm(tvm_t* vm)
+void tvm_run(tvm_t* vm)
 {
 	int* instr_idx = &vm->pMemory->registers[0x8].i32; *instr_idx = vm->pProgram->start;
 

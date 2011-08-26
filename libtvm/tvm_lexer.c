@@ -1,4 +1,4 @@
-#include "tvm_lexer.h"
+#include <tvm/tvm_lexer.h>
 
 #include <stdio.h>
 #include <stdlib.h>

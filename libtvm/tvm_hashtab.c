@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "tvm_hashtab.h"
+#include <tvm/tvm_hashtab.h>
 
 tvm_htab_t* create_htab()
 {

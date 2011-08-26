@@ -1,4 +1,4 @@
-#include "tvm_file.h"
+#include <tvm/tvm_file.h>
 
 FILE* tvm_fopen(const char* filename, const char* extension, const char* mode)
 {

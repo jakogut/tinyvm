@@ -13,9 +13,9 @@ typedef struct tvm_s
 	tvm_memory_t* pMemory;
 } tvm_t;
 
-tvm_t* create_vm(char* filename);
-void destroy_vm(tvm_t* vm);
+tvm_t* tvm_create(char* filename);
+void tvm_destroy(tvm_t* vm);
 
-void run_vm(tvm_t* vm);
+void tvm_run(tvm_t* vm);
 
 #endif

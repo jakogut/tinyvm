@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "tvm_stack.h"
+#include <tvm/tvm_stack.h>
 
 void create_stack(tvm_memory_t* mem, size_t size)
 {
