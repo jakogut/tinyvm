@@ -1,5 +1,6 @@
 CC = gcc
 AS = as
+MKDIR = mkdir
 
 CXXFLAGS = -Wall -pipe
 CFLAGS = $(CXXFLAGS) -c
@@ -38,12 +39,16 @@ endif
 
 CXXFLAGS += $(OPTIMIZATION)
 
-all: tinyvm
+all: $(BIN_DIR)/$(BIN_NAME)
 
 # Build TVM from the C sources
-tinyvm: $(OBJECTS)
+$(BIN_DIR)/$(BIN_NAME): $(OBJECTS) $(BIN_DIR)
 	$(CC) $(LFLAGS) $(OBJECTS) -o $(BIN_DIR)/$(BIN_NAME)
 	ln -s ../$(BIN_DIR)/$(BIN_NAME) ./$(PROGRAM_DIR)
+
+# Make the bin dir if it's missing
+$(BIN_DIR):
+	$(MKDIR) $(BIN_DIR)
 
 # Assemble TVM from the assembly sources provided by AS_SOURCES
 tinyvm-asm: $(AS_OBJECTS)
