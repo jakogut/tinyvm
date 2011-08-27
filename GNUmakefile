@@ -10,6 +10,9 @@ PEDANTIC_FLAGS = -ansi -pedantic -pedantic-errors
 LIBTVM_SOURCES = $(wildcard libtvm/*.c)
 LIBTVM_OBJECTS = $(LIBTVM_SOURCES:.c=.o)
 
+TDB_SOURCES = $(wildcard tdb/*.c)
+TDB_OBJECTS = $(TDB_SOURCES:.c=.o)
+
 BIN_DIR = bin
 LIB_DIR = lib
 INC_DIR = include
@@ -35,7 +38,7 @@ endif
 
 CFLAGS += $(OPTIMIZATION)
 
-all: libtvm tvmi
+all: libtvm tvmi tdb
 
 install: libtvm tvmi
 	cp -f bin/tvmi /usr/bin/
@@ -56,11 +59,15 @@ tvmi: libtvm
 	mkdir -p $(BIN_DIR)
 	$(CC) $(LFLAGS) tvmi.c -ltvm -o $(BIN_DIR)/tvmi
 
+tdb: libtvm $(TDB_OBJECTS)
+	mkdir -p $(BIN_DIR)
+	$(CC) $(LFLAGS) $(TDB_OBJECTS) -ltvm -o $(BIN_DIR)/tdb
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BIN_DIR)/* $(LIB_DIR)/*  libtvm/*.o gmon.out *.save *.o core* vgcore*
+	rm -rf $(BIN_DIR)/* $(LIB_DIR)/* libtvm/*.o tdb/*.o gmon.out *.save *.o core* vgcore*
 
 rebuild: clean all
 
