@@ -37,6 +37,16 @@ CFLAGS += $(OPTIMIZATION)
 
 all: libtvm tvmi
 
+install: libtvm tvmi
+	cp -f bin/tvmi /usr/bin/
+	cp -rf include/tvm /usr/include/
+	cp -f lib/libtvm* /usr/lib/
+
+uninstall:
+	rm -rf /usr/bin/tvmi
+	rm -rf /usr/include/tvmi
+	rm -rf /usr/lib/libtvm*
+
 libtvm: $(LIBTVM_OBJECTS)
 	mkdir -p $(LIB_DIR)
 	ar rcs $(LIB_DIR)/libtvm.a $(LIBTVM_OBJECTS)
