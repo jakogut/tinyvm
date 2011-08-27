@@ -1,9 +1,9 @@
 CC = gcc
 AS = as
 
-CXXFLAGS = -Wall -pipe -Iinclude/
-CFLAGS = $(CXXFLAGS) -c
-LFLAGS = $(CXXFLAGS) -L lib/
+CFLAGS = -Wall -pipe -Iinclude/
+OFLAGS = 
+LFLAGS = $(CFLAGS) -L lib/
 ASFLAGS =
 PEDANTIC_FLAGS = -ansi -pedantic -pedantic-errors
 
@@ -21,19 +21,19 @@ PEDANTIC = no
 OPTIMIZATION = -O3
 
 ifeq ($(DEBUG), yes)
-	CXXFLAGS += -g
+	CFLAGS += -g
 	OPTIMIZATION = -O0
 endif
 
 ifeq ($(PROFILE), yes)
-	CXXFLAGS += -pg
+	CFLAGS += -pg
 endif
 
 ifeq ($(PEDANTIC), yes)
-	CXXFLAGS += $(PEDANTIC_FLAGS)
+	CFLAGS += $(PEDANTIC_FLAGS)
 endif
 
-CXXFLAGS += $(OPTIMIZATION)
+CFLAGS += $(OPTIMIZATION)
 
 all: libtvm tvmi
 
@@ -47,7 +47,7 @@ tvmi: libtvm
 	$(CC) $(LFLAGS) tvmi.c -ltvm -o $(BIN_DIR)/tvmi
 
 %.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -rf $(BIN_DIR)/* $(LIB_DIR)/*  libtvm/*.o gmon.out *.save *.o core* vgcore*
