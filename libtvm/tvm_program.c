@@ -5,7 +5,7 @@
 const char* tvm_opcode_map[] = {"nop", "int", "mov", "push", "pop", "pushf", "popf", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
 				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "call", "ret", "je", "jne", "jg", "jge", "jl", "jle", "prn", 0};
 
-const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", 0};
+const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", "r08", "r09", "r10", "r11", "r12", "r13", "r14", "r15", 0};
 
 static int parse_labels(tvm_program_t* p, const char*** tokens);
 static void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory);
