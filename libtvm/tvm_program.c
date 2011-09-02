@@ -186,7 +186,7 @@ void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMem
 					if(end_symbol)
 					{
 						*end_symbol = 0;
-						p->args[num_instr][i - token_idx] = &((int*)pMemory->mem_space)[parse_value(tokens[i] + 1)];
+						p->args[num_instr][i - token_idx] = &((int*)pMemory->mem_space)[tvm_parse_value(tokens[i] + 1)];
 
 						continue;
 					}
@@ -197,12 +197,12 @@ void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMem
 
 				if(instr_idx >= 0)
 				{
-					p->args[num_instr][i - token_idx] = add_value(p, instr_idx);
+					p->args[num_instr][i - token_idx] = tvm_add_value(p, instr_idx);
 					continue;
 				}
 
 				/* Fuck it, parse it as a value */
-				p->args[num_instr][i - token_idx] = add_value(p, parse_value(tokens[i]));
+				p->args[num_instr][i - token_idx] = tvm_add_value(p, tvm_parse_value(tokens[i]));
 			}
 		}
 	}
@@ -218,7 +218,7 @@ int instr_to_opcode(const char* instr)
 	return -1;
 }
 
-int* add_value(tvm_program_t* p, const int val)
+int* tvm_add_value(tvm_program_t* p, const int val)
 {
 	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
 	p->values[p->num_values] = (int*)calloc(1, sizeof(int));
@@ -228,7 +228,7 @@ int* add_value(tvm_program_t* p, const int val)
 	return p->values[p->num_values++];
 }
 
-int parse_value(const char* str)
+int tvm_parse_value(const char* str)
 {
 	char* delimiter = strchr(str, '|'), base = 0;
 
