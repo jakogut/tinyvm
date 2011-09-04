@@ -17,6 +17,7 @@ BIN_DIR = bin
 LIB_DIR = lib
 INC_DIR = include
 PROGRAM_DIR = programs
+INSTALL_PREFIX = /usr/
 
 DEBUG = no
 PROFILE = no
@@ -41,9 +42,9 @@ CFLAGS += $(OPTIMIZATION)
 all: libtvm tvmi tdb
 
 install: libtvm tvmi
-	cp -f bin/tvmi /usr/bin/
-	cp -rf include/tvm /usr/include/
-	cp -f lib/libtvm* /usr/lib/
+	cp -f $(BIN_DIR)/tvmi $(INSTALL_PREFIX)/bin/
+	cp -rf $(INC_DIR)/tvm $(INSTALL_PREFIX)/include/
+	cp -f $(LIB_DIR)/libtvm* $(INSTALL_PREFIX)/lib/
 
 uninstall:
 	rm -rf /usr/bin/tvmi
@@ -51,16 +52,13 @@ uninstall:
 	rm -rf /usr/lib/libtvm*
 
 libtvm: $(LIBTVM_OBJECTS)
-	mkdir -p $(LIB_DIR)
 	ar rcs $(LIB_DIR)/libtvm.a $(LIBTVM_OBJECTS)
 
 # Build the TVM interpreter
 tvmi: libtvm
-	mkdir -p $(BIN_DIR)
 	$(CC) $(LFLAGS) tvmi.c -ltvm -o $(BIN_DIR)/tvmi
 
 tdb: libtvm $(TDB_OBJECTS)
-	mkdir -p $(BIN_DIR)
 	$(CC) $(LFLAGS) $(TDB_OBJECTS) -ltvm -o $(BIN_DIR)/tdb
 
 %.o: %.c
