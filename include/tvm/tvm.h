@@ -17,5 +17,6 @@ tvm_t* tvm_create(char* filename);
 void tvm_destroy(tvm_t* vm);
 
 void tvm_run(tvm_t* vm);
+void tvm_step(tvm_t* vm, int* instr_idx);
 
 #endif
