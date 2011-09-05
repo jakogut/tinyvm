@@ -27,10 +27,7 @@ void tvm_run(tvm_t* vm)
 {
 	int* instr_idx = &vm->pMemory->registers[0x8].i32; *instr_idx = vm->pProgram->start;
 
-	for(;vm->pProgram->instr[*instr_idx] != -0x1; ++(*instr_idx))
-	{
-		tvm_step(vm, instr_idx);
-	}
+	for(;vm->pProgram->instr[*instr_idx] != -0x1; ++(*instr_idx)) tvm_step(vm, instr_idx);
 }
 
 void tvm_step(tvm_t* vm, int* instr_idx)
@@ -40,7 +37,7 @@ void tvm_step(tvm_t* vm, int* instr_idx)
 	switch(vm->pProgram->instr[*instr_idx])
 	{
 /* nop   */	case 0x0:  break;
-/* int   */	case 0x1:  break;
+/* int   */	case 0x1:  /* unimplemented */ break;
 /* mov   */	case 0x2:  *arg0 = *arg1; break;
 /* push  */	case 0x3:  stack_push(vm->pMemory, arg0); break;
 /* pop   */	case 0x4:  stack_pop(vm->pMemory, arg0); break;
