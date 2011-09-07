@@ -32,7 +32,8 @@ using a base identifier, or 100000|b for binary using a base identifer.
 // 1. REGISTERS //////////////////////////////////
 //////////////////////////////////////////////////
 
-TVM has 9 registers, modeled after x86 registers
+TVM has 17 registers, modeled after x86 registers.
+Register names are written lower-case.
 
 (EAX - EDX, General Purpose)
 EAX
@@ -47,6 +48,8 @@ ESP - Stack pointer, points to the top of the stack
 EBP - Base pointer, points to the base of the stack
 
 EIP - Instruction pointer, this is modified with the jump commands, never directly
+
+R08 - R15, General Purpose
 
 //////////////////////////////////////////////////
 // 2. MEMORY /////////////////////////////////////
