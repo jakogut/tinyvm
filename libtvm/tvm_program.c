@@ -10,6 +10,7 @@ const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp
 static int parse_labels(tvm_program_t* p, const char*** tokens);
 static void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMemory);
 
+static int* token_to_register(const char* token, tvm_memory_t* pMemory);
 static int instr_to_opcode(const char* instr);
 
 tvm_program_t* create_program()
@@ -158,26 +159,18 @@ void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMem
 			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
 				char* newline;
-				int valid_register = 0, j = 0;
-
 				if(!tokens[i] || strlen(tokens[i]) <= 0) continue;
 
 				newline = strchr(tokens[i], '\n');
 				if(newline) *newline = 0;
 
 				/* Check to see if the token specifies a register */
-				while(tvm_register_map[j])
+				int* pRegister = token_to_register(tokens[i], pMemory);
+				if(pRegister)
 				{
-					if(strcmp(tokens[i], tvm_register_map[j]) == 0)
-					{
-						p->args[num_instr][i - token_idx] = &pMemory->registers[j].i32;
-						valid_register = 1;
-
-						break;
-
-					} else j++;
+					p->args[num_instr][i - token_idx] = pRegister;
+					continue;
 				}
-				if(valid_register) continue;
 
 				/* Check to see whether the token specifies an address */
 				if(tokens[i][0] == '[')
@@ -206,6 +199,19 @@ void parse_instruction(tvm_program_t* p, const char** tokens, tvm_memory_t* pMem
 			}
 		}
 	}
+}
+
+int* token_to_register(const char* token, tvm_memory_t* pMemory)
+{
+	int i = 0;
+	while(tvm_register_map[i])
+	{
+		if(strcmp(token, tvm_register_map[i]) == 0)
+			return &pMemory->registers[i].i32;
+		i++;
+	}
+
+	return NULL;
 }
 
 int instr_to_opcode(const char* instr)
