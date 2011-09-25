@@ -9,11 +9,15 @@ tvm_t* tvm_create(char* filename)
 
 	create_stack(vm->pMemory, MIN_STACK_SIZE);
 
-	if(interpret_program(vm->pProgram, filename, vm->pMemory) != 0) return NULL;
-
 	if(!vm || !vm->pMemory || !vm->pProgram) return NULL;
 
 	return vm;
+}
+
+int tvm_interpret(tvm_t* vm, char* filename)
+{
+	if(interpret_program(vm->pProgram, filename, vm->pMemory) != 0) return 1;
+	return 0;
 }
 
 void tvm_destroy(tvm_t* vm)
