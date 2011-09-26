@@ -80,13 +80,21 @@ void destroy_program(tvm_program_t* p)
 	int i = 0;
 	destroy_htab(p->label_htab);
 
-	for(i = 0; i < p->num_values; i++) free(p->values[i]);
-	free(p->values);
+	if(p->values)
+	{
+		for(i = 0; i < p->num_values; i++) free(p->values[i]);
+		free(p->values);
+	}
 
-	for(i = 0; p->args[i]; i++) free(p->args[i]);
-	free(p->args);
+	if(p->args)
+	{
+		for(i = 0; p->args[i]; i++) free(p->args[i]);
+		free(p->args);
+	}
 
-	free(p->instr);
+	if(p->instr)
+		free(p->instr);
+
 	free(p);
 }
 
