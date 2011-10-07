@@ -1,0 +1,29 @@
+# recursive factorial subroutine
+
+fact:
+	push eax	# save caller's EAX, ECX
+	push ecx
+	push ebp	# call mechanism
+	mov ebp, esp
+	mov ebx, 1	# default value = 1
+	cmp eax, 1	# n > 1 ?
+	jle end_fact	# no; leave with default = 1
+	mov ecx, eax	# yes; value = n*fact(n-1)
+	dec eax
+	call fact
+	mul ebx, ecx
+end_fact:
+	pop ebp		# restore everything; leave
+	pop ecx
+	pop eax
+	ret
+
+# print n! for 0<n<10
+
+start:
+	mov eax, 0
+loop:	inc eax
+	call fact
+	prn ebx
+	cmp eax, 10
+	jl loop
