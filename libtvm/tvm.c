@@ -64,7 +64,7 @@ void tvm_step(tvm_t* vm, int* instr_idx)
 /* cmp   */	case 0x15: vm->pMemory->FLAGS = ((*arg0 == *arg1) | (*arg0 > *arg1) << 1); break;
 /* jmp   */	case 0x17: stack_push(vm->pMemory, instr_idx);
 /* call  */	case 0x16: *instr_idx = *arg0 - 1; break;
-/* ret   */	case 0x18: stack_pop(vm->pMemory, instr_idx);
+/* ret   */	case 0x18: stack_pop(vm->pMemory, instr_idx); break;
 /* je    */	case 0x19: if(vm->pMemory->FLAGS   & 0x1)  *instr_idx = *arg0 - 1; break;
 /* jne   */	case 0x1A: if(!(vm->pMemory->FLAGS & 0x1)) *instr_idx = *arg0 - 1; break;
 /* jg    */	case 0x1B: if(vm->pMemory->FLAGS   & 0x2)  *instr_idx = *arg0 - 1; break;
