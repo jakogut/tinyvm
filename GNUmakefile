@@ -56,7 +56,7 @@ libtvm: $(LIBTVM_OBJECTS)
 
 # Build the TVM interpreter
 tvmi: libtvm
-	$(CC) $(LFLAGS) tvmi.c -ltvm -o $(BIN_DIR)/tvmi
+	$(CC) $(LFLAGS) src/tvmi.c -ltvm -o $(BIN_DIR)/tvmi
 
 tdb: libtvm $(TDB_OBJECTS)
 	$(CC) $(LFLAGS) $(TDB_OBJECTS) -ltvm -o $(BIN_DIR)/tdb
