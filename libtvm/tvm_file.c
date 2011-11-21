@@ -21,29 +21,24 @@ FILE* tvm_fopen(const char* filename, const char* extension, const char* mode)
 
 int tvm_fcopy(char* dest, size_t size, FILE* src)
 {
-	int i;
+	size_t i;
+	long pos = ftell(src);
 
-	fpos_t pos;
-	fgetpos(src, &pos);
-
-	for(i = 0; !feof(src); i++) dest[i] = fgetc(src);
+	for(i = 0; i < size && !feof(src); i++) dest[i] = fgetc(src);
 	dest[i - 1] = 0;
 
-	fsetpos(src, &pos);
+	fseek(src, pos, SEEK_SET);
 
 	return 0;
 }
 
 int tvm_flength(FILE* f)
 {
-	int length = 0;
-
-	fpos_t pos;
-	fgetpos(f, &pos);
-
+	int length;
+	long pos = ftell(f);
+	
 	for(length = 0; !feof(f); length++) fgetc(f);
-
-	fsetpos(f, &pos);
+	fseek(f, pos, SEEK_SET);
 
 	return length;
 }
