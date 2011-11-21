@@ -21,10 +21,10 @@ FILE* tvm_fopen(const char* filename, const char* extension, const char* mode)
 
 int tvm_fcopy(char* dest, size_t size, FILE* src)
 {
-	int i;
+	size_t i;
 	long pos = ftell(src);
 
-	for(i = 0; !feof(src); i++) dest[i] = fgetc(src);
+	for(i = 0; i < size && !feof(src); i++) dest[i] = fgetc(src);
 	dest[i - 1] = 0;
 
 	fseek(src, pos, SEEK_SET);
