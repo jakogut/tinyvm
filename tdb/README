@@ -1,0 +1,39 @@
+tdb is a debugging shell for tinyvm programs. It is somewhat similar to gdb.
+
+//////////////////////////////////////////////////
+// Table of Contents /////////////////////////////
+//////////////////////////////////////////////////
+0. INVOCATION
+1. COMMANDS
+
+//////////////////////////////////////////////////
+// 0. INVOCATION /////////////////////////////////
+//////////////////////////////////////////////////
+
+tdb expects a program name as its first argument:
+
+tdb program.vm
+
+//////////////////////////////////////////////////
+// 1. COMMANDS ///////////////////////////////////
+//////////////////////////////////////////////////
+
+Commands are shown in brackets here; the brackets
+must not be typed in.
+
+[break idx]
+Set a breakpoint at instruction index idx.
+
+[run]
+Run the program until a breakpoint is hit.
+(This command can only be issued once.)
+
+[continue]
+Resume execution after a breakpoint is hit.
+
+[step]
+Execute one instruction and pause. (Ignores breakpoints.)
+
+[q]
+Quit tdb.
+
