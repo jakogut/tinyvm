@@ -59,14 +59,14 @@ void lex(tvm_lexer_t* lexer, char* source)
 		lexer->tokens = (char***)realloc(lexer->tokens, sizeof(char**) * (i + 2));
 		lexer->tokens[i] = (char**)calloc(MAX_TOKENS, sizeof(char*));
 
-		pToken = strtok(lexer->source_lines[i], " 	,");
+		pToken = strtok(lexer->source_lines[i], " \t,");
 
 		for(j = 0; (pToken && j < MAX_TOKENS); j++)
 		{
 			lexer->tokens[i][j] = (char*)calloc(1, (strlen(pToken) + 1));
 			strcpy(lexer->tokens[i][j], pToken);
 
-			pToken = strtok(NULL, " 	,");
+			pToken = strtok(NULL, " \t,");
 		}
 	}
 
