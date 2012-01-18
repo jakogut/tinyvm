@@ -8,11 +8,11 @@ typedef struct tvm_htable_node_s
 {
 	char* key;
 	int value;
+	struct tvm_htable_node_s* next;
 } tvm_htable_node_t;
 
 typedef struct tvm_htab_s
 {
-	int num_nodes;
 	tvm_htable_node_t* nodes[HTAB_SIZE];
 } tvm_htab_t;
 
