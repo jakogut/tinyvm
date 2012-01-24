@@ -5,54 +5,132 @@
 
 tvm_htab_t* create_htab()
 {
-	return (tvm_htab_t*)calloc(1, sizeof(tvm_htab_t));
+	tvm_htab_t *htab = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
+	htab->size = HTAB_SIZE;
+	htab->nodes = (tvm_htable_node_t**)calloc(htab->size, sizeof(tvm_htable_node_t *));
+	htab->num_nodes = 0;
+	return htab;
+}
+
+void htab_rehash(tvm_htab_t* orig, unsigned int size)
+{
+	int i;
+	tvm_htable_node_t *node, *next;
+	tvm_htab_t *new;
+
+	new = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
+	new->nodes = (tvm_htable_node_t**)calloc(size, sizeof(tvm_htable_node_t *));
+	new->size = size;
+	new->num_nodes = 0;
+
+	/* Traverse the original hash table, rehashing
+	   every entry into the new table and deleting
+	   original entries */
+	for(i = 0; i < orig->size; i++)
+	{
+		node = orig->nodes[i];
+		while(node)
+		{
+			next = node->next;
+			htab_add(new, node->key, node->value);
+			free(node->key);
+			free(node);
+			node = next;
+		}
+	}
+
+	free(orig->nodes);
+
+	/* Transpose the new hash table's parameters
+	   on to the old one */	
+	orig->num_nodes = new->num_nodes;
+	orig->nodes = new->nodes;
+	orig->size = new->size;
+	
+	free(new);
 }
 
 void destroy_htab(tvm_htab_t* htab)
 {
 	int i;
-	for(i = 0; i < HTAB_SIZE; i++)
+	tvm_htable_node_t *node, *next;
+
+	for(i = 0; i < htab->size; i++)
 	{
-		if(htab->nodes[i])
+		node = htab->nodes[i];
+		while(node)
 		{
-			free(htab->nodes[i]->key);
-			free(htab->nodes[i]);
+			next = node->next;
+			free(node->key);
+			free(node);
+			node = next;
 		}
 	}
 
+	free(htab->nodes);
 	free(htab);
 }
 
 int htab_add(tvm_htab_t* htab, const char* k, int v)
 {
-	int hash = htab_hash(k);
+	int hash = htab_hash(k, htab->size);
+	tvm_htable_node_t *node = htab->nodes[hash];
+	tvm_htable_node_t *prev = NULL;
 
-	/* If the node is not already occupied, allocate space, and copy the key/value pair. */
-	if(htab->nodes[hash] == NULL) htab->nodes[hash] = calloc(1, sizeof(tvm_htable_node_t));
-	else return 1;
+	if(node)
+	{
+		while(node->next)
+			node = node->next;
 
-	htab->nodes[hash]->key = (char*)malloc(sizeof(char) * (strlen(k) + 1));
+		prev = node;
+		node = node->next;
+	}
 
-	strcpy(htab->nodes[hash]->key, k);
-	htab->nodes[hash]->value = v;
+	/* Allocate space, and copy the key/value pair. */
+
+	node = calloc(1, sizeof(tvm_htable_node_t));
+
+	node->key = (char*)malloc(sizeof(char) * (strlen(k) + 1));
+	strcpy(node->key, k);
+
+	node->value = v;
+
+	if(prev)
+		prev->next = node;
+	else
+		htab->nodes[hash] = node;	/* root node */
+
+	node->next = NULL;
+
+	/* Increase bucket count and rehash if the 
+	   load factor is too high */
+	if((float)++htab->num_nodes / htab->size > 0.7)
+		htab_rehash(htab, htab->num_nodes * 2);
 
 	return 0;
 }
 
 int htab_find(tvm_htab_t* htab, const char* key)
 {
-	int hash = htab_hash(key);
+	int hash = htab_hash(key, htab->size);
+	tvm_htable_node_t *node = htab->nodes[hash];	
 
-	if(htab->nodes[hash] != NULL) return htab->nodes[hash]->value;
-	else return -1;
+	while(node)
+	{
+		if(!strcmp(node->key, key))
+			return node->value;
+		node = node->next;
+	}
+
+	return -1;
 }
 
-unsigned int htab_hash(const char* k)
+unsigned int htab_hash(const char* k, const unsigned int size)
 {
 	unsigned int hash = 1;
 
 	char* c; for(c = (char*)k; *c; c++)
 		hash += (hash << *c) - *c;
 
-	return hash % HTAB_SIZE;
+	return hash % size;
 }
