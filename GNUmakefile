@@ -1,11 +1,11 @@
-CC = gcc
+CC = clang
 AS = as
 
-CFLAGS = -Wall -pipe -std=c99 -Iinclude/
+CFLAGS = -Wall -pipe -Iinclude/ -std=c99
 OFLAGS = 
 LFLAGS = $(CFLAGS) -Llib/
 ASFLAGS =
-PEDANTIC_FLAGS = -ansi -pedantic -pedantic-errors
+PEDANTIC_FLAGS = -Werror -pedantic -pedantic-errors
 
 LIBTVM_SOURCES = $(wildcard libtvm/*.c)
 LIBTVM_OBJECTS = $(LIBTVM_SOURCES:.c=.o)
@@ -21,12 +21,14 @@ INSTALL_PREFIX = /usr/
 
 DEBUG = no
 PROFILE = no
-PEDANTIC = no
+PEDANTIC = yes
 OPTIMIZATION = -O3
+
+PROFILER = operf
+PROF_ARGS = "programs/euler/euler7.vm"
 
 ifeq ($(DEBUG), yes)
 	CFLAGS += -g
-	OPTIMIZATION = -O0
 endif
 
 ifeq ($(PROFILE), yes)
@@ -61,6 +63,9 @@ tvmi: libtvm
 tdb: libtvm $(TDB_OBJECTS)
 	$(CC) $(LFLAGS) $(TDB_OBJECTS) -ltvm -o $(BIN_DIR)/tdb
 
+profile: tvmi
+	time $(PROFILER) $(BIN_DIR)/tvmi $(PROF_ARGS)
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -71,3 +76,4 @@ rebuild: clean all
 
 .PHONY : clean
 .SILENT : clean
+.NOTPARALLEL : clean
