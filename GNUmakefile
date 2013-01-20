@@ -1,7 +1,7 @@
 CC = gcc
 AS = as
 
-CFLAGS = -Wall -pipe -Iinclude/
+CFLAGS = -Wall -pipe -std=c99 -Iinclude/
 OFLAGS = 
 LFLAGS = $(CFLAGS) -Llib/
 ASFLAGS =
