@@ -3,7 +3,7 @@
 
 #include <tvm/tvm_hashtab.h>
 
-tvm_htab_t *create_htab()
+tvm_htab_t *htab_create()
 {
 	tvm_htab_t *htab = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
 	htab->size = HTAB_SIZE;
@@ -12,7 +12,7 @@ tvm_htab_t *create_htab()
 	return htab;
 }
 
-void destroy_htab(tvm_htab_t *htab)
+void htab_destroy(tvm_htab_t *htab)
 {
 	int i;
 	tvm_htable_node_t *node, *next;

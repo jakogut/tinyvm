@@ -5,7 +5,7 @@
 
 #define NUM_REGISTERS 17
 
-tvm_memory_t *create_memory(size_t size)
+tvm_memory_t *memory_create(size_t size)
 {
 	tvm_memory_t *m =  (tvm_memory_t *)calloc(1, sizeof(tvm_memory_t));
 
@@ -17,7 +17,7 @@ tvm_memory_t *create_memory(size_t size)
 	return m;
 }
 
-void destroy_memory(tvm_memory_t *m)
+void memory_destroy(tvm_memory_t *m)
 {
 	free(m->mem_space);
 	free(m->registers);

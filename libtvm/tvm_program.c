@@ -13,18 +13,18 @@ static int parse_instructions(tvm_program_t *p, const char ***tokens, tvm_memory
 static int *token_to_register(const char *token, tvm_memory_t *pMemory);
 static int instr_to_opcode(const char *instr);
 
-tvm_program_t *create_program()
+tvm_program_t *program_create()
 {
 	tvm_program_t *p = (tvm_program_t *)calloc(1, sizeof(tvm_program_t));
-	p->label_htab = create_htab();
+	p->label_htab = htab_create();
 
 	return p;
 }
 
-void destroy_program(tvm_program_t *p)
+void program_destroy(tvm_program_t *p)
 {
 	int i = 0;
-	destroy_htab(p->label_htab);
+	htab_destroy(p->label_htab);
 
 	if(p->values)
 	{
@@ -42,7 +42,7 @@ void destroy_program(tvm_program_t *p)
 	free(p);
 }
 
-int interpret_program(tvm_program_t *p, char *filename, tvm_memory_t *pMemory)
+int program_interpret(tvm_program_t *p, char *filename, tvm_memory_t *pMemory)
 {
 	int i;
 	FILE *pFile = NULL;

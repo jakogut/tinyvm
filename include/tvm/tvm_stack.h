@@ -7,7 +7,7 @@
 
 /* Initialize our stack by setting the base pointer and stack pointer */
 
-inline void create_stack(tvm_memory_t *mem, size_t size)
+inline void stack_create(tvm_memory_t *mem, size_t size)
 {
 	mem->registers[0x7].i32_ptr = ((int32_t *)mem->mem_space) + (size / sizeof(int32_t));
 	mem->registers[0x6].i32_ptr = mem->registers[0x7].i32_ptr;

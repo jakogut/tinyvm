@@ -38,7 +38,7 @@ typedef struct
 	tvm_register_t *registers;
 } tvm_memory_t;
 
-tvm_memory_t *create_memory(size_t size);
-void destroy_memory(tvm_memory_t *mem);
+tvm_memory_t *memory_create(size_t size);
+void memory_destroy(tvm_memory_t *mem);
 
 #endif
