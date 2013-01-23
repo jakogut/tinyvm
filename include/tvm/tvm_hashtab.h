@@ -6,22 +6,22 @@
 
 typedef struct tvm_htable_node_s
 {
-	char* key;
+	char *key;
 	int value;
-	struct tvm_htable_node_s* next;
+	struct tvm_htable_node_s *next;
 } tvm_htable_node_t;
 
 typedef struct tvm_htab_s
 {
 	unsigned int num_nodes;
 	unsigned int size;
-	tvm_htable_node_t** nodes;
+	tvm_htable_node_t **nodes;
 } tvm_htab_t;
 
 tvm_htab_t* create_htab();
-void destroy_htab(tvm_htab_t* htab);
+void destroy_htab(tvm_htab_t *htab);
 
-int htab_add(tvm_htab_t* htab, const char* key, int value);
-int htab_find(tvm_htab_t* htab, const char* key);
+int htab_add(tvm_htab_t *htab, const char *key, int value);
+int htab_find(tvm_htab_t *htab, const char *key);
 
 #endif

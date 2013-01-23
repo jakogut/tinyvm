@@ -3,16 +3,16 @@
 
 #include <tvm/tvm_hashtab.h>
 
-tvm_htab_t* create_htab()
+tvm_htab_t *create_htab()
 {
 	tvm_htab_t *htab = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
 	htab->size = HTAB_SIZE;
-	htab->nodes = (tvm_htable_node_t**)calloc(htab->size, sizeof(tvm_htable_node_t *));
+	htab->nodes = (tvm_htable_node_t **)calloc(htab->size, sizeof(tvm_htable_node_t *));
 	htab->num_nodes = 0;
 	return htab;
 }
 
-void destroy_htab(tvm_htab_t* htab)
+void destroy_htab(tvm_htab_t *htab)
 {
 	int i;
 	tvm_htable_node_t *node, *next;
@@ -33,24 +33,24 @@ void destroy_htab(tvm_htab_t* htab)
 	free(htab);
 }
 
-static inline unsigned htab_hash(const char* k, const unsigned int size)
+static inline unsigned htab_hash(const char *k, const unsigned int size)
 {
 	unsigned int hash = 1;
 
-	char* c; for(c = (char*)k; *c; c++)
+	char *c; for(c = (char*)k; *c; c++)
 		hash += (hash << *c) - *c;
 
 	return hash % size;
 }
 
-static void htab_rehash(tvm_htab_t* orig, unsigned int size)
+static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 {
 	int i;
 	tvm_htable_node_t *node, *next;
 	tvm_htab_t *new;
 
 	new = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
-	new->nodes = (tvm_htable_node_t**)calloc(size, sizeof(tvm_htable_node_t *));
+	new->nodes = (tvm_htable_node_t **)calloc(size, sizeof(tvm_htable_node_t *));
 	new->size = size;
 	new->num_nodes = 0;
 
@@ -80,7 +80,7 @@ static void htab_rehash(tvm_htab_t* orig, unsigned int size)
 	free(new);
 }
 
-int htab_add(tvm_htab_t* htab, const char* k, int v)
+int htab_add(tvm_htab_t *htab, const char *k, int v)
 {
 	int hash = htab_hash(k, htab->size);
 	tvm_htable_node_t *node = htab->nodes[hash];
@@ -99,7 +99,7 @@ int htab_add(tvm_htab_t* htab, const char* k, int v)
 
 	node = calloc(1, sizeof(tvm_htable_node_t));
 
-	node->key = (char*)malloc(sizeof(char) * (strlen(k) + 1));
+	node->key = (char *)malloc(sizeof(char) * (strlen(k) + 1));
 	strcpy(node->key, k);
 
 	node->value = v;
@@ -119,7 +119,7 @@ int htab_add(tvm_htab_t* htab, const char* k, int v)
 	return 0;
 }
 
-int htab_find(tvm_htab_t* htab, const char* key)
+int htab_find(tvm_htab_t *htab, const char *key)
 {
 	int hash = htab_hash(key, htab->size);
 	tvm_htable_node_t *node = htab->nodes[hash];

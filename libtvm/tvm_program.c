@@ -2,26 +2,26 @@
 #include <tvm/tvm_program.h>
 #include <tvm/tvm_lexer.h>
 
-const char* tvm_opcode_map[] = {"nop", "int", "mov", "push", "pop", "pushf", "popf", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
+const char *tvm_opcode_map[] = {"nop", "int", "mov", "push", "pop", "pushf", "popf", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
 				"not", "xor", "or", "and", "shl", "shr", "cmp", "jmp", "call", "ret", "je", "jne", "jg", "jge", "jl", "jle", "prn", 0};
 
-const char* tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", "r08", "r09", "r10", "r11", "r12", "r13", "r14", "r15", 0};
+const char *tvm_register_map[] = {"eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp", "eip", "r08", "r09", "r10", "r11", "r12", "r13", "r14", "r15", 0};
 
-static int parse_labels(tvm_program_t* p, const char*** tokens);
-static int parse_instructions(tvm_program_t* p, const char*** tokens, tvm_memory_t* pMemory);
+static int parse_labels(tvm_program_t *p, const char ***tokens);
+static int parse_instructions(tvm_program_t *p, const char ***tokens, tvm_memory_t *pMemory);
 
-static int* token_to_register(const char* token, tvm_memory_t* pMemory);
-static int instr_to_opcode(const char* instr);
+static int *token_to_register(const char *token, tvm_memory_t *pMemory);
+static int instr_to_opcode(const char *instr);
 
-tvm_program_t* create_program()
+tvm_program_t *create_program()
 {
-	tvm_program_t* p = (tvm_program_t*)calloc(1, sizeof(tvm_program_t));
+	tvm_program_t *p = (tvm_program_t *)calloc(1, sizeof(tvm_program_t));
 	p->label_htab = create_htab();
 
 	return p;
 }
 
-void destroy_program(tvm_program_t* p)
+void destroy_program(tvm_program_t *p)
 {
 	int i = 0;
 	destroy_htab(p->label_htab);
@@ -42,15 +42,15 @@ void destroy_program(tvm_program_t* p)
 	free(p);
 }
 
-int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
+int interpret_program(tvm_program_t *p, char *filename, tvm_memory_t *pMemory)
 {
 	int i;
-	FILE* pFile = NULL;
+	FILE *pFile = NULL;
 
 	int source_length = 0;
-	char* source = NULL;
+	char *source = NULL;
 
-	tvm_lexer_t* lexer = NULL;
+	tvm_lexer_t *lexer = NULL;
 
 	/* Attempt to open the file. If the file cannot be opened, try once more. */
 	if(filename)
@@ -74,17 +74,17 @@ int interpret_program(tvm_program_t* p, char* filename, tvm_memory_t* pMemory)
 	free(source);
 	fclose(pFile);
 
-	if(parse_labels(p, (const char***)lexer->tokens) != 0)
+	if(parse_labels(p, (const char ***)lexer->tokens) != 0)
 		return 1;
 
-	if(parse_instructions(p, (const char***)lexer->tokens, pMemory) != 0)
+	if(parse_instructions(p, (const char ***)lexer->tokens, pMemory) != 0)
 		return 1;
 
 	lexer_destroy(lexer);
 	return 0;
 }
 
-int parse_labels(tvm_program_t* p, const char*** tokens)
+int parse_labels(tvm_program_t *p, const char ***tokens)
 {
 	int i, num_instructions = 0;
 	for(i = 0; tokens[i]; i++)
@@ -92,7 +92,7 @@ int parse_labels(tvm_program_t* p, const char*** tokens)
 		int token_idx, valid_instruction = 0;
 		for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 		{
-			char* label_delimiter;
+			char *label_delimiter;
 
 			/* If the token is empty, or non-existent, skip it */
 			if(!tokens[i][token_idx]) continue;
@@ -132,16 +132,16 @@ int parse_labels(tvm_program_t* p, const char*** tokens)
 	return 0;
 }
 
-int parse_instructions(tvm_program_t* p, const char*** tokens, tvm_memory_t* pMemory)
+int parse_instructions(tvm_program_t *p, const char ***tokens, tvm_memory_t *pMemory)
 {
 	int line_idx;
 	for(line_idx = 0; tokens[line_idx]; line_idx++)
 	{
-		p->instr = (int*)realloc(p->instr, sizeof(int) * (line_idx + 2));
+		p->instr = (int *)realloc(p->instr, sizeof(int) * (line_idx + 2));
 		p->instr[line_idx] = 0;
 
-		p->args = (int***)realloc(p->args, sizeof(int**) * (line_idx + 2));
-		p->args[line_idx] = (int**)calloc(MAX_ARGS, sizeof(int*));
+		p->args = (int ***)realloc(p->args, sizeof(int **) * (line_idx + 2));
+		p->args[line_idx] = (int **)calloc(MAX_ARGS, sizeof(int *));
 
 		int token_idx;
 		for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
@@ -161,14 +161,13 @@ int parse_instructions(tvm_program_t* p, const char*** tokens, tvm_memory_t* pMe
 
 				for(i = ++token_idx; i < (token_idx + 2); ++i)
 				{
-					char* newline;
 					if(!tokens[line_idx][i] || strlen(tokens[line_idx][i]) <= 0) continue;
 
-					newline = strchr(tokens[line_idx][i], '\n');
+					char *newline = strchr(tokens[line_idx][i], '\n');
 					if(newline) *newline = 0;
 
 					/* Check to see if the token specifies a register */
-					int* pRegister = token_to_register(tokens[line_idx][i], pMemory);
+					int *pRegister = token_to_register(tokens[line_idx][i], pMemory);
 					if(pRegister)
 					{
 						p->args[num_instr][i - token_idx] = pRegister;
@@ -178,11 +177,11 @@ int parse_instructions(tvm_program_t* p, const char*** tokens, tvm_memory_t* pMe
 					/* Check to see whether the token specifies an address */
 					if(tokens[line_idx][i][0] == '[')
 					{
-						char* end_symbol = strchr(tokens[line_idx][i], ']');
+						char *end_symbol = strchr(tokens[line_idx][i], ']');
 						if(end_symbol)
 						{
 							*end_symbol = 0;
-							p->args[num_instr][i - token_idx] = &((int*)pMemory->mem_space)[tvm_parse_value(tokens[line_idx][i] + 1)];
+							p->args[num_instr][i - token_idx] = &((int *)pMemory->mem_space)[tvm_parse_value(tokens[line_idx][i] + 1)];
 
 							continue;
 						}
@@ -210,7 +209,7 @@ int parse_instructions(tvm_program_t* p, const char*** tokens, tvm_memory_t* pMe
 	return 0;
 }
 
-int* token_to_register(const char* token, tvm_memory_t* pMemory)
+int* token_to_register(const char *token, tvm_memory_t *pMemory)
 {
 	int i = 0;
 	while(tvm_register_map[i])
@@ -223,7 +222,7 @@ int* token_to_register(const char* token, tvm_memory_t* pMemory)
 	return NULL;
 }
 
-int instr_to_opcode(const char* instr)
+int instr_to_opcode(const char *instr)
 {
 	int i;
 	for(i = 0; tvm_opcode_map[i]; i++)
@@ -233,23 +232,23 @@ int instr_to_opcode(const char* instr)
 	return -1;
 }
 
-int* tvm_add_value(tvm_program_t* p, const int val)
+int *tvm_add_value(tvm_program_t *p, const int val)
 {
-	p->values = realloc(p->values, sizeof(int*) * (p->num_values + 1));
-	p->values[p->num_values] = (int*)calloc(1, sizeof(int));
+	p->values = realloc(p->values, sizeof(int *) * (p->num_values + 1));
+	p->values[p->num_values] = (int *)calloc(1, sizeof(int));
 
 	*p->values[p->num_values] = val;
 
 	return p->values[p->num_values++];
 }
 
-int tvm_parse_value(const char* str)
+int tvm_parse_value(const char *str)
 {
-	char* delimiter = strchr(str, '|'), base = 0;
+	char *delimiter = strchr(str, '|'), base = 0;
 
 	if(delimiter)
 	{
-		char* identifier = delimiter + 1;
+		char *identifier = delimiter + 1;
 
 		switch(*identifier)
 		{

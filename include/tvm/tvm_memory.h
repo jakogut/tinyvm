@@ -9,7 +9,7 @@
 typedef union
 {
 	int32_t i32;
-	int32_t* i32_ptr;
+	int32_t *i32_ptr;
 
 	union
 	{
@@ -32,13 +32,13 @@ typedef struct
 	int FLAGS;
 	int remainder;
 
-	void* mem_space;
+	void *mem_space;
 	int mem_space_size;
 
-	tvm_register_t* registers;
+	tvm_register_t *registers;
 } tvm_memory_t;
 
-tvm_memory_t* create_memory(size_t size);
-void destroy_memory(tvm_memory_t* mem);
+tvm_memory_t *create_memory(size_t size);
+void destroy_memory(tvm_memory_t *mem);
 
 #endif
