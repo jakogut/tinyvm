@@ -24,6 +24,4 @@ void destroy_htab(tvm_htab_t* htab);
 int htab_add(tvm_htab_t* htab, const char* key, int value);
 int htab_find(tvm_htab_t* htab, const char* key);
 
-unsigned int htab_hash(const char* key, const unsigned int size);
-
 #endif

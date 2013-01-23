@@ -1,4 +1,4 @@
-CC = clang
+CC = gcc
 AS = as
 
 CFLAGS = -Wall -pipe -Iinclude/ -std=c99

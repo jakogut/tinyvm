@@ -12,7 +12,38 @@ tvm_htab_t* create_htab()
 	return htab;
 }
 
-void htab_rehash(tvm_htab_t* orig, unsigned int size)
+void destroy_htab(tvm_htab_t* htab)
+{
+	int i;
+	tvm_htable_node_t *node, *next;
+
+	for(i = 0; i < htab->size; i++)
+	{
+		node = htab->nodes[i];
+		while(node)
+		{
+			next = node->next;
+			free(node->key);
+			free(node);
+			node = next;
+		}
+	}
+
+	free(htab->nodes);
+	free(htab);
+}
+
+static inline unsigned htab_hash(const char* k, const unsigned int size)
+{
+	unsigned int hash = 1;
+
+	char* c; for(c = (char*)k; *c; c++)
+		hash += (hash << *c) - *c;
+
+	return hash % size;
+}
+
+static void htab_rehash(tvm_htab_t* orig, unsigned int size)
 {
 	int i;
 	tvm_htable_node_t *node, *next;
@@ -42,33 +73,11 @@ void htab_rehash(tvm_htab_t* orig, unsigned int size)
 	free(orig->nodes);
 
 	/* Transpose the new hash table's parameters
-	   on to the old one */	
+	   on to the old one */
 	orig->num_nodes = new->num_nodes;
 	orig->nodes = new->nodes;
 	orig->size = new->size;
-	
 	free(new);
-}
-
-void destroy_htab(tvm_htab_t* htab)
-{
-	int i;
-	tvm_htable_node_t *node, *next;
-
-	for(i = 0; i < htab->size; i++)
-	{
-		node = htab->nodes[i];
-		while(node)
-		{
-			next = node->next;
-			free(node->key);
-			free(node);
-			node = next;
-		}
-	}
-
-	free(htab->nodes);
-	free(htab);
 }
 
 int htab_add(tvm_htab_t* htab, const char* k, int v)
@@ -102,7 +111,7 @@ int htab_add(tvm_htab_t* htab, const char* k, int v)
 
 	node->next = NULL;
 
-	/* Increase bucket count and rehash if the 
+	/* Increase bucket count and rehash if the
 	   load factor is too high */
 	if((float)++htab->num_nodes / htab->size > 0.7)
 		htab_rehash(htab, htab->num_nodes * 2);
@@ -113,7 +122,7 @@ int htab_add(tvm_htab_t* htab, const char* k, int v)
 int htab_find(tvm_htab_t* htab, const char* key)
 {
 	int hash = htab_hash(key, htab->size);
-	tvm_htable_node_t *node = htab->nodes[hash];	
+	tvm_htable_node_t *node = htab->nodes[hash];
 
 	while(node)
 	{
@@ -125,12 +134,3 @@ int htab_find(tvm_htab_t* htab, const char* key)
 	return -1;
 }
 
-unsigned int htab_hash(const char* k, const unsigned int size)
-{
-	unsigned int hash = 1;
-
-	char* c; for(c = (char*)k; *c; c++)
-		hash += (hash << *c) - *c;
-
-	return hash % size;
-}
