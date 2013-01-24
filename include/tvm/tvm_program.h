@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "tvm_hashtab.h"
+#include "tvm_htab.h"
 #include "tvm_memory.h"
 
 typedef struct tvm_program_s

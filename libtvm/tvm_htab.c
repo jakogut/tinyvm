@@ -1,13 +1,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <tvm/tvm_hashtab.h>
+#include <tvm/tvm_htab.h>
 
 tvm_htab_t *htab_create()
 {
 	tvm_htab_t *htab = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
 	htab->size = HTAB_SIZE;
-	htab->nodes = (tvm_htable_node_t **)calloc(htab->size, sizeof(tvm_htable_node_t *));
+	htab->nodes = (tvm_htab_node_t **)calloc(htab->size, sizeof(tvm_htab_node_t *));
 	htab->num_nodes = 0;
 	return htab;
 }
@@ -15,7 +15,7 @@ tvm_htab_t *htab_create()
 void htab_destroy(tvm_htab_t *htab)
 {
 	int i;
-	tvm_htable_node_t *node, *next;
+	tvm_htab_node_t *node, *next;
 
 	for(i = 0; i < htab->size; i++)
 	{
@@ -46,11 +46,11 @@ static inline unsigned htab_hash(const char *k, const unsigned int size)
 static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 {
 	int i;
-	tvm_htable_node_t *node, *next;
+	tvm_htab_node_t *node, *next;
 	tvm_htab_t *new;
 
 	new = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
-	new->nodes = (tvm_htable_node_t **)calloc(size, sizeof(tvm_htable_node_t *));
+	new->nodes = (tvm_htab_node_t **)calloc(size, sizeof(tvm_htab_node_t *));
 	new->size = size;
 	new->num_nodes = 0;
 
@@ -83,8 +83,8 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 int htab_add(tvm_htab_t *htab, const char *k, int v)
 {
 	int hash = htab_hash(k, htab->size);
-	tvm_htable_node_t *node = htab->nodes[hash];
-	tvm_htable_node_t *prev = NULL;
+	tvm_htab_node_t *node = htab->nodes[hash];
+	tvm_htab_node_t *prev = NULL;
 
 	if(node)
 	{
@@ -97,7 +97,7 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 
 	/* Allocate space, and copy the key/value pair. */
 
-	node = calloc(1, sizeof(tvm_htable_node_t));
+	node = calloc(1, sizeof(tvm_htab_node_t));
 
 	node->key = (char *)malloc(sizeof(char) * (strlen(k) + 1));
 	strcpy(node->key, k);
@@ -122,7 +122,7 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 int htab_find(tvm_htab_t *htab, const char *key)
 {
 	int hash = htab_hash(key, htab->size);
-	tvm_htable_node_t *node = htab->nodes[hash];
+	tvm_htab_node_t *node = htab->nodes[hash];
 
 	while(node)
 	{

@@ -1,21 +1,21 @@
-#ifndef TVM_HASHTAB_H_
-#define TVM_HASHTAB_H_
+#ifndef TVM_HTAB_H_
+#define TVM_HTAB_H_
 
 #define KEY_LENGTH 64
 #define HTAB_SIZE 4096
 
-typedef struct tvm_htable_node_s
+typedef struct tvm_htab_node_s
 {
 	char *key;
 	int value;
-	struct tvm_htable_node_s *next;
-} tvm_htable_node_t;
+	struct tvm_htab_node_s *next;
+} tvm_htab_node_t;
 
 typedef struct tvm_htab_s
 {
 	unsigned int num_nodes;
 	unsigned int size;
-	tvm_htable_node_t **nodes;
+	tvm_htab_node_t **nodes;
 } tvm_htab_t;
 
 tvm_htab_t* htab_create();
