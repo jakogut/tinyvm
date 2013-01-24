@@ -1,8 +1,11 @@
 
 # This algorithm was copied from an x86 solution to the first Project Euler problem.
 # It was authored by rayfil.
-
-# http://projecteuler.net/index.php?section=forum&id=14
+#
+# http://projecteuler.net/thread=1
+#
+# Note that the problem has been extended to find all multiples under 1 million.
+# This is to make the execution time more significant and measurable.
 
 # Specify a label named "start," and it will become the entrypoint for the program.
 
