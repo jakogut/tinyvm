@@ -20,7 +20,6 @@ PROGRAM_DIR = programs
 INSTALL_PREFIX = /usr/
 
 DEBUG = no
-PROFILE = no
 PEDANTIC = yes
 OPTIMIZATION = -O3
 
@@ -29,10 +28,8 @@ PROF_ARGS = "programs/euler/euler7.vm"
 
 ifeq ($(DEBUG), yes)
 	CFLAGS += -g
-endif
-
-ifeq ($(PROFILE), yes)
-	CFLAGS += -pg
+else
+	CFLAGS += -s
 endif
 
 ifeq ($(PEDANTIC), yes)
