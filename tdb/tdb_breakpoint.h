@@ -7,7 +7,7 @@
 typedef struct tdb_breakpoint_s
 {
 	int address;
-	char* label;
+	char *label;
 
 	int type;
 
