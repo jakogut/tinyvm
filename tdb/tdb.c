@@ -35,7 +35,8 @@ void tdb_shell(tvm_t *vm)
 
 		for(i = 0; i < MAX_TOKENS; i++) memset(tokens[i], 0, TOKEN_LENGTH);
 
-		fgets(str, MAX_INPUT_LENGTH, stdin);
+		if (!fgets(str, MAX_INPUT_LENGTH, stdin))
+			break;
 		tokenize(str, (char **)tokens);
 
 		switch(cmd_to_idx(tokens[0]))
