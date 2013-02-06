@@ -86,14 +86,12 @@ int program_interpret(tvm_program_t *p, char *filename, tvm_memory_t *pMemory)
 
 int parse_labels(tvm_program_t *p, const char ***tokens)
 {
-	int i, num_instructions = 0;
-	for(i = 0; tokens[i]; i++)
+	int num_instructions = 0;
+	for(int i = 0; tokens[i]; i++)
 	{
-		int token_idx, valid_instruction = 0;
-		for(token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
+		int valid_instruction = 0;
+		for(int token_idx = 0; token_idx < MAX_TOKENS; token_idx++)
 		{
-			char *label_delimiter;
-
 			/* If the token is empty, or non-existent, skip it */
 			if(!tokens[i][token_idx]) continue;
 
@@ -101,28 +99,24 @@ int parse_labels(tvm_program_t *p, const char ***tokens)
 			if(instr_to_opcode(tokens[i][token_idx]) != -1) valid_instruction = 1;
 
 			/* Figure out if the token we're dealing with has a label delimiter */
-			label_delimiter = strchr(tokens[i][token_idx], ':');
+			char* label_delimiter = strchr(tokens[i][token_idx], ':');
+			if(label_delimiter == NULL) continue;
 
-			if(label_delimiter != NULL)
+			*label_delimiter = 0;
+
+			/* If the label is "start," set the program to begin there */
+			if(strcmp(tokens[i][token_idx], "start") == 0) p->start = num_instructions;
+
+			/* Check if the label already exists */
+			if(htab_find(p->label_htab, tokens[i][token_idx]) != -1)
 			{
-				*label_delimiter = 0;
-
-				/* If the label is "start," set the program to begin there */
-				if(strcmp(tokens[i][token_idx], "start") == 0) p->start = num_instructions;
-
-				/* Check if the label already exists */
-				if(htab_find(p->label_htab, tokens[i][token_idx]) != -1)
-				{
-					printf("Label '%s' defined twice\n", tokens[i][token_idx]);
-					return 1;
-				}
-				else
-				{
-					/* Add that fucker to the hash table with the corresponding instruction index */
-					htab_add(p->label_htab, tokens[i][token_idx], num_instructions);
-				}
-
-				continue;
+				printf("Label '%s' defined twice\n", tokens[i][token_idx]);
+				return 1;
+			}
+			else
+			{
+				/* Add that fucker to the hash table with the corresponding instruction index */
+				htab_add(p->label_htab, tokens[i][token_idx], num_instructions);
 			}
 		}
 
@@ -153,52 +147,51 @@ int parse_instructions(tvm_program_t *p, const char ***tokens, tvm_memory_t *pMe
 
 			opcode = instr_to_opcode(tokens[line_idx][token_idx]);
 
-			/* If it *is* an opcode, parse the arguments */
-			if(opcode != -1)
+			/* If it *isn't* an opcode, skip trying to parse arguments */
+			if(opcode == -1) continue;
+
+			int i, instr_idx = 0, num_instr = p->num_instructions;
+			p->instr[p->num_instructions++] = opcode;
+
+			for(i = ++token_idx; i < (token_idx + 2); ++i)
 			{
-				int i, instr_idx = 0, num_instr = p->num_instructions;
-				p->instr[p->num_instructions++] = opcode;
+				if(!tokens[line_idx][i] || strlen(tokens[line_idx][i]) <= 0) continue;
 
-				for(i = ++token_idx; i < (token_idx + 2); ++i)
+				char *newline = strchr(tokens[line_idx][i], '\n');
+				if(newline) *newline = 0;
+
+				/* Check to see if the token specifies a register */
+				int *pRegister = token_to_register(tokens[line_idx][i], pMemory);
+				if(pRegister)
 				{
-					if(!tokens[line_idx][i] || strlen(tokens[line_idx][i]) <= 0) continue;
-
-					char *newline = strchr(tokens[line_idx][i], '\n');
-					if(newline) *newline = 0;
-
-					/* Check to see if the token specifies a register */
-					int *pRegister = token_to_register(tokens[line_idx][i], pMemory);
-					if(pRegister)
-					{
-						p->args[num_instr][i - token_idx] = pRegister;
-						continue;
-					}
-
-					/* Check to see whether the token specifies an address */
-					if(tokens[line_idx][i][0] == '[')
-					{
-						char *end_symbol = strchr(tokens[line_idx][i], ']');
-						if(end_symbol)
-						{
-							*end_symbol = 0;
-							p->args[num_instr][i - token_idx] = &((int *)pMemory->mem_space)[tvm_parse_value(tokens[line_idx][i] + 1)];
-
-							continue;
-						}
-					}
-
-					/* Check if the argument is a label */
-					instr_idx = htab_find(p->label_htab, tokens[line_idx][i]);
-
-					if(instr_idx >= 0)
-					{
-						p->args[num_instr][i - token_idx] = tvm_add_value(p, instr_idx);
-						continue;
-					}
-
-					/* Fuck it, parse it as a value */
-					p->args[num_instr][i - token_idx] = tvm_add_value(p, tvm_parse_value(tokens[line_idx][i]));
+					p->args[num_instr][i - token_idx] = pRegister;
+					continue;
 				}
+
+				/* Check to see whether the token specifies an address */
+				if(tokens[line_idx][i][0] == '[')
+				{
+					char *end_symbol = strchr(tokens[line_idx][i], ']');
+					if(end_symbol)
+					{
+						*end_symbol = 0;
+						p->args[num_instr][i - token_idx] = &((int *)pMemory->mem_space)[tvm_parse_value(tokens[line_idx][i] + 1)];
+
+						continue;
+					}
+				}
+
+				/* Check if the argument is a label */
+				instr_idx = htab_find(p->label_htab, tokens[line_idx][i]);
+
+				if(instr_idx >= 0)
+				{
+					p->args[num_instr][i - token_idx] = tvm_add_value(p, instr_idx);
+					continue;
+				}
+
+				/* Fuck it, parse it as a value */
+				p->args[num_instr][i - token_idx] = tvm_add_value(p, tvm_parse_value(tokens[line_idx][i]));
 			}
 		}
 	}
@@ -211,12 +204,10 @@ int parse_instructions(tvm_program_t *p, const char ***tokens, tvm_memory_t *pMe
 
 int* token_to_register(const char *token, tvm_memory_t *pMemory)
 {
-	int i = 0;
-	while(tvm_register_map[i])
+	for(int i = -; tvm_register_map[i]; i++)
 	{
 		if(strcmp(token, tvm_register_map[i]) == 0)
 			return &pMemory->registers[i].i32;
-		i++;
 	}
 
 	return NULL;
@@ -224,8 +215,7 @@ int* token_to_register(const char *token, tvm_memory_t *pMemory)
 
 int instr_to_opcode(const char *instr)
 {
-	int i;
-	for(i = 0; tvm_opcode_map[i]; i++)
+	for(int i = 0; tvm_opcode_map[i]; i++)
 		if(strcmp(instr, tvm_opcode_map[i]) == 0)
 			return i;
 

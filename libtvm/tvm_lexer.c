@@ -11,13 +11,12 @@ tvm_lexer_t *lexer_create()
 
 void lexer_destroy(tvm_lexer_t *lexer)
 {
-	int i, j;
-	for(i = 0; lexer->source_lines[i]; i++) free(lexer->source_lines[i]);
+	for(int i = 0; lexer->source_lines[i]; i++) free(lexer->source_lines[i]);
 	free(lexer->source_lines);
 
-	for(i = 0; lexer->tokens[i]; i++)
+	for(int i = 0; lexer->tokens[i]; i++)
 	{
-		for(j = 0; j < MAX_TOKENS; j++)
+		for(int j = 0; j < MAX_TOKENS; j++)
 			free(lexer->tokens[i][j]);
 
 		free(lexer->tokens[i]);
@@ -35,15 +34,13 @@ void lex(tvm_lexer_t *lexer, char *source)
 	/* Split the source into individual lines */
 	for(i = 0; pLine; i++)
 	{
-		char *comment_delimiter;
-
 		lexer->source_lines = (char **)realloc(lexer->source_lines, sizeof(char *) * (i + 2));
 		lexer->source_lines[i] = (char *)calloc(1, strlen(pLine) + 1);
 
 		strcpy(lexer->source_lines[i], pLine);
 
 		/* Ignore comments delimited by '#' */
-		comment_delimiter = strchr(lexer->source_lines[i], '#');
+		char* comment_delimiter = strchr(lexer->source_lines[i], '#');
 
 		if(comment_delimiter) *comment_delimiter = 0;
 
