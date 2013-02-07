@@ -6,6 +6,7 @@
 #include "tvm_memory.h"
 #include "tvm_program.h"
 #include "tvm_stack.h"
+#include "tvm_parser.h"
 
 typedef struct tvm_s
 {

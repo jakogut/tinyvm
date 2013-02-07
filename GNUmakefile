@@ -1,10 +1,8 @@
 CC = gcc
-AS = as
 
 CFLAGS = -Wall -pipe -Iinclude/ -std=c99
 OFLAGS = 
 LFLAGS = $(CFLAGS) -Llib/
-ASFLAGS =
 PEDANTIC_FLAGS = -Werror -pedantic -pedantic-errors
 
 LIBTVM_SOURCES = $(wildcard libtvm/*.c)

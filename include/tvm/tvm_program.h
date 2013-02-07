@@ -32,7 +32,7 @@ int program_interpret(tvm_program_t *p, char *filename, tvm_memory_t *pMemory);
 
 void program_destroy(tvm_program_t *p);
 
-int *tvm_add_value(tvm_program_t *p, const int val);
-int tvm_parse_value(const char *str);
+//int *tvm_add_value(tvm_program_t *p, const int val);
+//int tvm_parse_value(const char *str);
 
 #endif
