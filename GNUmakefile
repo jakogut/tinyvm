@@ -22,7 +22,7 @@ PEDANTIC = yes
 OPTIMIZATION = -O3
 
 PROFILER = operf
-PROF_ARGS = "programs/euler/euler7.vm"
+PROF_ARGS = "programs/tinyvm/euler/euler7.vm"
 
 ifeq ($(DEBUG), yes)
 	CFLAGS += -g
