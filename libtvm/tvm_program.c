@@ -204,7 +204,7 @@ int parse_instructions(tvm_program_t *p, const char ***tokens, tvm_memory_t *pMe
 
 int* token_to_register(const char *token, tvm_memory_t *pMemory)
 {
-	for(int i = -; tvm_register_map[i]; i++)
+	for(int i = 0; tvm_register_map[i]; i++)
 	{
 		if(strcmp(token, tvm_register_map[i]) == 0)
 			return &pMemory->registers[i].i32;
