@@ -1,7 +1,8 @@
 #include <tvm/tvm_file.h>
 #include <tvm/tvm_program.h>
+#include <tvm/tvm_preprocessor.h>
 #include <tvm/tvm_lexer.h>
-#include "tvm/tvm_parser.h"
+#include <tvm/tvm_parser.h>
 
 tvm_program_t *program_create()
 {
@@ -41,17 +42,19 @@ int program_interpret(tvm_program_t *p, char *filename, tvm_memory_t *pMemory)
 		for(int i = 0; i < 2; i++)
 			if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
 
-	if(pFile) goto pi_lex;
+	if(pFile) goto pi_interpret;
 
 	printf("File was not found, or does not exist. Unable to interpret.\n");
 	return 1;
 
-pi_lex:
+pi_interpret:
 	source_length = tvm_flength(pFile);
 	char *source = calloc(source_length, sizeof(char));
 
 	tvm_fcopy(source, source_length, pFile);
 	fclose(pFile);
+
+	while(tvm_preprocess(source, &source_length));
 
 	tvm_lexer_t *lexer_ctx = lexer_create();
 	lex(lexer_ctx, source);

@@ -1,4 +1,5 @@
 #include <tvm/tvm_parser.h>
+#include <tvm/tvm_file.h>
 #include <tvm/tvm_lexer.h>
 
 const char *tvm_opcode_map[] = {"nop", "int", "mov", "push", "pop", "pushf", "popf", "inc", "dec", "add", "sub", "mul", "div", "mod", "rem",
