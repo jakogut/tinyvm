@@ -1,0 +1,8 @@
+%include print_eax.vm
+
+start:
+	mov eax, 42
+	call print_eax
+
+	mov eax, 23
+	call print_eax
