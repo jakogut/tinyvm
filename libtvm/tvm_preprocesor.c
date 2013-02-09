@@ -10,7 +10,7 @@ int tvm_preprocess(char *src, int *src_len)
 	{
 		char *strbegin = pp_directive_delimiter, *strend = strchr(strbegin, '\n');
 
-		if(!strend || !strbegin)  goto pp_ret;
+		if(!strend || !strbegin)  return 0;
 
 		int linelen = strend - strbegin;
 		char* temp_str = calloc(linelen + 1, sizeof(char));
@@ -22,7 +22,7 @@ int tvm_preprocess(char *src, int *src_len)
 		if(!pFile)
 		{
 			printf("Unable to open file \"%s\"\n", filename);
-			goto pp_ret;
+			return 0;
 		}
 
 		free(temp_str);
@@ -49,6 +49,6 @@ int tvm_preprocess(char *src, int *src_len)
 		return 1;
 	}
 
-pp_ret:	return 0;
+	return 0;
 
 }
