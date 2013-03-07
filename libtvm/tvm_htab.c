@@ -3,9 +3,11 @@
 
 #include <tvm/tvm_htab.h>
 
+#define HTAB_LOAD_FACTOR 0.7
+
 tvm_htab_t *htab_create()
 {
-	tvm_htab_t *htab = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
+	tvm_htab_t *htab = (tvm_htab_t *)calloc(1, sizeof(tvm_htab_t));
 	htab->size = HTAB_SIZE;
 	htab->nodes = (tvm_htab_node_t **)calloc(htab->size, sizeof(tvm_htab_node_t *));
 	htab->num_nodes = 0;
@@ -49,7 +51,7 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 	tvm_htab_node_t *node, *next;
 	tvm_htab_t *new;
 
-	new = (tvm_htab_t *)malloc(sizeof(tvm_htab_t));
+	new = (tvm_htab_t *)calloc(1, sizeof(tvm_htab_t));
 	new->nodes = (tvm_htab_node_t **)calloc(size, sizeof(tvm_htab_node_t *));
 	new->size = size;
 	new->num_nodes = 0;
@@ -99,21 +101,19 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 
 	node = calloc(1, sizeof(tvm_htab_node_t));
 
-	node->key = (char *)malloc(sizeof(char) * (strlen(k) + 1));
+	node->key = (char *)calloc((strlen(k) + 1), sizeof(char));
 	strcpy(node->key, k);
 
 	node->value = v;
 
-	if(prev)
-		prev->next = node;
-	else
-		htab->nodes[hash] = node;	/* root node */
+	if(prev) prev->next = node;
+	else htab->nodes[hash] = node;	/* root node */
 
 	node->next = NULL;
 
 	/* Increase bucket count and rehash if the
 	   load factor is too high */
-	if((float)++htab->num_nodes / htab->size > 0.7)
+	if((float)(++htab->num_nodes / htab->size) > HTAB_LOAD_FACTOR)
 		htab_rehash(htab, htab->num_nodes * 2);
 
 	return 0;

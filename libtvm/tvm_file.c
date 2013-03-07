@@ -4,7 +4,7 @@ FILE *tvm_fopen(const char *filename, const char *extension, const char *mode)
 {
 	FILE *pFile = NULL;
 	size_t fname_chars = strlen(filename) + strlen(extension) + 1;
-	char *fname = malloc(sizeof(char) * fname_chars);
+	char *fname = calloc(fname_chars, sizeof(char));
 	int i;
 
 	strcpy(fname, filename);

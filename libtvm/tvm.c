@@ -2,7 +2,7 @@
 
 tvm_t *tvm_create(char *filename)
 {
-	tvm_t *vm = (tvm_t*)malloc(sizeof(tvm_t));
+	tvm_t *vm = (tvm_t*)calloc(1, sizeof(tvm_t));
 
 	vm->pMemory = memory_create(MIN_MEMORY_SIZE);
 	vm->pProgram = program_create();
