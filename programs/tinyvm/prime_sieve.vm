@@ -1,0 +1,44 @@
+# Written and contributed by "vokidas"
+
+	mov eax, 50000
+
+        mov ebx, eax
+fillStack:
+        cmp ebx, 1
+        jle walkStack
+        push ebx
+        dec ebx
+        jmp fillStack
+walkStack:
+        push 0          # align
+        push 0
+        mov edx, esp    # save esp
+outerLoop:
+        mov esp, edx
+        cmp ebx, eax
+        jge printPrimes
+        inc ebx
+        mov ecx, ebx
+        mul ecx, 4      # each int on stack is 4 bytes
+        add esp, ecx    # *esp is now ebx
+        pop r08
+        push r08
+        cmp r08, 0
+        je outerLoop    # already marked
+innerLoop:
+        add esp, ecx    # *esp is now (n * ebx)
+        cmp esp, ebp
+        jge outerLoop   # passed end of stack
+        pop r08
+        push 0          # mark as non-prime
+        jmp innerLoop
+printPrimes:
+        cmp esp, ebp
+        je end
+        pop eax
+        cmp eax, 0
+        je printPrimes
+        prn eax
+        jmp printPrimes
+
+end:
