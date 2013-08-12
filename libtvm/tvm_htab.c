@@ -113,7 +113,7 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 
 	/* Increase bucket count and rehash if the
 	   load factor is too high */
-	if((float)(++htab->num_nodes / htab->size) > HTAB_LOAD_FACTOR)
+	if((float)++htab->num_nodes / htab->size > HTAB_LOAD_FACTOR)
 		htab_rehash(htab, htab->num_nodes * 2);
 
 	return 0;
