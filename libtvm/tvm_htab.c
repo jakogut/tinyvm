@@ -74,11 +74,8 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 
 	free(orig->nodes);
 
-	/* Transpose the new hash table's parameters
-	   on to the old one */
-	orig->num_nodes = new->num_nodes;
-	orig->nodes = new->nodes;
-	orig->size = new->size;
+	/* Transpose the new hash table onto the old one */
+	memcpy(orig, new, sizeof(tvm_htab_t));
 	free(new);
 }
 
