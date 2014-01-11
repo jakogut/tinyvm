@@ -6,6 +6,7 @@ TODO:
 	- Move parsed TVM program code into the VM's virtual address space
 
 	(Advanced)
+	- Fix/refactor the debugger (it doesn't work)
 	- Interrupts
 	- SDL or GLFW based screen for outputting the contents of a framebuffer
 	- JIT compilation
