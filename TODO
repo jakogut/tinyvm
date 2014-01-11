@@ -1,0 +1,15 @@
+TODO:
+
+	(Basic)
+	- Implement defining bytes/words/dwords
+	- Add C style defines to preprocessor
+	- Move parsed TVM program code into the VM's virtual address space
+
+	(Advanced)
+	- Interrupts
+	- SDL or GLFW based screen for outputting the contents of a framebuffer
+	- JIT compilation
+	- C interface
+	- C Library written in TVM code
+
+Please send patches to Joseph Kogut <joseph.kogut@gmail.com>
