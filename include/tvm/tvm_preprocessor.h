@@ -1,6 +1,8 @@
 #ifndef TVM_PREPROCESSOR_H_
 #define TVM_PREPROCESSOR_H_
 
-int tvm_preprocess(char *src, int *src_len);
+#include "tvm_htab.h"
+
+int tvm_preprocess(char *src, int *src_len, tvm_htab_t *htab);
 
 #endif
