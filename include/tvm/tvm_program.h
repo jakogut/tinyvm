@@ -20,6 +20,8 @@ typedef struct tvm_program_s
 	int **values;
 	int num_values;
 
+	tvm_htab_t *define_htab;
+
 	tvm_htab_t *label_htab;
 
 } tvm_program_t;

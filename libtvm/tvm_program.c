@@ -8,6 +8,7 @@ tvm_program_t *program_create()
 {
 	tvm_program_t *p = (tvm_program_t *)calloc(1, sizeof(tvm_program_t));
 	p->label_htab = htab_create();
+	p->define_htab = htab_create();
 
 	return p;
 }
@@ -15,6 +16,7 @@ tvm_program_t *program_create()
 void program_destroy(tvm_program_t *p)
 {
 	htab_destroy(p->label_htab);
+	htab_destroy(p->define_htab);
 
 	if(p->values)
 	{
@@ -54,7 +56,7 @@ pi_interpret:
 	tvm_fcopy(source, source_length, pFile);
 	fclose(pFile);
 
-	while(tvm_preprocess(source, &source_length));
+	while(tvm_preprocess(source, &source_length, p->define_htab));
 
 	tvm_lexer_t *lexer_ctx = lexer_create();
 	lex(lexer_ctx, source);
