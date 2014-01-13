@@ -15,6 +15,7 @@ tvm_program_t *program_create()
 void program_destroy(tvm_program_t *p)
 {
 	htab_destroy(p->label_htab);
+	tvm_tree_destroy(p->defines);
 
 	if(p->values)
 	{
@@ -54,7 +55,7 @@ pi_interpret:
 	tvm_fcopy(source, source_length, pFile);
 	fclose(pFile);
 
-	while(tvm_preprocess(source, &source_length));
+	while(tvm_preprocess(source, &source_length, &p->defines));
 
 	tvm_lexer_t *lexer_ctx = lexer_create();
 	lex(lexer_ctx, source);
