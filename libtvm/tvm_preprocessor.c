@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-int tvm_preprocess(char *src, int *src_len, tvm_tree_t **node)
+int tvm_preprocess(char *src, int *src_len)
 {
 	char* pp_directive_delimiter = NULL;
 	if((pp_directive_delimiter = strstr(src, "%include")))
@@ -82,18 +82,6 @@ int tvm_preprocess(char *src, int *src_len, tvm_tree_t **node)
 		if(!keystr || !valstr)
 		{
 			printf("Define missing arguments.\n");
-			return -1;
-		}
-
-		int err = 0;
-		if(!*node)
-			*node = tvm_tree_create(*node, keystr, valstr, strlen(valstr));
-		else
-			err = tvm_tree_add(*node, keystr, valstr, strlen(valstr));
-
-		if(err == 2)
-		{
-			printf("Multiple definitions for %s.\n", keystr);
 			return -1;
 		}
 

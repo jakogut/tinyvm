@@ -55,14 +55,14 @@ pi_interpret:
 	fclose(pFile);
 
 	int err = 0;
-	while((err = tvm_preprocess(source, &source_length, &p->defines)) > 0);
+	while((err = tvm_preprocess(source, &source_length)) > 0);
 
 	/* The preprocessor encountered a problem. */
 	if (err < 0)
 		return 1;
 
 	tvm_lexer_t *lexer_ctx = lexer_create();
-	lex(lexer_ctx, source, &p->defines);
+	lex(lexer_ctx, source);
 	free(source);
 
 	if(parse_labels(p, (const char ***)lexer_ctx->tokens) != 0) return 1;

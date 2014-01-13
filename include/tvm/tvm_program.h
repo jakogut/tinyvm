@@ -7,7 +7,6 @@
 
 #include "tvm_htab.h"
 #include "tvm_memory.h"
-#include "tvm_tree.h"
 
 typedef struct tvm_program_s
 {
@@ -20,8 +19,6 @@ typedef struct tvm_program_s
 
 	int **values;
 	int num_values;
-
-	tvm_tree_t *defines;
 
 	tvm_htab_t *label_htab;
 
