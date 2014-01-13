@@ -60,13 +60,8 @@ void lex(tvm_lexer_t *lexer, char *source, tvm_htab_t *defines)
 
 		for(j = 0; (pToken && j < MAX_TOKENS); j++)
 		{
-			int hash;
-			char *token = pToken;
-
-			if((hash = htab_find(defines, pToken)) >= 0)
-			{
-				token = (char *)defines->nodes[hash]->valptr;
-			}
+			char *token = htab_find_str(defines, pToken);
+			token = token ? token : pToken;
 
 			lexer->tokens[i][j] = (char *)calloc(1, (strlen(token) + 1));
 			strcpy(lexer->tokens[i][j], token);

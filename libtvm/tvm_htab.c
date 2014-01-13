@@ -148,3 +148,17 @@ int htab_find(tvm_htab_t *htab, const char *key)
 	return -1;
 }
 
+char *htab_find_str(tvm_htab_t *htab, const char *key)
+{
+	int hash = htab_hash(key, htab->size);
+	tvm_htab_node_t *node = htab->nodes[hash];
+
+	while(node)
+	{
+		if(!strcmp(node->key, key))
+			return node->valptr;
+		node = node->next;
+	}
+
+	return NULL;
+}
