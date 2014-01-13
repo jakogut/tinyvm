@@ -87,14 +87,14 @@ void *tvm_tree_find(tvm_tree_t *node, const char *str)
 	return value;
 }
 
-void tvm_destroy(tvm_tree_t *node)
+void tvm_tree_destroy(tvm_tree_t *node)
 {
 	if(node)
 	{
 		if (node->right)
-			tvm_destroy(node->right);
+			tvm_tree_destroy(node->right);
 		if (node->left)
-			tvm_destroy(node->left);
+			tvm_tree_destroy(node->left);
 
 		free(node);
 	}
