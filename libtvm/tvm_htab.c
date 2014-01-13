@@ -127,7 +127,6 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 int htab_add_str(tvm_htab_t *htab, const char *key, const void *valptr, int len)
 {
 	int hash = htab_add(htab, key, 0);
-	htab->nodes[hash]->value = hash;
 	htab->nodes[hash]->valptr = calloc(len, sizeof(char));
 	memcpy(htab->nodes[hash]->valptr, valptr, len);
 	return hash;
