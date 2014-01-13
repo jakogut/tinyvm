@@ -72,4 +72,6 @@ void lex(tvm_lexer_t *lexer, char *source, tvm_tree_t **node)
 	}
 
 	lexer->tokens[i] = NULL;
+	tvm_tree_destroy(*node);
+	*node = NULL;
 }

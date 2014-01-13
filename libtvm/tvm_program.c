@@ -15,7 +15,6 @@ tvm_program_t *program_create()
 void program_destroy(tvm_program_t *p)
 {
 	htab_destroy(p->label_htab);
-	tvm_tree_destroy(p->defines);
 
 	if(p->values)
 	{
