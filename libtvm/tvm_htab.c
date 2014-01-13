@@ -25,6 +25,8 @@ void htab_destroy(tvm_htab_t *htab)
 		while(node)
 		{
 			next = node->next;
+			if(node->valptr)
+				free(node->valptr);
 			free(node->key);
 			free(node);
 			node = next;
@@ -66,6 +68,8 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 		{
 			next = node->next;
 			htab_add(new, node->key, node->value);
+			if(node->valptr)
+				free(node->valptr);
 			free(node->key);
 			free(node);
 			node = next;
@@ -113,7 +117,16 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 	if((float)++htab->num_nodes / htab->size > HTAB_LOAD_FACTOR)
 		htab_rehash(htab, htab->num_nodes * 2);
 
-	return 0;
+	return hash;
+}
+
+int htab_add_str(tvm_htab_t *htab, const char *key, const void *valptr, int len)
+{
+	int hash = htab_add(htab, key, 0);
+	htab->nodes[hash]->value = hash;
+	htab->nodes[hash]->valptr = calloc(len, sizeof(char));
+	memcpy(htab->nodes[hash]->valptr, valptr, len);
+	return hash;
 }
 
 int htab_find(tvm_htab_t *htab, const char *key)

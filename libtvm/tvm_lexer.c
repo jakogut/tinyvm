@@ -26,7 +26,7 @@ void lexer_destroy(tvm_lexer_t *lexer)
 	free(lexer);
 }
 
-void lex(tvm_lexer_t *lexer, char *source)
+void lex(tvm_lexer_t *lexer, char *source, tvm_htab_t *defines)
 {
 	int i, j;
 	char *pToken, *pLine = strtok(source, "\n");
@@ -60,7 +60,13 @@ void lex(tvm_lexer_t *lexer, char *source)
 
 		for(j = 0; (pToken && j < MAX_TOKENS); j++)
 		{
+			int hash;
 			char *token = pToken;
+
+			if((hash = htab_find(defines, pToken)) >= 0)
+			{
+				token = (char *)defines->nodes[hash]->valptr;
+			}
 
 			lexer->tokens[i][j] = (char *)calloc(1, (strlen(token) + 1));
 			strcpy(lexer->tokens[i][j], token);
@@ -70,4 +76,5 @@ void lex(tvm_lexer_t *lexer, char *source)
 	}
 
 	lexer->tokens[i] = NULL;
+	htab_destroy(defines);
 }

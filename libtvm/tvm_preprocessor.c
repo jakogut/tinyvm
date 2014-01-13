@@ -3,7 +3,7 @@
 
 #include <string.h>
 
-int tvm_preprocess(char *src, int *src_len)
+int tvm_preprocess(char *src, int *src_len, tvm_htab_t *defines)
 {
 	char* pp_directive_delimiter = NULL;
 	if((pp_directive_delimiter = strstr(src, "%include")))
@@ -82,6 +82,14 @@ int tvm_preprocess(char *src, int *src_len)
 		if(!keystr || !valstr)
 		{
 			printf("Define missing arguments.\n");
+			return -1;
+		}
+
+		if(htab_find(defines, keystr) < 0)
+			htab_add_str(defines, keystr, valstr, strlen(valstr) + 1);
+		else
+		{
+			printf("Multiple definitions for %s.\n", keystr);
 			return -1;
 		}
 
