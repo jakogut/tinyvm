@@ -54,7 +54,12 @@ pi_interpret:
 	tvm_fcopy(source, source_length, pFile);
 	fclose(pFile);
 
-	while(tvm_preprocess(source, &source_length, &p->defines));
+	int err = 0;
+	while((err = tvm_preprocess(source, &source_length, &p->defines)) > 0);
+
+	/* The preprocessor encountered a problem. */
+	if (err < 0)
+		return 1;
 
 	tvm_lexer_t *lexer_ctx = lexer_create();
 	lex(lexer_ctx, source, &p->defines);

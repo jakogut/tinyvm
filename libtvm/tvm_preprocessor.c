@@ -22,7 +22,7 @@ int tvm_preprocess(char *src, int *src_len, tvm_tree_t **node)
 		if(!pFile)
 		{
 			printf("Unable to open file \"%s\"\n", filename);
-			return 0;
+			return -1;
 		}
 
 		free(temp_str);
@@ -60,7 +60,7 @@ int tvm_preprocess(char *src, int *src_len, tvm_tree_t **node)
 		if(begin + offset >= end)
 		{
 			printf("Define missing arguments.\n");
-			return 0;
+			return -1;
 		}
 
 		int length = (end - (begin + offset));
@@ -82,7 +82,7 @@ int tvm_preprocess(char *src, int *src_len, tvm_tree_t **node)
 		if(!keystr || !valstr)
 		{
 			printf("Define missing arguments.\n");
-			return 0;
+			return -1;
 		}
 
 		int err = 0;
@@ -94,7 +94,7 @@ int tvm_preprocess(char *src, int *src_len, tvm_tree_t **node)
 		if(err == 2)
 		{
 			printf("Multiple definitions for %s.\n", keystr);
-			return 0;
+			return -1;
 		}
 
 		/* Remove the define line so it is not processed again. */
