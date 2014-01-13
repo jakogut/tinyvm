@@ -4,6 +4,8 @@
 #define MAX_ARGS 2
 #define MAX_TOKENS 4
 
+#include "tvm_tree.h"
+
 typedef struct tvm_lexer_s
 {
 	char **source_lines;
@@ -14,6 +16,6 @@ tvm_lexer_t *lexer_create();
 void lexer_destroy(tvm_lexer_t *l);
 
 /* Tokenize the character array "source" into lines and tokens */
-void lex(tvm_lexer_t *lexer, char *source);
+void lex(tvm_lexer_t *lexer, char *source, tvm_tree_t **node);
 
 #endif

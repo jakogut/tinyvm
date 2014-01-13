@@ -58,7 +58,7 @@ pi_interpret:
 	while(tvm_preprocess(source, &source_length, &p->defines));
 
 	tvm_lexer_t *lexer_ctx = lexer_create();
-	lex(lexer_ctx, source);
+	lex(lexer_ctx, source, &p->defines);
 	free(source);
 
 	if(parse_labels(p, (const char ***)lexer_ctx->tokens) != 0) return 1;
