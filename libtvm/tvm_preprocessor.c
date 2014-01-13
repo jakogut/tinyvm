@@ -85,10 +85,17 @@ int tvm_preprocess(char *src, int *src_len, tvm_tree_t **node)
 			return 0;
 		}
 
+		int err = 0;
 		if(!*node)
 			*node = tvm_tree_create(*node, keystr, valstr, strlen(valstr));
 		else
-			tvm_tree_add(*node, keystr, valstr, strlen(valstr));
+			err = tvm_tree_add(*node, keystr, valstr, strlen(valstr));
+
+		if(err == 2)
+		{
+			printf("Multiple definitions for %s.\n", keystr);
+			return 0;
+		}
 
 		/* Remove the define line so it is not processed again. */
 		size_t new_length = *src_len - (end - begin);
