@@ -67,9 +67,13 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 		while(node)
 		{
 			next = node->next;
-			htab_add(new, node->key, node->value);
-			if(node->valptr)
+			if (node->valptr)
+			{
+				htab_add_str(new, node->key, node->valptr, strlen(node->valptr) + 1);
 				free(node->valptr);
+			}
+			else
+				htab_add(new, node->key, node->value);
 			free(node->key);
 			free(node);
 			node = next;
