@@ -25,6 +25,8 @@ void htab_destroy(tvm_htab_t *htab)
 		while(node)
 		{
 			next = node->next;
+			if(node->valptr)
+				free(node->valptr);
 			free(node->key);
 			free(node);
 			node = next;
@@ -65,7 +67,13 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 		while(node)
 		{
 			next = node->next;
-			htab_add(new, node->key, node->value);
+			if (node->valptr)
+			{
+				htab_add_str(new, node->key, node->valptr, strlen(node->valptr) + 1);
+				free(node->valptr);
+			}
+			else
+				htab_add(new, node->key, node->value);
 			free(node->key);
 			free(node);
 			node = next;
@@ -113,7 +121,26 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 	if((float)++htab->num_nodes / htab->size > HTAB_LOAD_FACTOR)
 		htab_rehash(htab, htab->num_nodes * 2);
 
-	return 0;
+	return hash;
+}
+
+int htab_add_str(tvm_htab_t *htab, const char *key, const void *valptr, int len)
+{
+	int hash = htab_add(htab, key, 0);
+	int found = 0;
+	tvm_htab_node_t *node = htab->nodes[hash];
+
+	while (node && !found)
+	{
+		if (!strcmp(node->key, key))
+			found = 1;
+		else
+			node = node->next;
+	}
+
+	node->valptr = calloc(len, sizeof(char));
+	memcpy(node->valptr, valptr, len);
+	return hash;
 }
 
 int htab_find(tvm_htab_t *htab, const char *key)
@@ -131,3 +158,17 @@ int htab_find(tvm_htab_t *htab, const char *key)
 	return -1;
 }
 
+char *htab_find_str(tvm_htab_t *htab, const char *key)
+{
+	int hash = htab_hash(key, htab->size);
+	tvm_htab_node_t *node = htab->nodes[hash];
+
+	while(node)
+	{
+		if(!strcmp(node->key, key))
+			return node->valptr;
+		node = node->next;
+	}
+
+	return NULL;
+}

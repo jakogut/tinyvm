@@ -26,7 +26,7 @@ void lexer_destroy(tvm_lexer_t *lexer)
 	free(lexer);
 }
 
-void lex(tvm_lexer_t *lexer, char *source)
+void lex(tvm_lexer_t *lexer, char *source, tvm_htab_t *defines)
 {
 	int i, j;
 	char *pToken, *pLine = strtok(source, "\n");
@@ -60,12 +60,16 @@ void lex(tvm_lexer_t *lexer, char *source)
 
 		for(j = 0; (pToken && j < MAX_TOKENS); j++)
 		{
-			lexer->tokens[i][j] = (char *)calloc(1, (strlen(pToken) + 1));
-			strcpy(lexer->tokens[i][j], pToken);
+			char *token = htab_find_str(defines, pToken);
+			token = token ? token : pToken;
+
+			lexer->tokens[i][j] = (char *)calloc(1, (strlen(token) + 1));
+			strcpy(lexer->tokens[i][j], token);
 
 			pToken = strtok(NULL, " \t,");
 		}
 	}
 
 	lexer->tokens[i] = NULL;
+	htab_destroy(defines);
 }
