@@ -69,7 +69,7 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 			next = node->next;
 			if (node->valptr)
 			{
-				htab_add_str(new, node->key, node->valptr, strlen(node->valptr) + 1);
+				htab_add_ref(new, node->key, node->valptr, strlen(node->valptr) + 1);
 				free(node->valptr);
 			}
 			else
@@ -124,7 +124,7 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 	return hash;
 }
 
-int htab_add_str(tvm_htab_t *htab, const char *key, const void *valptr, int len)
+int htab_add_ref(tvm_htab_t *htab, const char *key, const void *valptr, int len)
 {
 	int hash = htab_add(htab, key, 0);
 	int found = 0;
@@ -143,32 +143,38 @@ int htab_add_str(tvm_htab_t *htab, const char *key, const void *valptr, int len)
 	return hash;
 }
 
-int htab_find(tvm_htab_t *htab, const char *key)
+static tvm_htab_node_t *htab_find_core(tvm_htab_t *htab, const char *key)
 {
 	int hash = htab_hash(key, htab->size);
 	tvm_htab_node_t *node = htab->nodes[hash];
 
-	while(node)
+	while (node)
 	{
 		if(!strcmp(node->key, key))
-			return node->value;
-		node = node->next;
-	}
-
-	return -1;
-}
-
-char *htab_find_str(tvm_htab_t *htab, const char *key)
-{
-	int hash = htab_hash(key, htab->size);
-	tvm_htab_node_t *node = htab->nodes[hash];
-
-	while(node)
-	{
-		if(!strcmp(node->key, key))
-			return node->valptr;
-		node = node->next;
+			return node;
+		else
+			node = node->next;
 	}
 
 	return NULL;
+}
+
+int htab_find(tvm_htab_t *htab, const char *key)
+{
+	tvm_htab_node_t *node = htab_find_core(htab, key);
+	
+	if(!node)
+		return -1;
+
+	return node->value;
+}
+
+char *htab_find_ref(tvm_htab_t *htab, const char *key)
+{
+	tvm_htab_node_t *node = htab_find_core(htab, key);
+
+	if (!node)
+		return NULL;
+
+	return node->valptr;
 }

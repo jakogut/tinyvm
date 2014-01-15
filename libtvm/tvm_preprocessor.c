@@ -86,7 +86,7 @@ int tvm_preprocess(char *src, int *src_len, tvm_htab_t *defines)
 		}
 
 		if(htab_find(defines, keystr) < 0)
-			htab_add_str(defines, keystr, valstr, strlen(valstr) + 1);
+			htab_add_ref(defines, keystr, valstr, strlen(valstr) + 1);
 		else
 		{
 			printf("Multiple definitions for %s.\n", keystr);
