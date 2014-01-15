@@ -89,6 +89,11 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 
 static tvm_htab_node_t *htab_add_core(tvm_htab_t *htab, const char *k)
 {
+	/* Increase bucket count and rehash if the
+	   load factor is too high */
+	if((float)++htab->num_nodes / htab->size > HTAB_LOAD_FACTOR)
+		htab_rehash(htab, htab->num_nodes * 2);
+
 	int hash = htab_hash(k, htab->size);
 	tvm_htab_node_t *node = htab->nodes[hash];
 	tvm_htab_node_t *prev = NULL;
@@ -113,11 +118,6 @@ static tvm_htab_node_t *htab_add_core(tvm_htab_t *htab, const char *k)
 	else htab->nodes[hash] = node;	/* root node */
 
 	node->next = NULL;
-
-	/* Increase bucket count and rehash if the
-	   load factor is too high */
-	if((float)++htab->num_nodes / htab->size > HTAB_LOAD_FACTOR)
-		htab_rehash(htab, htab->num_nodes * 2);
 
 	return node;
 }
