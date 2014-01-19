@@ -23,8 +23,8 @@ tvm_htab_t* htab_create();
 void htab_destroy(tvm_htab_t *htab);
 
 int htab_add(tvm_htab_t *htab, const char *key, int value);
-int htab_add_str(tvm_htab_t *htab, const char *key, const void *valptr, int len);
+int htab_add_ref(tvm_htab_t *htab, const char *key, const void *valptr, int len);
 int htab_find(tvm_htab_t *htab, const char *key);
-char *htab_find_str(tvm_htab_t *htab, const char *key);
+char *htab_find_ref(tvm_htab_t *htab, const char *key);
 
 #endif
