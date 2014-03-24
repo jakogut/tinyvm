@@ -9,3 +9,5 @@ Building can be accomplished using "make," or "make rebuild".
 
 To build a debug version, add "DEBUG=yes" after "make". To build a binary with
 profiling enabled, add "PROFILE=yes" after "make".
+
+I can be reached at "joseph.kogut(at)gmail.com"
