@@ -78,9 +78,17 @@ Labels must be specified at the beginning of a line or on their own line.
 // 4. PREPROCESSOR ///////////////////////////////
 //////////////////////////////////////////////////
 
-TVM has a preprocessor that allows other source files to be included with the directive "%include filename.vm"
+TVM's preprocessor works similarly to many C compilers and uses the prefix "%".
 
-During preprocessing, the entire included source file is inserted in place of the %include directive in memory.
+	// I. Include //
+
+		%include filename
+		Pastes all of the contents of filename into the source code before interpretting it.
+
+	// II. Define //
+
+		%define identifier value
+		Define a constant so that all instances of the string "identifier" will be replaced by "value".
 
 //////////////////////////////////////////////////
 // 5. INSTRUCTION LISTING ////////////////////////

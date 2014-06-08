@@ -1,0 +1,20 @@
+%define ONE 1
+%define ZERO 0
+
+start:
+	mov eax, ONE
+	mov ebx, ZERO
+
+loop:	add eax, ebx
+	add ebx, eax
+
+	prn eax
+	prn ebx
+
+	cmp eax, ZERO
+	jl end
+
+	cmp ebx, ZERO
+	jg loop
+
+end:

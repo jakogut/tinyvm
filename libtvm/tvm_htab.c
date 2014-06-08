@@ -25,6 +25,8 @@ void htab_destroy(tvm_htab_t *htab)
 		while(node)
 		{
 			next = node->next;
+			if(node->valptr)
+				free(node->valptr);
 			free(node->key);
 			free(node);
 			node = next;
@@ -65,7 +67,13 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 		while(node)
 		{
 			next = node->next;
-			htab_add(new, node->key, node->value);
+			if (node->valptr)
+			{
+				htab_add_ref(new, node->key, node->valptr, strlen(node->valptr) + 1);
+				free(node->valptr);
+			}
+			else
+				htab_add(new, node->key, node->value);
 			free(node->key);
 			free(node);
 			node = next;
@@ -79,8 +87,13 @@ static void htab_rehash(tvm_htab_t *orig, unsigned int size)
 	free(new);
 }
 
-int htab_add(tvm_htab_t *htab, const char *k, int v)
+static tvm_htab_node_t *htab_add_core(tvm_htab_t *htab, const char *k)
 {
+	/* Increase bucket count and rehash if the
+	   load factor is too high */
+	if((float)++htab->num_nodes / htab->size > HTAB_LOAD_FACTOR)
+		htab_rehash(htab, htab->num_nodes * 2);
+
 	int hash = htab_hash(k, htab->size);
 	tvm_htab_node_t *node = htab->nodes[hash];
 	tvm_htab_node_t *prev = NULL;
@@ -101,33 +114,71 @@ int htab_add(tvm_htab_t *htab, const char *k, int v)
 	node->key = (char *)calloc((strlen(k) + 1), sizeof(char));
 	strcpy(node->key, k);
 
-	node->value = v;
-
 	if(prev) prev->next = node;
 	else htab->nodes[hash] = node;	/* root node */
 
 	node->next = NULL;
 
-	/* Increase bucket count and rehash if the
-	   load factor is too high */
-	if((float)++htab->num_nodes / htab->size > HTAB_LOAD_FACTOR)
-		htab_rehash(htab, htab->num_nodes * 2);
+	return node;
+}
+
+int htab_add(tvm_htab_t *htab, const char *key, int value)
+{
+	tvm_htab_node_t *node = htab_add_core(htab, key);
+
+	if (!node)
+		return -1;
+
+	node->value = value;
 
 	return 0;
 }
 
-int htab_find(tvm_htab_t *htab, const char *key)
+int htab_add_ref(tvm_htab_t *htab, const char *key, const void *valptr, int len)
+{
+	tvm_htab_node_t *node = htab_add_core(htab, key);
+
+	if (!node)
+		return -1;
+
+	node->valptr = calloc(len, sizeof(char));
+	memcpy(node->valptr, valptr, len);
+
+	return 0;
+}
+
+static tvm_htab_node_t *htab_find_core(tvm_htab_t *htab, const char *key)
 {
 	int hash = htab_hash(key, htab->size);
 	tvm_htab_node_t *node = htab->nodes[hash];
 
-	while(node)
+	while (node)
 	{
 		if(!strcmp(node->key, key))
-			return node->value;
-		node = node->next;
+			return node;
+		else
+			node = node->next;
 	}
 
-	return -1;
+	return NULL;
 }
 
+int htab_find(tvm_htab_t *htab, const char *key)
+{
+	tvm_htab_node_t *node = htab_find_core(htab, key);
+	
+	if(!node)
+		return -1;
+
+	return node->value;
+}
+
+char *htab_find_ref(tvm_htab_t *htab, const char *key)
+{
+	tvm_htab_node_t *node = htab_find_core(htab, key);
+
+	if (!node)
+		return NULL;
+
+	return node->valptr;
+}
