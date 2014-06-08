@@ -1,6 +1,6 @@
-CC = distcc
+CC = clang
 
-CFLAGS = -Wall -pipe -Iinclude/ -std=c99
+CFLAGS = -Wall -pipe -Iinclude/ -std=gnu11
 OFLAGS = 
 LFLAGS = $(CFLAGS) -Llib/
 PEDANTIC_FLAGS = -Werror -pedantic -pedantic-errors
@@ -26,8 +26,6 @@ PROF_ARGS = "programs/tinyvm/euler/euler7.vm"
 
 ifeq ($(DEBUG), yes)
 	CFLAGS += -g
-else
-	CFLAGS += -s
 endif
 
 ifeq ($(PEDANTIC), yes)
