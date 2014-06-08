@@ -1,6 +1,7 @@
 TODO:
 
 	(Basic)
+	- NASM style local labels
 	- Implement defining bytes/words/dwords
 	- Add C style defines to preprocessor
 	- Move parsed TVM program code into the VM's virtual address space

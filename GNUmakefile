@@ -1,4 +1,4 @@
-CC = gcc
+CC = distcc
 
 CFLAGS = -Wall -pipe -Iinclude/ -std=c99
 OFLAGS = 
