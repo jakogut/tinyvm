@@ -43,12 +43,12 @@ int program_interpret(tvm_program_t *p, char *filename, tvm_memory_t *pMemory)
 		for(int i = 0; i < 2; i++)
 			if(!pFile) pFile = tvm_fopen(filename, ".vm", "r");
 
-	if(pFile) goto pi_interpret;
+	if(!pFile)
+	{
+	        printf("File was not found, or does not exist. Unable to interpret.\n");
+	        return 1;
+	}
 
-	printf("File was not found, or does not exist. Unable to interpret.\n");
-	return 1;
-
-pi_interpret:
 	source_length = tvm_flength(pFile);
 	char *source = calloc(source_length, sizeof(char));
 
