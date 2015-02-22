@@ -15,7 +15,7 @@ BIN_DIR = bin
 LIB_DIR = lib
 INC_DIR = include
 PROGRAM_DIR = programs
-INSTALL_PREFIX = /usr/
+INSTALL_PREFIX = /usr
 
 DEBUG = no
 PEDANTIC = yes
