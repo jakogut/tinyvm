@@ -4,27 +4,26 @@
 #define KEY_LENGTH 64
 #define HTAB_SIZE 4096
 
-typedef struct tvm_htab_node_s
-{
+struct tvm_htab_node {
 	char *key;
 	int value;
 	void *valptr;
-	struct tvm_htab_node_s *next;
-} tvm_htab_node_t;
+	struct tvm_htab_node *next;
+};
 
-typedef struct tvm_htab_s
-{
+struct tvm_htab_ctx {
 	unsigned int num_nodes;
 	unsigned int size;
-	tvm_htab_node_t **nodes;
-} tvm_htab_t;
+	struct tvm_htab_node **nodes;
+};
 
-tvm_htab_t* htab_create();
-void htab_destroy(tvm_htab_t *htab);
+struct tvm_htab_ctx *tvm_htab_create();
+void tvm_htab_destroy(struct tvm_htab_ctx *htab);
 
-int htab_add(tvm_htab_t *htab, const char *key, int value);
-int htab_add_ref(tvm_htab_t *htab, const char *key, const void *valptr, int len);
-int htab_find(tvm_htab_t *htab, const char *key);
-char *htab_find_ref(tvm_htab_t *htab, const char *key);
+int tvm_htab_add(struct tvm_htab_ctx *htab, const char *key, int value);
+int tvm_htab_add_ref(struct tvm_htab_ctx *htab,
+	const char *key, const void *valptr, int len);
+int tvm_htab_find(struct tvm_htab_ctx *htab, const char *key);
+char *tvm_htab_find_ref(struct tvm_htab_ctx *htab, const char *key);
 
 #endif

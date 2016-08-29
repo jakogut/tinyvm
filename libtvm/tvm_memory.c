@@ -5,11 +5,12 @@
 
 #define NUM_REGISTERS 17
 
-tvm_memory_t *memory_create(size_t size)
+struct tvm_mem *tvm_mem_create(size_t size)
 {
-	tvm_memory_t *m =  (tvm_memory_t *)calloc(1, sizeof(tvm_memory_t));
+	struct tvm_mem *m =
+		(struct tvm_mem *)calloc(1, sizeof(struct tvm_mem));
 
-	m->registers = calloc(NUM_REGISTERS, sizeof(tvm_register_t));
+	m->registers = calloc(NUM_REGISTERS, sizeof(union tvm_reg_u));
 
 	m->mem_space_size = size;
 	m->mem_space = (int *)calloc(size, 1);
@@ -17,7 +18,7 @@ tvm_memory_t *memory_create(size_t size)
 	return m;
 }
 
-void memory_destroy(tvm_memory_t *m)
+void tvm_mem_destroy(struct tvm_mem *m)
 {
 	free(m->mem_space);
 	free(m->registers);

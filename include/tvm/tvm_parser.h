@@ -1,12 +1,13 @@
 #ifndef TVM_PARSER_H_
 #define TVM_PARSER_H_
 
-#include <tvm/tvm_program.h>
+#include "tvm.h"
+#include "tvm_program.h"
 
-int parse_labels(tvm_program_t *p, const char ***tokens);
-int parse_instructions(tvm_program_t *pProgram, const char ***tokens, tvm_memory_t *pMemory);
+int tvm_parse_labels(struct tvm_ctx *vm, const char ***tokens);
+int tvm_parse_program(struct tvm_ctx *vm, const char ***tokens);
 
-int *tvm_add_value(tvm_program_t *p, const int val);
+int *tvm_add_value(struct tvm_ctx *vm, const int val);
 int tvm_parse_value(const char *str);
 
 #endif

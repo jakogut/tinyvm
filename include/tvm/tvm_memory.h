@@ -6,28 +6,25 @@
 
 #define MIN_MEMORY_SIZE (64 * 1024 * 1024) /* 64 MB */
 
-typedef union
-{
+union tvm_reg_u {
 	int32_t i32;
 	int32_t *i32_ptr;
 
-	union
-	{
+	union {
 		int16_t h;
 		int16_t l;
 	} i16;
 
-} tvm_register_t;
+};
 
-typedef struct
-{
+struct tvm_mem {
 	/*
-	Similar to x86 FLAGS register
-
-	0x1	EQUAL
-	0x2	GREATER
-
-	*/
+	 *	Similar to x86 FLAGS register
+	 *
+	 *	0x1	EQUAL
+	 *	0x2	GREATER
+	 *
+	 */
 
 	int FLAGS;
 	int remainder;
@@ -35,10 +32,10 @@ typedef struct
 	void *mem_space;
 	int mem_space_size;
 
-	tvm_register_t *registers;
-} tvm_memory_t;
+	union tvm_reg_u *registers;
+};
 
-tvm_memory_t *memory_create(size_t size);
-void memory_destroy(tvm_memory_t *mem);
+struct tvm_mem *tvm_mem_create(size_t size);
+void tvm_mem_destroy(struct tvm_mem *mem);
 
 #endif

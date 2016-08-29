@@ -6,16 +6,16 @@
 
 #include "tvm_htab.h"
 
-typedef struct tvm_lexer_s
-{
+struct tvm_lexer_ctx {
 	char **source_lines;
 	char ***tokens;
-} tvm_lexer_t;
+};
 
-tvm_lexer_t *lexer_create();
-void lexer_destroy(tvm_lexer_t *l);
+struct tvm_lexer_ctx *lexer_create();
+void tvm_lexer_destroy(struct tvm_lexer_ctx *l);
 
 /* Tokenize the character array "source" into lines and tokens */
-void lex(tvm_lexer_t *lexer, char *source, tvm_htab_t *defines);
+void tvm_lex(struct tvm_lexer_ctx *lexer,
+	char *source, struct tvm_htab_ctx *defines);
 
 #endif

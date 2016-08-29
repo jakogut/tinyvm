@@ -8,30 +8,23 @@
 #include "tvm_htab.h"
 #include "tvm_memory.h"
 
-typedef struct tvm_program_s
-{
+struct tvm_prog {
 	int start;
 
-	int num_instructions;
-        int *instr;
-
-        int ***args;
+	int num_instr;
+	int *instr;
+	int ***args;
 
 	int **values;
 	int num_values;
 
-	tvm_htab_t *defines;
-
-	tvm_htab_t *label_htab;
-
-} tvm_program_t;
+	struct tvm_htab_ctx *defines;
+	struct tvm_htab_ctx *label_htab;
+};
 
 /* Create and initialize an empty program object */
-tvm_program_t *program_create();
+struct tvm_prog *tvm_prog_create();
 
-/* Interpret a source file into bytecode, and store it in a program object */
-int program_interpret(tvm_program_t *p, char *filename, tvm_memory_t *pMemory);
-
-void program_destroy(tvm_program_t *p);
+void tvm_prog_destroy(struct tvm_prog *p);
 
 #endif
