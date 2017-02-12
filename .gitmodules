@@ -1,0 +1,4 @@
+[submodule "mlibc"]
+	path = mlibc
+	url = https://github.com/jakogut/mlibc.git
+	branch = master
