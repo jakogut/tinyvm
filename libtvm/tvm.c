@@ -45,7 +45,7 @@ int tvm_vm_interpret(struct tvm_ctx *vm, char *filename)
 	tvm_fcopy(source, source_length, filp);
 	fclose(filp);
 
-	int err = tvm_preprocess(source, &source_length, vm->prog->defines);
+	int err = tvm_preprocess(&source, &source_length, vm->prog->defines);
 
 	/* The preprocessor encountered a problem. */
 	if (err < 0)

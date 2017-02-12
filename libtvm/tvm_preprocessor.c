@@ -1,27 +1,28 @@
 #include <tvm/tvm_preprocessor.h>
-#include <tvm/tvm_tokens.h>
 #include <tvm/tvm_file.h>
+#include <tvm/tvm_tokens.h>
 
+#include <unistd.h>
 #include <string.h>
 
 static int process_includes(
-	char *src, int *src_len, struct tvm_htab_ctx *defines)
+	char **src, int *src_len, struct tvm_htab_ctx *defines)
 {
-	char *pp_directive_delimiter = strstr(src, TOK_INCLUDE);
+	char *pp_directive_delimiter = strstr(*src, TOK_INCLUDE);
 
 	if (!pp_directive_delimiter)
 		return 0;
 
-	char *strbegin = pp_directive_delimiter,
-		 *strend = strchr(strbegin, '\n');
+	char *begin = pp_directive_delimiter,
+		 *end = strchr(begin, '\n');
 
-	if (!strend || !strbegin)
+	if (!end || !begin)
 		return 0;
 
-	int linelen = strend - strbegin;
+	int linelen = end - begin;
 	char *temp_str = calloc(linelen + 1, sizeof(char));
 
-	memcpy(temp_str, strbegin, linelen);
+	memcpy(temp_str, begin, linelen);
 
 	char *filename = (strchr(temp_str, ' ') + 1);
 	FILE *filp = tvm_fopen(filename, ".vm", "r");
@@ -39,31 +40,26 @@ static int process_includes(
 	tvm_fcopy(addition_str, addition_len, filp);
 	fclose(filp);
 
-	size_t first_block_len = (strbegin - src);
-	size_t second_block_len = ((src + *src_len) - strend);
+	size_t first_block_len = (begin - *src);
+	size_t second_block_len = ((*src + *src_len) - end);
 	size_t new_src_len = (
 		first_block_len + addition_len + second_block_len);
 
-	src = (char *)realloc((char *)src, sizeof(char) * new_src_len);
-	src[new_src_len] = 0;
+	char *new_src = (char *)calloc(sizeof(char), new_src_len);
+	strncpy(new_src, (*src), first_block_len);
+	strcat(new_src, addition_str);
+	strcat(new_src, end+1);
 
-	memmove(&src[first_block_len + addition_len], strend, second_block_len);
-	memcpy(&src[first_block_len], addition_str, addition_len);
-
-	/* Fuckin' hack */
-	for (int i = 0; i < new_src_len; i++) {
-		if (src[i] == 0)
-			src[i] = ' ';
-	}
-
-	*src_len = strlen(src);
+	free(*src);
+	*src = new_src;
+	*src_len = strlen(*src);
 	return 1;
 }
 
 static int process_defines(
-	char *src, int *src_len, struct tvm_htab_ctx *defines)
+	char **src, int *src_len, struct tvm_htab_ctx *defines)
 {
-	char *pp_directive_delimiter = strstr(src, TOK_DEFINE);
+	char *pp_directive_delimiter = strstr(*src, TOK_DEFINE);
 
 	if (!pp_directive_delimiter)
 		return 0;
@@ -111,20 +107,20 @@ static int process_defines(
 	}
 
 	/* Remove the define line so it is not processed again. */
-	size_t new_length = *src_len - (end - begin);
-	size_t first_block_len = begin - src;
-	size_t second_block_len = (src + *src_len) - end;
+	size_t new_src_len = *src_len - (end - begin);
+	size_t first_block_len = begin - *src;
+	size_t second_block_len = (*src + *src_len) - end;
 
-	memmove(&src[first_block_len], end, second_block_len);
+	memmove(&(*src)[first_block_len], end, second_block_len);
 
-	src = realloc(src, sizeof(char) * new_length);
-	*src_len = new_length;
+	*src = realloc(*src, sizeof(char) * new_src_len);
+	*src_len = new_src_len;
 
 	return 1;
 }
 
 static int preprocess_pass(
-	char *src, int *src_len, struct tvm_htab_ctx *defines)
+	char **src, int *src_len, struct tvm_htab_ctx *defines)
 {
 	int ret = 0;
 
@@ -134,7 +130,7 @@ static int preprocess_pass(
 }
 
 
-int tvm_preprocess(char *src, int *src_len, struct tvm_htab_ctx *defines)
+int tvm_preprocess(char **src, int *src_len, struct tvm_htab_ctx *defines)
 {
 	int ret = 1;
 
