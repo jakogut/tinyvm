@@ -162,7 +162,7 @@ int tvm_parse_program(
 	int line_idx;
 
 	for (line_idx = 0; tokens[line_idx]; line_idx++) {
-		int instr_place;
+		int instr_place = 0;
 
 		int opcode = tvm_parse_instr(
 			vm, tokens[line_idx], &instr_place);
