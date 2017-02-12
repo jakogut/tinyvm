@@ -26,8 +26,11 @@ void tvm_prog_destroy(struct tvm_prog *p)
 	}
 
 	if (p->args) {
-		for (int i = 0; p->args[i]; i++)
-			free(p->args[i]);
+		for (int i = 0; p->args[i]; i++) {
+			if (p->args[i])
+				free(p->args[i]);
+		}
+
 		free(p->args);
 	}
 
