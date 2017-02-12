@@ -4,6 +4,7 @@ CFLAGS = -Wall -pipe -Iinclude/ -std=gnu11
 OFLAGS = 
 LFLAGS = $(CFLAGS) -Llib/
 PEDANTIC_FLAGS = -Werror -pedantic -pedantic-errors
+FREESTANDING_FLAGS = -nostdlib
 
 LIBTVM_SOURCES = $(wildcard libtvm/*.c)
 LIBTVM_OBJECTS = $(LIBTVM_SOURCES:.c=.o)
@@ -21,6 +22,8 @@ DEBUG = no
 PEDANTIC = yes
 OPTIMIZATION = -O3
 
+FREESTANDING = no
+
 PROFILER = operf
 PROF_ARGS = "programs/tinyvm/euler/euler7.vm"
 
@@ -30,6 +33,10 @@ endif
 
 ifeq ($(PEDANTIC), yes)
 	CFLAGS += $(PEDANTIC_FLAGS)
+endif
+
+ifeq ($(FREESTANDING), yes)
+	CFLAGS += $(FREESTANDING_FLAGS)
 endif
 
 CFLAGS += $(OPTIMIZATION)
