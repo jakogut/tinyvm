@@ -116,15 +116,6 @@ static int **tvm_parse_args(
 			vm, tvm_parse_value(instr_tokens[*instr_place+1 + i]));
 	}
 
-	int args_set = 0;
-	for (int i = 0; i < MAX_ARGS; i++) {
-		if (args[i])
-			args_set = 1;
-	}
-
-	if (!args_set)
-		free(args);
-
 	return args;
 }
 
@@ -193,7 +184,7 @@ int tvm_parse_program(
 		else
 			return -1;
 
-		vm->prog->args[vm->prog->num_instr - 1] = (int **)args;
+		vm->prog->args[vm->prog->num_instr - 1] = args;
 	}
 
 	vm->prog->args[vm->prog->num_instr] = NULL;
