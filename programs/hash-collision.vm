@@ -1,0 +1,21 @@
+# On an x86/amd64 machine,
+# the labels "rose" and "verdict"
+# will hash to the same value;
+# tinyvm doesn't mind.
+
+rose:
+	mov eax, 456
+	prn eax
+	jmp end
+
+verdict:
+	mov eax, 123
+	prn eax
+	jmp rose
+
+start:
+	jmp verdict
+
+end:
+
+
