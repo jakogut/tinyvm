@@ -3,7 +3,7 @@
 #include <tvm/tvm_lexer.h>
 #include <tvm/tvm_parser.h>
 
-struct tvm_ctx *tvm_vm_create(char *filename)
+struct tvm_ctx *tvm_vm_create()
 {
 	struct tvm_ctx *vm =
 		(struct tvm_ctx *)calloc(1, sizeof(struct tvm_ctx));
