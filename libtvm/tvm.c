@@ -3,19 +3,22 @@
 #include <tvm/tvm_lexer.h>
 #include <tvm/tvm_parser.h>
 
-struct tvm_ctx *tvm_vm_create(char *filename)
+struct tvm_ctx *tvm_vm_create()
 {
 	struct tvm_ctx *vm =
 		(struct tvm_ctx *)calloc(1, sizeof(struct tvm_ctx));
 
+	if (!vm)
+		return NULL;
 	vm->mem = tvm_mem_create(MIN_MEMORY_SIZE);
 	vm->prog = tvm_prog_create();
 
-	tvm_stack_create(vm->mem, MIN_STACK_SIZE);
-
-	if (!vm || !vm->mem || !vm->prog)
+	if (!vm->mem || !vm->prog) {
+		tvm_vm_destroy(vm);
 		return NULL;
+	}
 
+	tvm_stack_create(vm->mem, MIN_STACK_SIZE);
 	return vm;
 }
 
