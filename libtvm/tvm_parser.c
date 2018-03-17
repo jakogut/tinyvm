@@ -189,10 +189,13 @@ int tvm_parse_program(
 		int opcode = tvm_parse_instr(
 			vm, tokens[line_idx], &instr_place);
 
+		if (opcode == -1)
+			continue;
+
 		int **args = tvm_parse_args(
 			vm, tokens[line_idx], &instr_place);
 
-		if (opcode == -1 || !args)
+		if (!args)
 			continue;
 
 		void *newptr;
