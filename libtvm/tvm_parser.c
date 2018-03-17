@@ -137,6 +137,19 @@ static int **tvm_parse_args(
 	return args;
 }
 
+/* This function frees the memory allocated by tvm_parse_args().
+ */
+static void tvm_free_args(int **args) {
+	if(args) {
+                for (int i = 0; args[i]; i++) {
+			free(args[i]);
+                }
+
+	}
+	free(args);
+}
+
+
 
 
 /* This is a helper function that converts one instruction,
@@ -190,8 +203,10 @@ int tvm_parse_program(
 		if (newptr != NULL) {
 			vm->prog->instr = newptr;
 			vm->prog->instr[vm->prog->num_instr - 1] = opcode;
-		} else
+		} else {
+			tvm_free_args(args);
 			return -1;
+                }
 
 		newptr = realloc(
 			vm->prog->args,
@@ -199,8 +214,10 @@ int tvm_parse_program(
 
 		if (newptr != NULL)
 			vm->prog->args = (int ***)newptr;
-		else
+		else {
+			tvm_free_args(args);
 			return -1;
+		}
 
 		vm->prog->args[vm->prog->num_instr - 1] = args;
 	}
