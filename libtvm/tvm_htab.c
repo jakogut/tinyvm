@@ -110,7 +110,6 @@ static struct tvm_htab_node *htab_add_core(
 			node = node->next;
 
 		prev = node;
-		node = node->next;
 	}
 
 	/* Allocate space, and copy the key/value pair. */

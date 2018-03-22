@@ -29,6 +29,7 @@ static int process_includes(
 
 	if (!filp) {
 		printf("Unable to open file \"%s\"\n", filename);
+		free(temp_str);
 		return -1;
 	}
 
