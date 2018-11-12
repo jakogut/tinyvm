@@ -41,7 +41,13 @@ static inline unsigned int htab_hash(const char *k, const unsigned int size)
 {
 	unsigned int hash = 1;
 
-	char *c; for (c = (char *)k; *c; c++)
+	char *c = (char*)k;
+	// loop continues until ascii value at address c is 0
+		for(; *c != 0; c++)
+
+		/* hash is incremented by (hash 'times' 2^*c)-*c on every iteration
+		 * *c is the ascii value of char stored at address c
+		 */
 		hash += (hash << *c) - *c;
 
 	return hash % size;
