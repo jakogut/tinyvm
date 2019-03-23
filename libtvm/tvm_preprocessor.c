@@ -2,7 +2,10 @@
 #include <tvm/tvm_file.h>
 #include <tvm/tvm_tokens.h>
 
+#ifndef WIN32
 #include <unistd.h>
+#endif
+
 #include <string.h>
 
 static int process_includes(
@@ -79,9 +82,9 @@ static int process_defines(
 	}
 
 	int length = (end - (begin + offset));
-	char tempstr[length + 1];
+	char *tempstr;
+	tempstr = calloc(length + 1, sizeof(char));
 
-	memset(tempstr, 0, length + 1);
 	memcpy(tempstr, begin + offset, length);
 
 	char *keystr = tempstr;
@@ -97,6 +100,7 @@ static int process_defines(
 
 	if (!keystr || !valstr) {
 		printf("Define missing arguments.\n");
+		free(tempstr);
 		return -1;
 	}
 
@@ -104,6 +108,7 @@ static int process_defines(
 		tvm_htab_add_ref(defines, keystr, valstr, strlen(valstr) + 1);
 	else {
 		printf("Multiple definitions for %s.\n", keystr);
+		free(tempstr);
 		return -1;
 	}
 
@@ -117,6 +122,7 @@ static int process_defines(
 	*src = realloc(*src, sizeof(char) * new_src_len);
 	*src_len = new_src_len;
 
+	free(tempstr);
 	return 1;
 }
 
